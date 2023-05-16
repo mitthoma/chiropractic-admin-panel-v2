@@ -305,6 +305,7 @@
           tx: "",
         };
         const currentPatient = await this.getCurrentPatient();
+      
         payload.patientFirstName = currentPatient.firstName;
         payload.patientLastName = currentPatient.lastName;
         payload.noteVisitDate = note.visitDate || "";
@@ -313,6 +314,7 @@
         payload.temperature = `${note.temperature} F` || "";
         payload.systolic = note.systolic || "";
         payload.diastoic = note.diastoic || "";
+        payload.pulse = note.pulse || "";
         payload.respiration = note.respiration || "";
         payload.physiotherapyNumber = note.physiotherapy || ""
         payload.roomAssignments.physio = note.physio || "";

@@ -34,6 +34,8 @@
                                     <v-card-text>Respiration: {{currentNote?.respiration}} </v-card-text>
                                     <v-card-text>Systolic: {{ currentNote?.systolic }} </v-card-text>
                                     <v-card-text>Diastolic: {{ currentNote?.diastolic }} </v-card-text>
+                                    <v-card-text>Pulse: {{ currentNote?.pulse }} </v-card-text>
+
                                 </v-col>
                         </v-row>
                     </div>

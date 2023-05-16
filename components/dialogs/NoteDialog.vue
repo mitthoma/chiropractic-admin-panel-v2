@@ -60,6 +60,13 @@
               </v-col>
               <v-col cols="3">
                 <v-text-field
+                  v-model="form.pulse"
+                  label="Pulse"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
                   v-model="form.diastolic"
                   label="Diastolic"
                   type="number"
@@ -148,6 +155,7 @@ export default {
         roomAssignment: null,
         physio: null,
         tx: null,
+        pulse: null,
         otherNotes: "",
       },
       formIsValid: false,
@@ -213,6 +221,7 @@ export default {
       this.form.roomAssignment = 0;
       this.form.physio = 0;
       this.form.tx = 0;
+      this.form.pulse = 0;
       this.form.otherNotes = "";
     },
     async submitNoteForm() {

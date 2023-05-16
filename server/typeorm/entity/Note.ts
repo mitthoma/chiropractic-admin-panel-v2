@@ -55,6 +55,9 @@ export class Note {
   @Column('integer', { nullable: true })
   tx: number;
 
+  @Column('integer', { nullable: true })
+  pulse: number;
+
   @Column({ type: 'text', nullable: true })
   otherNotes: string;
 
