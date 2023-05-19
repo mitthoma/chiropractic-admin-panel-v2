@@ -8,30 +8,27 @@
         color="deep-purple-accent-4"
         align-tabs="center"
       >
-        <v-tab :value="tab === 0" @click="switchTab(0)">Phase 1</v-tab>
-        <v-tab :value="tab === 1" @click="switchTab(1)">Phase 2</v-tab>
-        <!-- <v-tab @click="switchTab(3)" :value="tab === 3">Phase 3</v-tab>
-        <v-tab @click="switchTab(4)" :value="tab === 4">Phase 4</v-tab> -->
+        <v-tab :value="tab === 0" :disabled="!formIsValid[0]" @click="switchTab(0)">Phase 1</v-tab>
+        <v-tab :value="tab === 1" :disabled="!formIsValid[1]" @click="switchTab(1)">Phase 2</v-tab>
       </v-tabs>
-
       <v-window v-model="tab" class="phaseWindow">
         <v-window-item :value="0">
           <v-container fluid>
-            <v-form ref="form1" v-model="formIsValid[0]">
+            <v-form ref="form0" v-model="formIsValid[0]">
               <v-row>
                 <v-col cols="6">
-                  <VueDatePicker v-model="form.visitDate" menu-props="auto" placeholder="Please select a visit date" class="h-full w-full overflow-visible" dark type="date" />
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field v-model="form.visitDateText" label="Visit Date Text Entry" type="string" required></v-text-field>
+                  <v-text-field 
+                    v-model="form.visitDateText" 
+                    label="Visit Date Text Entry" 
+                    type="string" 
+                    :rules="[value => !!value || 'Field is required']" 
+                    @input="validateForm(0)"
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="6">
                   <v-text-field v-model="form.heightFeet" label="Height (Feet)" type="number" required @input="validateForm(0)"></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field v-model="form.heightInches" label="Height (Inches)" type="number" required></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
@@ -40,51 +37,21 @@
 
         <v-window-item :value="1">
           <v-container fluid>
-            <v-form ref="form2" v-model="formIsValid[1]">
+            <v-form ref="form1" v-model="formIsValid[1]">
               <v-row>
                 <v-col cols="6">
-                  <v-text-field v-model="form.temperature" label="Temperature" type="number" required></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field v-model="form.pulse" label="Pulse" type="number" required></v-text-field>
+                  <v-text-field v-model="form.temperature" label="Temperature" type="number" required @input="validateForm(1)"></v-text-field>
                 </v-col>
               </v-row>
             </v-form>
           </v-container>
         </v-window-item>
-
-        <!-- <v-window-item :value="3">
-          <v-container fluid>
-            <v-form ref="form3" v-model="formIsValid[2]">
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field v-model="form.diastolic" label="Diastolic" type="number" required></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field v-model="form.systolic" label="Systolic" type="number" required></v-text-field>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-container>
-        </v-window-item>
-
-        <v-window-item :value="4">
-          <v-container fluid>
-            <v-form ref="form4" v-model="formIsValid[3]">
-              <v-row>
-                <v-col cols="12">
-                  <v-textarea v-model="form.otherNotes" label="Additional notes" required></v-textarea>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-container>
-        </v-window-item> -->
       </v-window>
 
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="confirmExit">Cancel</v-btn>
-        <v-btn color="blue darken-1" text @click="processPhase">{{ tab === 4 ? saveButtonText : 'Next' }}</v-btn>
+        <v-btn color="blue darken-1" text @click="processPhase">{{ tab === 1 ? saveButtonText : 'Next' }}</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -106,15 +73,14 @@
 
 <script>
 import { createNoteService } from '~/services/note';
-import VueDatePicker from '@vuepic/vue-datepicker';
+// import VueDatePicker from '@vuepic/vue-datepicker';
 import { formatISO, parseISO } from 'date-fns';
-import '@vuepic/vue-datepicker/dist/main.css';
 
 
 export default {
   name: 'NoteDialog',
   components: {
-    VueDatePicker,
+    // VueDatePicker,
   },
   props: {
     value: {
@@ -128,25 +94,11 @@ export default {
   data() {
     return {
       form: {
-        visitDate: null,
         visitDateText: null,
         heightFeet: null,
-        heightInches: null,
         temperature: null,
-        respiration: null,
-        systolic: null,
-        diastolic: null,
-        physiotherapy: null,
-        phaseOneRoomAssignment: null,
-        phaseTwoRoomAssignment: null,
-        phaseThreeRoomAssignment: null,
-        phaseFourRoomAssignment: null,
-        physio: null,
-        tx: null,
-        pulse: null,
-        otherNotes: "",
       },
-      formIsValid: [false, false, false, false],
+      formIsValid: [false, false],
       tab: 0,
       exitConfirmDialog: false,
     };
@@ -170,13 +122,9 @@ export default {
       return this.isUpdateMode ? 'Update' : 'Save';
     },
     isFormValid() {
-      console.log('in isformvalid cp and Im checking ', this.$refs[`form${this.tab + 1}`])
-      console.log("this.tab is ", this.tab);
-      if (this.$refs[`form${this.tab + 1}`]) {
-        console.log('I AM IN THE CHECK AND I AM ABOUT TO RETURN ', this.$refs[`form${this.tab + 1}`].validate() && this.formIsValid[this.tab])
-        return this.$refs[`form${this.tab + 1}`].validate() && this.formIsValid[this.tab];
+      if (this.$refs[`form${this.tab}`]) {
+        return this.$refs[`form${this.tab}`].validate() && this.formIsValid[this.tab];
       }
-      console.log('In cp and I am about to return FALSE');
       return false;
     },
   },
@@ -194,12 +142,6 @@ export default {
     confirmExit() {
       this.exitConfirmDialog = true;
     },
-    // switchTab(tabNumber) {
-    //   console.log('this.isformvalid in switchtab', this.isFormValid, ' and tab number is ', tabNumber);
-    //   if (this.isFormValid) {
-    //     this.tab = tabNumber;
-    //   }
-    // },
     closeDialog() {
       this.$emit('close-dialog');
       this.resetForm();
@@ -212,19 +154,9 @@ export default {
         this.visitDate = visitDate;
       },
     resetForm() {
-      this.form.visitDate = null;
+      this.form.visitDateText = null;
       this.form.heightFeet = 0;
-      this.form.heightInches = 0;
       this.form.temperature = 0;
-      this.form.respiration = 0;
-      this.form.systolic = 0;
-      this.form.diastolic = 0;
-      this.form.physiotherapy = 0;
-      this.form.phaseOneRoomAssignment = 0;
-      this.form.physio = 0;
-      this.form.tx = 0;
-      this.form.pulse = 0;
-      this.form.otherNotes = "";
     },
     async submitNoteForm() {
       const patientId = this.$route.params.id;
@@ -248,27 +180,37 @@ export default {
         console.log('Form not submitted. Did not meet validation standards.');
       }
     },
-    switchTab(tabNumber) {
-  if (this.validateForm(this.tab)) {
-    this.tab = tabNumber;
-  } else {
-    // Alert the user about the failed validation
-    alert("Please fill in all required fields before switching tabs.");
-  }
-},
-processPhase() {
-  if (this.validateForm(this.tab)) {
-    if (this.tab === 4) {
-      this.submitNoteForm();
-    } else {
-      this.tab++;
-    }
-  }
-},
+    async switchTab(tabNumber) {
+      if (await this.validateForm(this.tab)) {
+        this.tab = tabNumber;
+      } else {
+        alert("Please fill in all required fields before switching tabs.");
+      }
+    },
 
-validateForm(tabNumber) {
-    this.formIsValid[tabNumber] = this.$refs[`form${tabNumber + 1}`].validate();
-  },
+    async processPhase() {
+      if (await this.validateForm(this.tab)) {
+        if (this.tab === 1) {
+          this.submitNoteForm();
+        } else {
+          this.tab++;
+        }
+      }
+    },
+
+    async validateForm(tabNumber) {
+      console.log('IN VALIDATE FORM AND TAB IS ', tabNumber);
+      console.log("formnumber is ", `form${tabNumber}` )
+
+      if (this.$refs[`form${tabNumber}`]) {
+        const isValid = await this.$refs[`form${tabNumber}`].validate();
+        this.formIsValid[tabNumber] = isValid.valid;
+        console.log('validation is ', isValid);
+        console.log(this.formIsValid[tabNumber]);
+        return isValid.valid;
+      }
+      return false;
+    }
   },
 };
 </script>
