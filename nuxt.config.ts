@@ -41,11 +41,11 @@ export default defineNuxtConfig({
     
     modules: [
         '@pinia/nuxt',
-        '@nuxtus/nuxt-localtunnel',
+        // '@nuxtus/nuxt-localtunnel',
         
     ],
     localtunnel: {
-        subdomain: 'orange-planets-drum-98-116-78-133'
+        // subdomain: 'orange-planets-drum-98-116-78-133'
     },
 
     pinia: {
