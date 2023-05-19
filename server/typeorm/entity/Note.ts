@@ -16,8 +16,11 @@ export class Note {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP", nullable: true })
   visitDate: Date;
+
+  @Column({ type: 'text', nullable: true })
+  visitDateText: string;
 
   @CreateDateColumn()
   createdDate: Date;
@@ -30,6 +33,9 @@ export class Note {
 
   @Column('integer', { nullable: true })
   heightInches: number;
+
+  @Column('integer', { nullable: true })
+  weight: number;
 
   @Column('integer', { nullable: true })
   temperature: number;
@@ -46,8 +52,17 @@ export class Note {
   @Column('integer', { nullable: true })
   physiotherapy: number;
 
-  @Column('integer')
-  roomAssignment: number;
+  @Column('integer', { nullable: true })
+  phaseOneRoomAssignment: number;
+
+  @Column('integer', { nullable: true })
+  phaseTwoRoomAssignment: number;
+
+  @Column('integer', { nullable: true })
+  phaseThreeRoomAssignment: number;
+
+  @Column('integer', { nullable: true })
+  phaseFourRoomAssignment: number;
 
   @Column('integer', { nullable: true })
   physio: number;

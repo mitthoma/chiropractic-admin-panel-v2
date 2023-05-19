@@ -24,10 +24,10 @@
                 v-for="item in displayedNotes"
                 :key="item.id"
             >
-                <td>{{ formatDate(item.visitDate) }}</td>
+                <td>{{ formatDate(item.visitDate, item) }}</td>
                 <td v-if="item.patient">{{ item.patient.firstName }}</td>
                 <td v-if="item.patient">{{ item.patient.lastName }}</td>
-                <td>{{ formatDate(item.lastEdited) }}</td>
+                <td>{{ formatDate(item.lastEdited, item) }}</td>
                 <td class="d-flex justify-end">
                     <v-icon @click="editNoteItem(item)">mdi-pencil</v-icon>
                     <v-btn class="ma-2 pa-2" color="primary" @click="goToNote(item)">See note</v-btn>
@@ -122,9 +122,10 @@
             });
             this.updateDisplayedNotes();
         },
-        formatDate(date) {
+        formatDate(date, item) {
             if (isNaN(Date.parse(date))) {
-                return "Invalid date";
+                console.log('item.visitdatetext ', item.visitDateText);
+                return item.visitDateText || "Invalid date";
             }
 
             const formattedDate = new Intl.DateTimeFormat("en-US", {

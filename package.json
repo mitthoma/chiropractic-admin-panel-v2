@@ -33,7 +33,7 @@
     "http-proxy-middleware": "^2.0.6",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.1",
-    "nuxt": "^3.3.1",
+    "nuxt": "^3.0.0",
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1"
   },

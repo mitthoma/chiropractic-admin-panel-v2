@@ -45,9 +45,8 @@ export default defineNuxtConfig({
         
     ],
     localtunnel: {
-        subdomain: 'orange-planets-drum-98-116-78-133'
+        subdomain: 'blue-solar-wind-98-116-78-133'
     },
-
     pinia: {
         autoImports: ['defineStore', 'acceptHMRUpdate'],
     },
