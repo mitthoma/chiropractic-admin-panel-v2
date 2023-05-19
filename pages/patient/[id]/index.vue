@@ -36,7 +36,7 @@
                     :key="item.id"
                   >
                     <td>{{ formatDate(item.visitDate) }}</td>
-                    <td>{{ item.roomAssignment }}</td>
+                    <td>{{ item.phaseOneRoomAssignment }}</td>
                     <td class="d-flex justify-end">
                       <v-menu
                         transition="slide-x-transition"
@@ -300,7 +300,7 @@
 
           return acc;
         }, {});
-        payload.roomAssignments = {
+        payload.phaseOneRoomAssignments = {
           physio: "",
           tx: "",
         };
@@ -308,7 +308,7 @@
       
         payload.patientFirstName = currentPatient.firstName;
         payload.patientLastName = currentPatient.lastName;
-        payload.noteVisitDate = note.visitDate || "";
+        payload.noteVisitDate = note.visitDate || note.visitDateText || "";
         payload.height = `${note.heightFeet || ""}'${note.heightInches || ""}"` || "";
         payload.weight = `${note.weight || ""} lbs`;
         payload.temperature = `${note.temperature} F` || "";
@@ -317,8 +317,8 @@
         payload.pulse = note.pulse || "";
         payload.respiration = note.respiration || "";
         payload.physiotherapyNumber = note.physiotherapy || ""
-        payload.roomAssignments.physio = note.physio || "";
-        payload.roomAssignments.tx = note.tx || "";
+        payload.phaseOneRoomAssignments.physio = note.physio || "";
+        payload.phaseOneRoomAssignments.tx = note.tx || "";
 
         this.payload = payload;
       },

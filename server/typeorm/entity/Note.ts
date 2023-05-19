@@ -19,6 +19,9 @@ export class Note {
   @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
   visitDate: Date;
 
+  @Column({ type: 'text', nullable: true })
+  visitDateText: string;
+
   @CreateDateColumn()
   createdDate: Date;
 
@@ -47,7 +50,16 @@ export class Note {
   physiotherapy: number;
 
   @Column('integer')
-  roomAssignment: number;
+  phaseOneRoomAssignment: number;
+
+  @Column('integer')
+  phaseTwoRoomAssignment: number;
+
+  @Column('integer')
+  phaseThreeRoomAssignment: number;
+
+  @Column('integer')
+  phaseFourRoomAssignment: number;
 
   @Column('integer', { nullable: true })
   physio: number;

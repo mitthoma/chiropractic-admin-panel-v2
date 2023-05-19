@@ -12,138 +12,29 @@
           <v-tab :value="1">Phase 1</v-tab>
           <v-tab :value="2">Phase 2</v-tab>
           <v-tab :value="3">Phase 3</v-tab>
+          <v-tab :value="4">Phase 4</v-tab>
         </v-tabs>
         <v-window v-model="tab">
           <v-window-item
-            v-for="n in 3"
+            v-for="n in 4"
             :key="n"
             :value="n"
           >
             <v-container fluid>
+              <v-form ref="form" v-model="formIsValid">
+                  <VueDatePicker v-model="visitDateTime" placeholder="Please select a visit date and time" dark type="datetime" :minute-interval="30" required/>
+                  <v-text-field v-model="form.heightFeet" label="Height (Feet)" type="number" required></v-text-field>
+                  <v-text-field v-model="form.heightInches" label="Height (Inches)" type="number" required></v-text-field>
+                  <v-text-field v-model="form.pulse" label="Pulse" type="number" required></v-text-field>
+                  <v-text-field v-model="form.temperature" label="Temperature" type="number" required></v-text-field>
+                </v-form>
               <v-row>
-                <v-col
-                  v-for="i in 6"
-                  :key="i"
-                  cols="12"
-                  md="4"
-                >
-                  <v-img
-                    :src="`https://picsum.photos/500/300?image=${i * n * 5 + 10}`"
-                    :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
-                    aspect-ratio="1"
-                  ></v-img>
-                </v-col>
+                hello {{ n }}
               </v-row>
             </v-container>
           </v-window-item>
         </v-window>
-        <v-card-text>
-          <v-form ref="noteForm" v-model="formIsValid">
-            <v-row>
-                <v-col cols="12">
-                    <VueDatePicker
-                        v-model="visitDateTime"
-                        placeholder="Please select a visit date and time"
-                        dark
-                        type="datetime"
-                        :minute-interval="30"
-                    />
-                    </v-col>
-            </v-row>
-  
-            <!-- Additional form fields based on Note entity attributes -->
-            <v-row>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.roomAssignment"
-                  label="Room Assignment"
-                  type="number"
-                ></v-text-field>
-                
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.heightFeet"
-                  label="Height (Feet)"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.heightInches"
-                  label="Height (Inches)"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.respiration"
-                  label="Respiration"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.systolic"
-                  label="Systolic"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.pulse"
-                  label="Pulse"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.diastolic"
-                  label="Diastolic"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.physiotherapy"
-                  label="Physiotherapy"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="form.temperature"
-                  label="Temperature"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="form.physio"
-                  label="Physio"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="form.tx"
-                  label="TX"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-textarea
-            v-model="form.otherNotes"
-            label="Additional Notes"
-            auto-grow
-          ></v-textarea>
-        </v-form>
-      </v-card-text>
+        
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="closeDialog">Close</v-btn>
@@ -185,7 +76,10 @@ export default {
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        roomAssignment: null,
+        phaseOneRoomAssignment: null,
+        phaseTwoRoomAssignment: null,
+        phaseThreeRoomAssignment: null,
+        phaseFourRoomAssignment: null,
         physio: null,
         tx: null,
         pulse: null,
@@ -252,7 +146,7 @@ export default {
       this.form.systolic = 0;
       this.form.diastolic = 0;
       this.form.physiotherapy = 0;
-      this.form.roomAssignment = 0;
+      this.form.phaseOneRoomAssignment = 0;
       this.form.physio = 0;
       this.form.tx = 0;
       this.form.pulse = 0;
