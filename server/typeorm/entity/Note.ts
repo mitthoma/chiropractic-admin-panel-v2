@@ -16,7 +16,7 @@ export class Note {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP", nullable: true })
   visitDate: Date;
 
   @Column({ type: 'text', nullable: true })
@@ -33,6 +33,9 @@ export class Note {
 
   @Column('integer', { nullable: true })
   heightInches: number;
+
+  @Column('integer', { nullable: true })
+  weight: number;
 
   @Column('integer', { nullable: true })
   temperature: number;
