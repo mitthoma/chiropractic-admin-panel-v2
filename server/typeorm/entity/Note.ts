@@ -49,16 +49,16 @@ export class Note {
   @Column('integer', { nullable: true })
   physiotherapy: number;
 
-  @Column('integer')
+  @Column('integer', { nullable: true })
   phaseOneRoomAssignment: number;
 
-  @Column('integer')
+  @Column('integer', { nullable: true })
   phaseTwoRoomAssignment: number;
 
-  @Column('integer')
+  @Column('integer', { nullable: true })
   phaseThreeRoomAssignment: number;
 
-  @Column('integer')
+  @Column('integer', { nullable: true })
   phaseFourRoomAssignment: number;
 
   @Column('integer', { nullable: true })
