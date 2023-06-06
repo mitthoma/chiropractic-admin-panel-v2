@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model complaint {
+  id         String   @id(map: "PK_a9c8dbc2ab4988edcc2ff0a7337") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  text       String
+  painLevel  Int
+  patient_id Int?
+  lastEdited DateTime @default(now()) @db.Timestamp(6)
+  patient    patient? @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_14e50d23f95a6e038dbbe97783b")
+}
+
+model entry {
+  id                   String                     @id(map: "PK_a58c675c4c129a8e0f63d3676d6") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdDate          DateTime                   @default(now()) @db.Timestamp(6)
+  category             entry_category_enum
+  region               entry_region_enum?
+  spinalLevel          entry_spinallevel_enum?
+  extremityLevel       entry_extremitylevel_enum?
+  side                 entry_side_enum
+  sublux               Boolean
+  muscleSpasm          Boolean
+  triggerPoints        Boolean
+  tenderness           Boolean
+  numbness             Boolean
+  edema                Boolean
+  swelling             Boolean
+  reducedMotion        Boolean
+  coldPack             Boolean
+  hotPack              Boolean
+  electStim            Boolean
+  traction             Boolean
+  massage              Boolean
+  technique            String
+  manipulation         Boolean
+  noteId               String?                    @db.Uuid
+  physioPositioning    String
+  treatmentPositioning String
+  note                 note?                      @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_df491c2c902d007610301eff36d")
+}
+
+model note {
+  id                       String    @id(map: "PK_96d0c172a4fba276b1bbed43058") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  visitDate                DateTime? @default(now()) @db.Timestamp(6)
+  createdDate              DateTime  @default(now()) @db.Timestamp(6)
+  lastEdited               DateTime  @default(now()) @db.Timestamp(6)
+  heightFeet               Int?
+  heightInches             Int?
+  temperature              Int?
+  respiration              Int?
+  systolic                 Int?
+  diastolic                Int?
+  physiotherapy            Int?
+  phaseOneRoomAssignment   Int?
+  physio                   Int?
+  tx                       Int?
+  otherNotes               String?
+  patientId                Int?
+  pulse                    Int?
+  visitDateText            String?
+  phaseTwoRoomAssignment   Int?
+  phaseThreeRoomAssignment Int?
+  phaseFourRoomAssignment  Int?
+  weight                   Int?
+  entry                    entry[]
+  patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
+}
+
+model patient {
+  id              Int         @id(map: "PK_8dfa510bb29ad31ab2139fbfb99") @default(autoincrement())
+  firstName       String
+  lastName        String
+  lastUpdated     DateTime    @default(now()) @db.Timestamp(6)
+  email           String      @default("john@gmail.com")
+  phoneNumber     String?
+  nextAppointment DateTime?   @db.Timestamp(6)
+  createdDate     DateTime    @default(now()) @db.Timestamp(6)
+  complaint       complaint[]
+  note            note[]
+}
+
+model user {
+  id          Int            @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
+  firstName   String?
+  lastName    String?
+  email       String         @default("john@gmail.com")
+  role        user_role_enum @default(user)
+  firebaseUid String
+}
+
+enum entry_category_enum {
+  spinal
+  extremity
+}
+
+enum entry_extremitylevel_enum {
+  shoulder
+  arm
+  bicep
+  tricep
+  elbow
+  wrist
+  hand
+  hip
+  thigh
+  leg
+  knee
+  scap
+  ankle
+  foot
+}
+
+enum entry_region_enum {
+  upper_cerv @map("upper-cerv")
+  mid_cerv   @map("mid-cerv")
+  lower_cerv @map("lower-cerv")
+  sub_occ    @map("sub-occ")
+  upper_t    @map("upper-t")
+  mid_t      @map("mid-t")
+  lower_t    @map("lower-t")
+  upper_l    @map("upper-l")
+  lower_l    @map("lower-l")
+  upper_sac  @map("upper-sac")
+  lower_sac  @map("lower-sac")
+}
+
+enum entry_side_enum {
+  l
+  r
+  b
+}
+
+enum entry_spinallevel_enum {
+  occ
+  c1
+  c2
+  c3
+  c4
+  c5
+  c6
+  c7
+  t1
+  t2
+  t3
+  t4
+  t5
+  t6
+  t7
+  t8
+  t9
+  t10
+  t11
+  t12
+  l1
+  l2
+  l3
+  l4
+  l5
+  s1
+  s2
+  s3
+  s4
+  s5
+}
+
+enum user_role_enum {
+  admin
+  super_admin @map("super-admin")
+  user
+}
