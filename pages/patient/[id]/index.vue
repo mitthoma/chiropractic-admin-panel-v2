@@ -14,7 +14,7 @@
                 <v-spacer></v-spacer>
                 <v-row class="mx-2 pa-2" justify="end">
                     <v-btn color="primary" @click="dialog = true">Add New Note</v-btn>
-                    <NoteDialog v-model="dialog"  @note-added="refreshNotes" @close-dialog="closeNoteDialog" />
+                    <NoteDialog v-model="dialog"  :patient="currentPatient" @note-added="refreshNotes" @close-dialog="closeNoteDialog" />
                 </v-row>
               </div>
               <v-table>
@@ -35,8 +35,8 @@
                     v-for="item in shownNotes"
                     :key="item.id"
                   >
-                    <td>{{ formatDate(item.visitDate) }}</td>
-                    <td>{{ item.roomAssignment }}</td>
+                    <td>{{ formatDate(item.visitDate, item) }}</td>
+                    <td>{{ item.phaseOneRoomAssignment }}</td>
                     <td class="d-flex justify-end">
                       <v-menu
                         transition="slide-x-transition"
@@ -151,7 +151,7 @@
                   >
                     <td>{{ item.text }}</td>
                     <td>{{ item.painLevel }}</td>
-                    <td>{{ formatDate(item.lastEdited) }}</td>
+                    <td>{{ formatDate(item.lastEdited, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-icon class="ma-2 pa-2 pencil-edit" @click="editComplaintItem(item)">mdi-pencil</v-icon>
                     </td>
@@ -300,23 +300,25 @@
 
           return acc;
         }, {});
-        payload.roomAssignments = {
+        payload.phaseOneRoomAssignments = {
           physio: "",
           tx: "",
         };
         const currentPatient = await this.getCurrentPatient();
+      
         payload.patientFirstName = currentPatient.firstName;
         payload.patientLastName = currentPatient.lastName;
-        payload.noteVisitDate = note.visitDate || "";
+        payload.noteVisitDate = note.visitDate || note.visitDateText || "";
         payload.height = `${note.heightFeet || ""}'${note.heightInches || ""}"` || "";
         payload.weight = `${note.weight || ""} lbs`;
         payload.temperature = `${note.temperature} F` || "";
         payload.systolic = note.systolic || "";
         payload.diastoic = note.diastoic || "";
+        payload.pulse = note.pulse || "";
         payload.respiration = note.respiration || "";
         payload.physiotherapyNumber = note.physiotherapy || ""
-        payload.roomAssignments.physio = note.physio || "";
-        payload.roomAssignments.tx = note.tx || "";
+        payload.phaseOneRoomAssignments.physio = note.physio || "";
+        payload.phaseOneRoomAssignments.tx = note.tx || "";
 
         this.payload = payload;
       },
@@ -338,9 +340,9 @@
       closeNoteDialog() {
         this.dialog = false;
       },
-      formatDate(date) {
+      formatDate(date, item) {
             if (isNaN(Date.parse(date))) {
-                return "Invalid date";
+                return item.visitDateText || "Invalid date";
             }
 
             const formattedDate = new Intl.DateTimeFormat("en-US", {

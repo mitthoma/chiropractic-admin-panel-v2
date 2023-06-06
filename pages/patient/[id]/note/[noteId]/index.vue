@@ -34,6 +34,8 @@
                                     <v-card-text>Respiration: {{currentNote?.respiration}} </v-card-text>
                                     <v-card-text>Systolic: {{ currentNote?.systolic }} </v-card-text>
                                     <v-card-text>Diastolic: {{ currentNote?.diastolic }} </v-card-text>
+                                    <v-card-text>Pulse: {{ currentNote?.pulse }} </v-card-text>
+
                                 </v-col>
                         </v-row>
                     </div>
@@ -82,7 +84,7 @@
       </v-container>
     <SpinalDialog v-model="spinalDialog" :current-note="currentNote" :selected-item="selectedSpinalItem" @entry-added="fetchEntries" @close-dialog="closeSpinalDialog" />
     <ExtremityDialog v-model="extremityDialog" :selected-item="selectedExtremityItem" @entry-added="fetchEntries" @close-dialog="closeExtremityDialog" />
-    <NoteDialog v-model="noteDialog" :selected-item="selectedNoteItem" @note-added="getCurrentNote" @close-dialog="closeNoteDialog" />
+    <NoteDialog v-model="noteDialog" :selected-item="selectedNoteItem" :patient="currentPatient" @note-added="getCurrentNote" @close-dialog="closeNoteDialog" />
 </div>  
 </template>
   
