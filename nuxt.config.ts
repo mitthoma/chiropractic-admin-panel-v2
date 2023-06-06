@@ -41,12 +41,12 @@ export default defineNuxtConfig({
     
     modules: [
         '@pinia/nuxt',
-        '@nuxtus/nuxt-localtunnel',
+        // '@nuxtus/nuxt-localtunnel',
         
     ],
-    localtunnel: {
-        subdomain: 'blue-solar-wind-98-116-78-133'
-    },
+    // localtunnel: {
+    //     subdomain: 'blue-solar-wind-98-116-78-133'
+    // },
     pinia: {
         autoImports: ['defineStore', 'acceptHMRUpdate'],
     },
