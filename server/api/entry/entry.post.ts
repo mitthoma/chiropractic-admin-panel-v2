@@ -1,4 +1,4 @@
-import { addEntry } from "~/server/repositories/entryRepository";
+import { addEntry } from "~/server/typeorm/repositories/EntryRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

@@ -1,4 +1,4 @@
-import { getUser } from "~/server/repositories/userRepository";
+import { getUser } from "~/server/typeorm/repositories/UserRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

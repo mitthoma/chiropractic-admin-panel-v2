@@ -1,4 +1,4 @@
-import { getAllNotes } from "~/server/repositories/noteRepository";
+import { getAllNotes } from "~/server/typeorm/repositories/NoteRepository";
 
 export default defineEventHandler(async event => {
     const res = await getAllNotes();

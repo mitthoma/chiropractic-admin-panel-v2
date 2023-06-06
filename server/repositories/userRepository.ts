@@ -1,18 +1,18 @@
 
-import { Prisma, User } from '@prisma/client';
-import prisma from '../prismaClient';
+// import { Prisma, User } from '@prisma/client';
+// import prisma from '../prismaClient';
 
-console.log("PRISMA CLIENT IS ", prisma);
+// console.log("PRISMA CLIENT IS ", prisma);
 
-export const getAllUsers = async () => {
-  try {
-    const results = await prisma.user.findMany();
-    return results;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
+// export const getAllUsers = async () => {
+//   try {
+//     const results = await prisma.user.findMany();
+//     return results;
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// };
 
 // export const saveNewUser = async (
 //     payload: Prisma.UserCreateInput
@@ -35,50 +35,37 @@ export const getAllUsers = async () => {
 //     }
 //   };
 
-  export const updateUser = async (id: number, payload: Prisma.UserUpdateInput) => {
-    try {
-      const user = await prisma.user.findUnique({ where: { id } });
+//   export const updateUser = async (id: number, payload: Prisma.UserUpdateInput) => {
+//     try {
+//       const user = await prisma.user.findUnique({ where: { id } });
   
-      if (!user) throw new Error('User not found');
+//       if (!user) throw new Error('User not found');
   
-      const updatedUser = await prisma.user.update({
-        where: { id },
-        data: payload
-      });
+//       const updatedUser = await prisma.user.update({
+//         where: { id },
+//         data: payload
+//       });
   
-      return updatedUser;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  };
+//       return updatedUser;
+//     } catch (error) {
+//       console.log(error);
+//       return error;
+//     }
+//   };
 
-export const deleteUser = async (id: number) => {
-  try {
-    const result = await prisma.user.delete({ where: { id } });
-    return true;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-export const getUser = async (id: number) => {
-  try {
-    const user = await prisma.user.findUnique({ where: { id } });
-
-    if (!user) throw new Error('User not found');
-
-    return user;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-// export const getUserByFirebaseUid = async (firebaseUid: String) => {
+// export const deleteUser = async (id: number) => {
 //   try {
-//     const user = await prisma.user.findUnique({ where: { firebaseUid } });
+//     const result = await prisma.user.delete({ where: { id } });
+//     return true;
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// };
+
+// export const getUser = async (id: number) => {
+//   try {
+//     const user = await prisma.user.findUnique({ where: { id } });
 
 //     if (!user) throw new Error('User not found');
 
@@ -88,3 +75,16 @@ export const getUser = async (id: number) => {
 //     return error;
 //   }
 // };
+
+// // export const getUserByFirebaseUid = async (firebaseUid: String) => {
+// //   try {
+// //     const user = await prisma.user.findUnique({ where: { firebaseUid } });
+
+// //     if (!user) throw new Error('User not found');
+
+// //     return user;
+// //   } catch (error) {
+// //     console.log(error);
+// //     return error;
+// //   }
+// // };
