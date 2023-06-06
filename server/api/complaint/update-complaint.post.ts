@@ -1,4 +1,4 @@
-import { updateComplaint } from "~/server/typeorm/repositories/ComplaintRepository";
+import { updateComplaint } from "~/server/repositories/complaintRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

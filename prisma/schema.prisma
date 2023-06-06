@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+  USER
+}
+
+model Patient {
+  id              Int        @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  lastUpdated     DateTime   @updatedAt
+  email           String     @unique
+  phoneNumber     String?    @default("")
+  nextAppointment DateTime? 
+  createdDate     DateTime   @default(now())
+  notes           Note[]
+  complaints      Complaint[]
+}
+
+model Note {
+  id                      String   @id @default(uuid())
+  visitDate               DateTime @default(now())
+  visitDateText           String?
+  createdDate             DateTime @default(now())
+  lastEdited              DateTime @updatedAt
+  heightFeet              Int?
+  heightInches            Int?
+  weight                  Int?
+  temperature             Int?
+  respiration             Int?
+  systolic                Int?
+  diastolic               Int?
+  physiotherapy           Int?
+  phaseOneRoomAssignment  Int?
+  phaseTwoRoomAssignment  Int?
+  phaseThreeRoomAssignment Int?
+  phaseFourRoomAssignment Int?
+  physio                  Int?
+  tx                      Int?
+  pulse                   Int?
+  otherNotes              String?
+  patientId               Int
+  patient                 Patient  @relation(fields: [patientId], references: [id])
+  entries                 Entry[]
+}
+
+model Entry {
+  id                  String  @id @default(uuid())
+  createdDate         DateTime @default(now())
+  category            String
+  region              String?
+  spinalLevel         String?
+  extremityLevel      String?
+  side                String
+  sublux              Boolean
+  muscleSpasm         Boolean
+  triggerPoints       Boolean
+  tenderness          Boolean
+  numbness            Boolean
+  edema               Boolean
+  swelling            Boolean
+  reducedMotion       Boolean
+  physioPositioning   String
+  coldPack            Boolean
+  hotPack             Boolean
+  electStim           Boolean
+  traction            Boolean
+  massage             Boolean
+  treatmentPositioning String
+  technique           String
+  manipulation        Boolean
+  noteId              String
+  note                Note    @relation(fields: [noteId], references: [id])
+}
+
+model Complaint {
+  id        String  @id @default(uuid())
+  text      String
+  painLevel Int
+  lastEdited DateTime @updatedAt
+  patientId Int
+  patient   Patient  @relation(fields: [patientId], references: [id])
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  firstName   String?  
+  lastName    String? 
+  email       String   @unique
+  role        UserRole @default(USER)
+  firebaseUid String   @unique
+}

@@ -1,4 +1,4 @@
-import { getAllComplaints } from "~/server/typeorm/repositories/ComplaintRepository";
+import { getAllComplaints } from "~/server/repositories/complaintRepository";
 
 export default defineEventHandler(async event => {
     const res = await getAllComplaints();

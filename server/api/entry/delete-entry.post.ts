@@ -1,4 +1,4 @@
-import { deleteEntry } from "~/server/typeorm/repositories/EntryRepository";
+import { deleteEntry } from "~/server/repositories/entryRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

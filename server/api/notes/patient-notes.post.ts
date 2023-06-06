@@ -1,4 +1,4 @@
-import { getNotesByPatientId } from "~/server/typeorm/repositories/NoteRepository";
+import { getNotesByPatientId } from "~/server/repositories/noteRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

@@ -1,4 +1,4 @@
-import { getUserByFirebaseUid } from "~/server/typeorm/repositories/UserRepository";
+import { getUserByFirebaseUid } from "~/server/repositories/userRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);
