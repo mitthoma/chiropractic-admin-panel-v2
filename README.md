@@ -40,3 +40,12 @@ npm run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+
+
+WHEN USING PRISMA:
+
+AFTER CHANGES TO SCHEMA:
+
+1. RUN PRISMA GENERATE COMMAND
+2. PUSH IT TO THE DB
