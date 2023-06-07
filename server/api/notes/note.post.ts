@@ -1,5 +1,5 @@
 
-import { addNewNote } from "~/server/typeorm/repositories/NoteRepository";
+import { addNewNote } from "~/server/repositories/noteRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

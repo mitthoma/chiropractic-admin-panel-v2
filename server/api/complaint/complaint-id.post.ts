@@ -1,4 +1,4 @@
-import { getComplaintById } from "~/server/typeorm/repositories/ComplaintRepository";
+import { getComplaintById } from "~/server/repositories/complaintRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);

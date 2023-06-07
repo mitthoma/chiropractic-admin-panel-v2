@@ -70,8 +70,8 @@ export default {
         email: "",
         phoneNumber: "",
         nextAppointment: null,
-        patientService: null,
       },
+      patientService: null,
       formValid: false,
       nameRules: [(v) => !!v || 'This field is required'],
       emailRules: [
