@@ -1,7 +1,9 @@
 
 import { PrismaClient, Prisma, Patient } from '@prisma/client';
 console.log('Prisma client created');
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+    log: ['query', 'info', 'warn', 'error'],
+  });
 
 
 // export const saveNewPatient = async (
