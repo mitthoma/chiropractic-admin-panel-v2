@@ -1,4 +1,4 @@
-import { getAllPatients } from "~/server/repositories/patientRepository";
+import { getAllPatients } from "~/server/typeorm/repositories/PatientRepository";
 
 export default defineEventHandler(async event => {
     console.log('getAllPatients');
