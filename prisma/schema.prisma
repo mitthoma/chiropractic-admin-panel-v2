@@ -12,9 +12,9 @@ model complaint {
   id         String   @id(map: "PK_a9c8dbc2ab4988edcc2ff0a7337") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   text       String
   painLevel  Int
-  patient_id Int?
   lastEdited DateTime @default(now()) @db.Timestamp(6)
-  patient    patient? @relation(fields: [patient_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_14e50d23f95a6e038dbbe97783b")
+  note_id    String?  @db.Uuid
+  note       note?    @relation(fields: [note_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_complaint_note")
 }
 
 model entry {
@@ -70,6 +70,7 @@ model note {
   phaseFourRoomAssignment  Int?
   weight                   Int?
   entry                    entry[]
+  complaint                complaint[]
   patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
 }
 
@@ -84,7 +85,6 @@ model patient {
   phoneNumber     String?
   nextAppointment DateTime?   @db.Timestamp(6)
   createdDate     DateTime    @default(now()) @db.Timestamp(6)
-  complaint       complaint[]
   note            note[]
 }
 

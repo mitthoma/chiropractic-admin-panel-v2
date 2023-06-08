@@ -18,11 +18,11 @@ export const createComplaintService = (api : AxiosInstance) => ({
         return data.data;
     },
 
-    addComplaint: async (payload : any, patientId : any) => {
+    addComplaint: async (payload : any, noteId : any) => {
         console.log('payload is ', payload);
         payload = {
             ...payload,
-            patientId
+            note_id: noteId,
         }
         const { data } = await api.post('/complaint/complaint', payload);
         return data.data;

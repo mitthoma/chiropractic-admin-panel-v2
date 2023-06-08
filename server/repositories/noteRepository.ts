@@ -7,7 +7,7 @@ export const addNewNote = async (payload: any, patientId: number) => {
     const patientsRepository = prisma.patient;
 
     // Fetch the patient from the database
-    const patient = await patientsRepository.findUnique({ where: { id: patientId } });
+    const patient = await patientsRepository.findUnique({ where: { id: patientId as number} });
 
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
@@ -54,9 +54,12 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
   }
 };
 
-export const deleteNote = async (noteId: string) => {
+export const deleteNote = async (noteId: any) => {
   try {
+    console.log('in delete note');
+    console.log('noteId is ', noteId)
     const result = await prisma.note.delete({ where: { id: noteId } });
+    console.log('RESULT IS ', result);
     return true;
   } catch (error) {
     console.log(error);
