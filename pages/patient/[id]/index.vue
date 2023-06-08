@@ -24,7 +24,7 @@
                       Visit Date
                     </th>
                     <th class="text-left">
-                      Room Assignment
+                      Last Updated
                     </th>
                     <th class="text-left">
                     </th>
@@ -69,8 +69,8 @@
               ></v-pagination>
             </v-card>
           </v-col>
-          <v-col cols="4">
-                <v-card class="px-5 mx-5 my-5">
+          <v-col class="px-1" cols="4">
+                <v-card class="px-1 mx-2 my-5">
                     <div class="d-flex align-center justify-space-around py-16">
                         <v-avatar color="info" size="x-large">
                           {{currentPatient?.firstName[0]}}{{currentPatient?.lastName[0]}}
