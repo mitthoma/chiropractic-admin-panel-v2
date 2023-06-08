@@ -13,11 +13,20 @@
         <v-table>
           <thead>
             <tr>
+              <th class="text-left" @click="sortPatients('acctNo')">
+                Account Number
+              </th>
               <th class="text-left" @click="sortPatients('firstName')">
                 First Name
               </th>
               <th class="text-left" @click="sortPatients('lastName')">
                 Last Name
+              </th>
+              <th class="text-left" @click="sortPatients('email')">
+                Email
+              </th>
+              <th class="text-left" @click="sortPatients('phoneNumber')">
+                Phone Number
               </th>
               <th class="text-left" @click="sortPatients('lastUpdated')">
                 Last Updated
@@ -30,8 +39,11 @@
               v-for="item in displayedPatients"
               :key="item.id"
             >
+              <td>{{ item.acctNo }}</td>
               <td>{{ item.firstName }}</td>
               <td>{{ item.lastName }}</td>
+              <td>{{ item.email }}</td>
+              <td>{{ item.phoneNumber }}</td>
               <td>{{ formatDateTime(item.lastUpdated) }}</td>
               <td class="d-flex justify-end">
                 <v-icon class="ma-2 pa-3" @click="editPatientItem(item)">mdi-pencil</v-icon>

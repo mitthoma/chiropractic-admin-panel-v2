@@ -9,7 +9,9 @@ export const createNoteService = (api : AxiosInstance) => ({
     },
 
     getNotesForPatient: async (payload : any) => {
+        console.log("entering here");
         const { data } = await api.post('/notes/patient-notes', payload);
+        console.log('data is ', data.data);
         return data.data;
     },
 
@@ -18,14 +20,17 @@ export const createNoteService = (api : AxiosInstance) => ({
         return data.data;
     },
 
-    addNote: async (payload : any, patientId : any) => {
+    addNote: async (payload : any, patientId : number) => {
         console.log('payload is ', payload);
+        console.log('patientid is ', patientId);
         payload = {
             ...payload,
             patientId
         }
         const { data } = await api.post('/notes/note', payload);
-        return data.data;
+        console.log('data is ', data);
+        console.log('and data.data is ', data.data);
+        return data;
     },
 
     updateNote: async (payload : any) => {
