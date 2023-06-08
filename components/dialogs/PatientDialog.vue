@@ -6,31 +6,63 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="patientForm" v-model="formValid">
-          <v-text-field
+          <v-row>
+          <v-col cols="12">
+            <v-text-field
+            v-model="form.acctNo"
+            :rules="acctRules"
+            label="Account Number"
+            required
+          ></v-text-field>
+          </v-col>
+        </v-row>
+          <v-row>
+          <v-col cols="5">
+            <v-text-field
             v-model="form.firstName"
             :rules="nameRules"
             label="First Name"
             required
           ></v-text-field>
-          <v-text-field
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+            v-model="form.middleName"
+            label="Middle Initial"
+          ></v-text-field>
+
+          </v-col>
+          <v-col cols="5">
+            <v-text-field
             v-model="form.lastName"
             :rules="nameRules"
             label="Last Name"
             required
           ></v-text-field>
-          <v-text-field
+
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
             v-model="form.email"
             :rules="emailRules"
             label="Email"
             required
           ></v-text-field>
-          <v-text-field
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
             v-model="form.phoneNumber"
             :rules="phoneRules"
             label="Phone Number"
           ></v-text-field>
-          <label class="form-label">Next Appointment</label>
-          <VueDatePicker v-model="form.nextAppointment" dark />
+          </v-col>
+        </v-row>
+          <!-- <label class="form-label">Next Appointment</label>
+          <VueDatePicker v-model="form.nextAppointment" dark /> -->
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -44,14 +76,15 @@
 
 <script>
 import { createPatientService } from '~/services/patient';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
+// import VueDatePicker from '@vuepic/vue-datepicker';
+// import '@vuepic/vue-datepicker/dist/main.css'
 
 export default {
   name: 'PatientDialog',
   components: {
-    VueDatePicker
+    // VueDatePicker
   },
+  
   props: {
     value: {
       type: Boolean,
@@ -63,9 +96,10 @@ export default {
   },
   data() {
     return {
-      showDatePicker: false,
       form: {
+        acctNo: null,
         firstName: "",
+        middleName: null,
         lastName: "",
         email: "",
         phoneNumber: "",
@@ -73,6 +107,7 @@ export default {
       },
       patientService: null,
       formValid: false,
+      acctRules: [(v) => !!v || 'This field is required'],
       nameRules: [(v) => !!v || 'This field is required'],
       emailRules: [
         (v) => !!v || 'E-mail is required',
@@ -122,6 +157,7 @@ export default {
       this.form = { ...item };
     },
     resetForm() {
+      this.form.acctNo = null;
       this.form.firstName = '';
       this.form.lastName = '';
       this.form.email = '';

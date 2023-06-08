@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="noteDialog" class="dialog" max-width="1000px">
+  <v-dialog v-model="noteDialog" class="dialog" max-width="1600px">
     <v-card>
       <v-card-title class="d-flex">
         <span class="justify-start text-h5 pa-4">{{ title }}</span>
@@ -14,64 +14,38 @@
         <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Phase 2</v-tab>
         <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Phase 3</v-tab>
         <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Phase 4</v-tab>
-
-
       </v-tabs>
       <v-window v-model="tab" class="phaseWindow">
         <v-window-item :value="0">
           <v-container fluid>
             <v-form ref="form0">
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field 
-                    v-model="form.phaseOneRoomAssignment" 
-                    label="Phase 1 Room Assignment" 
-                    type="string" 
-                  ></v-text-field>
-                </v-col>
-                </v-row>
+              <!-- dynamic complaints form -->
+              <div v-for="(complaint, index) in complaints" :key="index">
                 <v-row>
-                <v-col cols="12">
-                  <v-label>Visit Date</v-label>
-                </v-col>
-                <v-col cols="6">
-                  <VueDatePicker
-                        v-model="visitDateTime"
-                        placeholder="Please select a visit date and time"
-                        dark
-                        type="datetime"
-                        :minute-interval="30"
-                        class="vue-datepicker"
-                    />
-
-                </v-col>
-
-                <v-col cols="6">
-                  <v-text-field 
-                    v-model="form.visitDateText" 
-                    label="Visit Date Text Entry" 
-                    type="string" 
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+                  <v-col cols="6">
+                    <v-text-field
+                      v-model="complaint.text"
+                      label="Complaint Text"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-slider
+                      v-model="complaint.painLevel"
+                      :max="5"
+                      :step="1"
+                      label="Pain Level"
+                    ></v-slider>
+                  </v-col>
+                </v-row>
+              </div>
+              <!-- add complaint button -->
               <v-row>
-                <v-col cols="12">
-                  <v-label>Height & Weight</v-label>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field v-model="form.heightFeet" label="Height (Feet)" type="number" required></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field v-model="form.heightInches" label="Height (Inches)" type="number" required></v-text-field>
-                </v-col>
-                <v-col cols="4">
-                  <v-text-field v-model="form.weight" label="Weight" type="number" required></v-text-field>
-                </v-col>
+                <v-btn @click="addComplaint">Add New Complaint</v-btn>
               </v-row>
             </v-form>
           </v-container>
         </v-window-item>
-
         <v-window-item :value="1">
           <v-container fluid>
             <v-form ref="form1" @input="validateForm(1)">
@@ -80,7 +54,7 @@
                   <v-text-field 
                     v-model="form.phaseTwoRoomAssignment" 
                     label="Phase 2 Room Assignment" 
-                    type="string" 
+                    type="number" 
                   ></v-text-field>
                 </v-col>
                 </v-row>
@@ -131,7 +105,7 @@
                   <v-text-field 
                     v-model="form.phaseThreeRoomAssignment" 
                     label="Phase 3 Room Assignment" 
-                    type="string" 
+                    type="number" 
                   ></v-text-field>
                 </v-col>
                 </v-row>
@@ -154,7 +128,6 @@
             </v-form>
           </v-container>
         </v-window-item>
-
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
@@ -163,7 +136,7 @@
                   <v-text-field 
                     v-model="form.phaseFourRoomAssignment" 
                     label="Phase 4 Room Assignment" 
-                    type="string" 
+                    type="number" 
                   ></v-text-field>
                 </v-col>
                 </v-row>
@@ -180,7 +153,6 @@
           </v-container>
         </v-window-item>
       </v-window>
-
       <v-card-actions class="d-flex">
         <v-card-text class="justify-start">Patient: {{currentPatient?.firstName}} {{ currentPatient?.lastName }}</v-card-text>
         <v-card-text class="justify-start">Height: {{ form.heightFeet }}' {{ form.heightInches }}"</v-card-text>
@@ -190,7 +162,6 @@
         <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 3 ? saveButtonText : 'Next' }}</v-btn>
       </v-card-actions>
     </v-card>
-
     <v-dialog v-model="exitConfirmDialog" max-width="300px">
       <v-card>
         <v-card-title>
@@ -206,18 +177,17 @@
     </v-dialog>
   </v-dialog>
 </template>
-
 <script>
 import { createNoteService } from '~/services/note';
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { createComplaintService } from '~/services/complaint';
+// import VueDatePicker from '@vuepic/vue-datepicker';
 import { formatISO, parseISO } from 'date-fns';
-import '@vuepic/vue-datepicker/dist/main.css';
-
+// import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
   name: 'NoteDialog',
   components: {
-    VueDatePicker,
+    // VueDatePicker,
   },
   props: {
     value: {
@@ -244,7 +214,6 @@ export default {
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        roomAssignment: null,
         physio: null,
         tx: null,
         pulse: null,
@@ -254,6 +223,12 @@ export default {
         phaseThreeRoomAssignment: null,
         phaseFourRoomAssignment: null,
       },
+      complaints: [
+        {
+          text: '',
+          painLevel: 0,
+        }
+      ],
       formIsValid: [false, false, false, false],
       tab: 0,
       exitConfirmDialog: false,
@@ -308,21 +283,23 @@ export default {
   },
   async mounted() {
     this.noteService = createNoteService(this.$api);
+    this.complaintService = createComplaintService(this.$api);
+    // this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
+    // console.log('complaints ', this.complaints);
   },
   methods: {
-    confirmExit() {
-      this.exitConfirmDialog = true;
-    },
-    closeDialog() {
-      this.$emit('close-dialog');
-      this.resetForm();
-    },
     async populateFormData(item) {
         const visitDate = parseISO(item.visitDate);
         this.form = {
           ...item,
         };
         this.visitDate = visitDate;
+      },
+      addComplaint() {
+        this.complaints.push({
+          text: '',
+          painLevel: 0,
+        });
       },
     resetForm() {
       this.tab = 0
@@ -336,7 +313,6 @@ export default {
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        roomAssignment: null,
         physio: null,
         tx: null,
         pulse: null,
@@ -349,50 +325,52 @@ export default {
       this.visitDateTime = null;
       this.formIsValid = [false, false, false, false];
       this.exitConfirmDialog = false;
-
     },
-
     async submitNoteForm() {
       const patientId = this.$route.params.id;
-
       if (this.isFormValid) {
-        console.log('this.form is ', this.form);
         const formData = {
           ...this.form,
           visitDate: this.visitDate ? formatISO(this.visitDate) : null,
         };
-        console.log('formdata is ', formData);
-        console.log('visitDate is ', formData.visitDate);
+        console.log('about to save and form data is ', formData, ' and patient id is ', patientId);
         const res = this.isUpdateMode
           ? await this.noteService.updateNote(formData)
           : await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
         } else {
-          console.log('Note added successfully');
+          console.log('response is ', res)
+          const noteId = res.id;
+          await this.saveComplaints(noteId);
+
           this.$emit('note-added');
           this.closeDialog();
         }
       } else {
-        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
     async switchTab(tabNumber) {
-      console.log('i am in switchtab and this.tab is ', this.tab);
-
       if (await this.validateForm(this.tab)) {
-        console.log('in switch tab and tab has been validated as True');
         this.tab = tabNumber;
       } else {
         alert("Please fill in all required fields before switching tabs.");
       }
     },
-
+    async saveComplaints(noteId) {
+      // save complaints associated with the note ID
+      // note: you would need to get note ID and also ensure this.complaints contains all complaints, not just new ones
+      for (let complaint of this.complaints) {
+        if(complaint.id) {
+          await this.complaintService.updateComplaint(complaint);
+        } else {
+          console.log('complaint ', complaint);
+          await this.complaintService.addComplaint(complaint, noteId);
+        }
+      }
+    },
     async processPhase() {
-      console.log('processPhase and tab is ', this.tab);
-
       if (await this.validateForm(this.tab)) {
-        console.log('this.validateForm(this.tab) is true)');
         if (this.tab === 3) {
           this.submitNoteForm();
         } else {
@@ -400,19 +378,20 @@ export default {
         }
       }
     },
-
     async validateForm(tabNumber) {
-      console.log('calling validateform on form ', tabNumber);
-
       if (this.$refs[`form${tabNumber}`]) {
-        console.log("form exists");
-        console.log('for is ', this.$refs[`form${tabNumber}`]);
         const isValid = await this.$refs[`form${tabNumber}`].validate();
-        console.log('we just validated and the form is ', tabNumber);
         this.formIsValid[tabNumber] = isValid.valid;
         return isValid.valid;
       }
       return false;
+    },
+    confirmExit() {
+      this.exitConfirmDialog = true;
+    },
+    closeDialog() {
+      this.$emit('close-dialog');
+      this.resetForm();
     },
   },
 };
