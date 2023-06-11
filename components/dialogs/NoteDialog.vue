@@ -19,136 +19,28 @@
         <v-window-item :value="0">
           <v-container fluid>
             <v-form ref="form0">
-              <!-- dynamic complaints form -->
-              <div v-for="(complaint, index) in complaints" :key="index">
-                <v-row>
-                  <v-col cols="6">
-                    <v-text-field
-                      v-model="complaint.text"
-                      label="Complaint Text"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-slider
-                      v-model="complaint.painLevel"
-                      :max="5"
-                      :step="1"
-                      label="Pain Level"
-                    ></v-slider>
-                  </v-col>
-                </v-row>
-              </div>
-              <!-- add complaint button -->
-              <v-row>
-                <v-btn @click="addComplaint">Add New Complaint</v-btn>
-              </v-row>
+              <PhaseOne :complaints="complaints" :add-complaint="addComplaint" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="1">
-          <v-container fluid>
+          <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field 
-                    v-model="form.phaseTwoRoomAssignment" 
-                    label="Phase 2 Room Assignment" 
-                    type="number" 
-                  ></v-text-field>
-                </v-col>
-                </v-row>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field v-model="form.temperature" label="Temperature" type="number" required ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="form.respiration"
-                    label="Respiration"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="form.systolic"
-                    label="Systolic"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="form.pulse"
-                    label="Pulse"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="form.diastolic"
-                    label="Diastolic"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+              <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" />
             </v-form>
           </v-container>
         </v-window-item>
-
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field 
-                    v-model="form.phaseThreeRoomAssignment" 
-                    label="Phase 3 Room Assignment" 
-                    type="number" 
-                  ></v-text-field>
-                </v-col>
-                </v-row>
-                <v-row>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="form.physio"
-                  label="Physio"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="form.tx"
-                  label="TX"
-                  type="number"
-                ></v-text-field>
-              </v-col>
-            </v-row>
+              <PhaseThree :phase-three-form="form" @update:phaseThreeForm="form = $event"  />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field 
-                    v-model="form.phaseFourRoomAssignment" 
-                    label="Phase 4 Room Assignment" 
-                    type="number" 
-                  ></v-text-field>
-                </v-col>
-                </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-textarea
-                    v-model="form.otherNotes"
-                    label="Additional Notes"
-                    auto-grow
-                  ></v-textarea>
-                </v-col>
-              </v-row>
+              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -180,14 +72,20 @@
 <script>
 import { createNoteService } from '~/services/note';
 import { createComplaintService } from '~/services/complaint';
-// import VueDatePicker from '@vuepic/vue-datepicker';
 import { formatISO, parseISO } from 'date-fns';
-// import '@vuepic/vue-datepicker/dist/main.css';
+import PhaseOne from './phases/PhaseOne.vue';
+import PhaseTwo from './phases/PhaseTwo.vue';
+import PhaseThree from './phases/PhaseThree.vue';
+import PhaseFour from './phases/PhaseFour.vue';
 
 export default {
   name: 'NoteDialog',
   components: {
-    // VueDatePicker,
+    PhaseOne,
+    PhaseOne,
+    PhaseTwo,
+    PhaseThree,
+    PhaseFour
   },
   props: {
     value: {

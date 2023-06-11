@@ -1,11 +1,11 @@
 
-import { PrismaClient, Prisma, Patient } from '@prisma/client';
+import { PrismaClient, Prisma, patient } from '@prisma/client';
 console.log('Prisma client created');
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
-  payload: Prisma.PatientCreateInput
-): Promise<{ success: boolean; patient?: Patient; error?: string }> => {
+  payload: Prisma.patientCreateInput
+): Promise<{ success: boolean; patient?: patient; error?: string }> => {
   try {
     const existingPatient = await prisma.patient.findFirst({ where: { email: payload.email } });
     if (existingPatient) {
@@ -22,8 +22,8 @@ export const saveNewPatient = async (
 
 export const updatePatient = async (
   id: number,
-  payload: Prisma.PatientUpdateInput
-): Promise<Patient | null> => {
+  payload: Prisma.patientUpdateInput
+): Promise<patient | null> => {
   try {
     const updatedPatient = await prisma.patient.update({
       where: { id },
@@ -46,7 +46,7 @@ export const deletePatient = async (id: number): Promise<boolean> => {
   }
 };
 
-export const getPatient = async (id: number): Promise<Patient | null> => {
+export const getPatient = async (id: number): Promise<patient | null> => {
   try {
     const patient = await prisma.patient.findUnique({ where: { id } });
     return patient;
@@ -57,8 +57,8 @@ export const getPatient = async (id: number): Promise<Patient | null> => {
 };
 
 export const getPatients = async (
-  params: Prisma.PatientFindManyArgs
-): Promise<Patient[]> => {
+  params: Prisma.patientFindManyArgs
+): Promise<patient[]> => {
     console.log('entering getpatients');
   try {
     console.log('entering getpatients');
@@ -71,7 +71,7 @@ export const getPatients = async (
   }
 };
 
-export const getAllPatients = async (): Promise<Patient[]> => {
+export const getAllPatients = async (): Promise<patient[]> => {
     console.log('entering getpatients');
     // console.log("PRISMA CLIENT IS ", prisma);
   try {
