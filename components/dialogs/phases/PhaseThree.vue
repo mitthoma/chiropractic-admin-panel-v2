@@ -1,29 +1,26 @@
 <template>
     <v-row>
       <v-col cols="6">
-        <v-text-field 
-          :value="phaseThreeForm.phaseThreeRoomAssignment"
-          label="Phase 3 Room Assignment"
-          type="number" 
-          @input="updatePhaseThreeRoomAssignment" 
+        <v-text-field
+            v-model="phaseThreeForm.phaseThreeRoomAssignment"
+            label="Phase 3 Room Assignment"
+            type="number" 
         ></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="6">
         <v-text-field
-          :value="phaseThreeForm.physio"
+          v-model="phaseThreeForm.physio"
           label="Physio"
           type="number"
-          @input="updatePhysio"
         ></v-text-field>
       </v-col>
       <v-col cols="6">
         <v-text-field
-          :value="phaseThreeForm.tx"
-          label="TX"
-          type="number"
-          @input="updateTx"
+            v-model="phaseThreeForm.tx"
+            label="TX"
+            type="number"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -31,17 +28,24 @@
   
   <script>
   export default {
-    props: ['phaseThreeForm'],
-    methods: {
-      updatePhaseThreeRoomAssignment(value) {
-        this.$emit('update:phaseThreeForm.phaseThreeRoomAssignment', value);
+      props: {
+          phaseThreeForm: {
+              type: Object,
+              required: true
+          }
       },
-      updatePhysio(value) {
-        this.$emit('update:phaseThreeForm.physio', value);
+      data() {
+          return {
+              localPhaseThreeForm: {...this.phaseThreeForm}
+          }
       },
-      updateTx(value) {
-        this.$emit('update:phaseThreeForm.tx', value);
+      watch: {
+          localPhaseThreeForm: {
+              handler(val) {
+                  this.$emit('update:phaseThreeForm', val);
+              },
+              deep: true
+          }
       }
-    }
   }
   </script>

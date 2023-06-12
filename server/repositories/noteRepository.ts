@@ -13,6 +13,7 @@ export const addNewNote = async (payload: any, patientId: number) => {
       throw new Error(`Patient with id ${patientId} not found`);
     }
 
+    console.log('payload is ', payload);
     const newNote = await prisma.note.create({
       data: {
         ...payload,

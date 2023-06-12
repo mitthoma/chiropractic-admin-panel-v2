@@ -48,6 +48,7 @@ export const deletePatient = async (id: number): Promise<boolean> => {
 
 export const getPatient = async (id: number): Promise<patient | null> => {
   try {
+    console.log("type of ", typeof id);
     const patient = await prisma.patient.findUnique({ where: { id } });
     return patient;
   } catch (error) {

@@ -26,14 +26,14 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" />
+              <PhaseTwo v-model:phaseTwoForm="form" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree :phase-three-form="form" @update:phaseThreeForm="form = $event"  />
+              <PhaseThree :phaseThreeForm="phaseThreeForm" @update:phaseThreeForm="val => phaseThreeForm = val"  />
             </v-form>
           </v-container>
         </v-window-item>
@@ -104,10 +104,10 @@ export default {
     return {
       form: {
         visitDateText: null,
-        heightFeet: null,
-        heightInches: null,
-        weight: null,
-        temperature: null,
+        heightFeet: 3,
+        heightInches: 3,
+        weight: 3,
+        temperature: 3,
         respiration: null,
         systolic: null,
         diastolic: null,
@@ -116,7 +116,7 @@ export default {
         tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: null,
+        phaseOneRoomAssignment: 998,
         phaseTwoRoomAssignment: null,
         phaseThreeRoomAssignment: null,
         phaseFourRoomAssignment: null,
