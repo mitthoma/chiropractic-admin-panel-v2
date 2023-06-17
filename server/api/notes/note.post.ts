@@ -18,7 +18,9 @@ export default defineEventHandler(async event => {
         phaseFourRoomAssignment: parseInt(body.phaseFourRoomAssignment),
         weight: parseInt(body.weight),
         heightInches: parseInt(body.heightInches),
-        heightFeet: parseInt(body.heightFeet)
+        heightFeet: parseInt(body.heightFeet),
+        tx: parseInt(body.tx),
+        physio: parseInt(body.physio),
     }
 
     console.log('typeof phaseOneRoomAssignment is ', typeof parseInt(formattedBody.phaseOneRoomAssignment));

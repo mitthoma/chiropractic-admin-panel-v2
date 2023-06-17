@@ -3,7 +3,7 @@ import { addNewComplaint } from "~/server/repositories/complaintRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);
-
-    const response = await addNewComplaint(body, body.note_id);
+    console.log('ADD COMPLAINT AND BODY IS ', body);
+    const response = await addNewComplaint(body, body.noteId);
     return response;
 })

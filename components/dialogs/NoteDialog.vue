@@ -33,14 +33,15 @@
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree :phaseThreeForm="phaseThreeForm" @update:phaseThreeForm="val => phaseThreeForm = val"  />
+              <PhaseThree v-model:phaseThreeForm="form"  />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event" />
+              <!-- <PhaseFour v-model:phaseFourForm="form" /> -->
+              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event"/>
             </v-form>
           </v-container>
         </v-window-item>
@@ -82,7 +83,6 @@ export default {
   name: 'NoteDialog',
   components: {
     PhaseOne,
-    PhaseOne,
     PhaseTwo,
     PhaseThree,
     PhaseFour
@@ -112,14 +112,14 @@ export default {
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        physio: null,
-        tx: null,
+        physio: 234,
+        tx: 234,
         pulse: null,
         otherNotes: "",
         phaseOneRoomAssignment: 998,
-        phaseTwoRoomAssignment: null,
-        phaseThreeRoomAssignment: null,
-        phaseFourRoomAssignment: null,
+        phaseTwoRoomAssignment: 12,
+        phaseThreeRoomAssignment: 13,
+        phaseFourRoomAssignment: 978,
       },
       complaints: [
         {

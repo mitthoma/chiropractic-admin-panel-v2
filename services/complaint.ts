@@ -22,7 +22,7 @@ export const createComplaintService = (api : AxiosInstance) => ({
         console.log('payload is ', payload);
         payload = {
             ...payload,
-            note_id: noteId,
+            noteId: noteId,
         }
         const { data } = await api.post('/complaint/complaint', payload);
         return data.data;

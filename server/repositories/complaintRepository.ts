@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const addNewComplaint = async (payload: any, noteId: any) => {
+export const addNewComplaint = async (payload: any, noteId: string) => {
   try {
     const notesRepository = prisma.note;
 
@@ -12,12 +12,11 @@ export const addNewComplaint = async (payload: any, noteId: any) => {
       throw new Error(`Patient with id ${noteId} not found`);
     }
 
-    console.log('payload is ', payload);
 
     const newComplaint = await prisma.complaint.create({
       data: {
         ...payload,
-        note_id: note.id
+        noteId: note.id
       },
     });
 
@@ -30,9 +29,7 @@ export const addNewComplaint = async (payload: any, noteId: any) => {
 
 export const getAllComplaints = async () => {
   try {
-    const complaints = await prisma.complaint.findMany({
-      include: { patient: true }, // Include the related Patient entity
-    });
+    const complaints = await prisma.complaint.findMany();
 
     return complaints;
   } catch (error) {
@@ -78,9 +75,10 @@ export const getComplaintsByPatientId = async (patientId: number) => {
 
 export const getComplaintById = async (complaintId: string) => {
   try {
+    console.log('ADD COMPLAINT, COMPLAINT ID IS ', complaintId);
+
     const complaint = await prisma.complaint.findUnique({
       where: { id: complaintId },
-      include: { patient: true }, // Include the related Patient entity
     });
 
     if (!complaint) {
