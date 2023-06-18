@@ -117,7 +117,6 @@
             if (res instanceof Error) {
             console.log('Complaint not updated/added');
             } else {
-            console.log('Complaint updated/added successfully');
             this.$emit('complaint-added');
             this.closeDialog();
             }

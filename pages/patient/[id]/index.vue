@@ -35,8 +35,8 @@
                     v-for="item in shownNotes"
                     :key="item.id"
                   >
-                    <td>{{ formatDate(item.visitDate, item) }}</td>
-                    <td>{{ item.phaseOneRoomAssignment }}</td>
+                    <td>{{ formatVisitDate(item.visitDate, item) }}</td>
+                    <td>{{ formatDate(item.lastEdited, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-menu
                         transition="slide-x-transition"
@@ -322,6 +322,23 @@
             }).format(new Date(date));
 
             return `${formattedDate}`;
+        },
+        formatVisitDate(date, item) {
+          if (!date && !item.visitDateText) {
+              return "No Date Data";
+          }
+          if (!date || isNaN(Date.parse(date))) {
+              return item.visitDateText;
+          }
+
+          const formattedDate = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(new Date(date));
+
+          return `${formattedDate}`;
+          
         },
         async getCurrentPatient() {
             this.patientService = createPatientService(this.$api);

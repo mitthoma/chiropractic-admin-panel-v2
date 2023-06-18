@@ -1,5 +1,6 @@
 
 import { PrismaClient, Prisma, patient } from '@prisma/client';
+import { deleteNote } from './noteRepository';
 console.log('Prisma client created');
 const prisma = new PrismaClient();
 
@@ -38,7 +39,22 @@ export const updatePatient = async (
 
 export const deletePatient = async (id: number): Promise<boolean> => {
   try {
+    console.log('ENTERING DELETE');
+    
+    // Fetch all notes related to the patient
+    const notes = await prisma.note.findMany({
+      where: { patientId : id },
+    });
+
+    // Delete all notes related to the patient
+    if (notes) {
+      for (const note of notes) {
+        await deleteNote(note.id);
+      }
+    }
+    
     const result = await prisma.patient.delete({ where: { id } });
+    console.log('result is ', result);
     return !!result;
   } catch (error) {
     console.error(error);

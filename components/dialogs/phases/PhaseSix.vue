@@ -2,10 +2,10 @@
     <v-row>
       <v-col cols="6">
         <v-text-field 
-            :value="phaseFourForm.phaseFourRoomAssignment"
-            label="Phase 4 Room Assignment"
+            :value="phaseSixForm.phaseSixRoomAssignment"
+            label="Phase 6 Room Assignment"
             type="number"
-            @input="updatePhaseFourRoomAssignment"     
+            @input="updatePhaseSixRoomAssignment"     
         ></v-text-field>
       </v-col>
     </v-row>
@@ -15,16 +15,16 @@
   <script>
   export default {
         props: {
-            phaseFourForm: {
+            phaseSixForm: {
                 type: Object,
                 required: true
             }
         },
         methods: {
-          updatePhaseFourRoomAssignment(newVal) {
-            this.$emit('update:phaseFourForm', {
-              ...this.phaseFourForm,
-              phaseFourRoomAssignment: newVal
+          updatePhaseSixRoomAssignment(newVal) {
+            this.$emit('update:phaseSixForm', {
+              ...this.phaseSixForm,
+              phaseSixRoomAssignment: newVal
             });
           }
         }

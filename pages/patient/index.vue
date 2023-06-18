@@ -46,8 +46,9 @@
               <td>{{ item.phoneNumber }}</td>
               <td>{{ formatDateTime(item.lastUpdated) }}</td>
               <td class="d-flex justify-end">
-                <v-icon class="ma-2 pa-3" @click="editPatientItem(item)">mdi-pencil</v-icon>
-                <v-btn class="ma-2 pa-3" color="primary" @click="goToPatient(item)">See patient</v-btn>
+                <v-icon class="ma-2 pa-3 pt-5" @click="editPatientItem(item)">mdi-pencil</v-icon>
+                <v-icon class="ma-2 pa-3 pt-5" @click="deletePatient(item)">mdi-delete</v-icon> <!-- Add delete button -->
+                <v-btn class="ma-2" color="primary" @click="goToPatient(item)">See patient</v-btn>
               </td>
             </tr>
           </tbody>
@@ -99,6 +100,16 @@ export default {
       this.updateDisplayedPatients();
   },
   methods: {
+    async deletePatient(item) {
+        try {
+          await this.patientService.deletePatient({
+            id: item.id,
+          });
+          this.refreshPatientList();
+        } catch (error) {
+          console.error('Error deleting patient:', error);
+        }
+      },
       async refreshPatientList() {
           this.patients = await this.patientService.getPatients();
           this.updateDisplayedPatients();
