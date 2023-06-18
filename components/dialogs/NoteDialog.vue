@@ -251,14 +251,12 @@ export default {
           ...this.form,
           visitDate: this.visitDate ? formatISO(this.visitDate) : null,
         };
-        console.log('about to save and form data is ', formData, ' and patient id is ', patientId);
         const res = this.isUpdateMode
           ? await this.noteService.updateNote(formData)
           : await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
         } else {
-          console.log('response is ', res)
           const noteId = res.id;
           await this.saveComplaints(noteId);
 

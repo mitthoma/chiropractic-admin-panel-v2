@@ -320,14 +320,10 @@ export default {
       if (this.$refs.extremityEntryForm.validate()) {
         const res = this.isUpdateMode ? await this.entryService.updateEntry(this.form) : await this.entryService.addEntry(this.form, noteId);
         if (await res instanceof Error) {
-          console.log('Entry not added');
         } else {
-          console.log('Entry added successfully');
-          this.$emit('entry-added');
           this.closeDialog();
         }
       } else {
-        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
   },
