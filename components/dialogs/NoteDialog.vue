@@ -14,6 +14,9 @@
         <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Phase 2</v-tab>
         <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Phase 3</v-tab>
         <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Phase 4</v-tab>
+        <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Phase 5</v-tab>
+        <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Phase 6</v-tab>
+
       </v-tabs>
       <v-window v-model="tab" class="phaseWindow">
         <v-window-item :value="0">
@@ -40,8 +43,21 @@
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <!-- <PhaseFour v-model:phaseFourForm="form" /> -->
               <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event"/>
+            </v-form>
+          </v-container>
+        </v-window-item>
+        <v-window-item :value="4">
+          <v-container fluid>
+            <v-form ref="form4" @input="validateForm(4)">
+              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event"/>
+            </v-form>
+          </v-container>
+        </v-window-item>
+        <v-window-item :value="5">
+          <v-container fluid>
+            <v-form ref="form5" @input="validateForm(5)">
+              <PhaseSix :phase-six-form="form" @update:phaseSixForm="form = $event"/>
             </v-form>
           </v-container>
         </v-window-item>
@@ -78,6 +94,8 @@ import PhaseOne from './phases/PhaseOne.vue';
 import PhaseTwo from './phases/PhaseTwo.vue';
 import PhaseThree from './phases/PhaseThree.vue';
 import PhaseFour from './phases/PhaseFour.vue';
+import PhaseFive from './phases/PhaseFive.vue';
+import PhaseSix from './phases/PhaseSix.vue';
 
 export default {
   name: 'NoteDialog',
@@ -85,7 +103,9 @@ export default {
     PhaseOne,
     PhaseTwo,
     PhaseThree,
-    PhaseFour
+    PhaseFour,
+    PhaseFive,
+    PhaseSix
   },
   props: {
     value: {
@@ -127,7 +147,7 @@ export default {
           painLevel: 0,
         }
       ],
-      formIsValid: [false, false, false, false],
+      formIsValid: [false, false, false, false, false, false],
       tab: 0,
       exitConfirmDialog: false,
       visitDateTime: null,
@@ -221,7 +241,7 @@ export default {
         phaseFourRoomAssignment: null,
       };
       this.visitDateTime = null;
-      this.formIsValid = [false, false, false, false];
+      this.formIsValid = [false, false, false, false, false, false];
       this.exitConfirmDialog = false;
     },
     async submitNoteForm() {
@@ -269,7 +289,7 @@ export default {
     },
     async processPhase() {
       if (await this.validateForm(this.tab)) {
-        if (this.tab === 3) {
+        if (this.tab === 5) {
           this.submitNoteForm();
         } else {
           this.tab++;
