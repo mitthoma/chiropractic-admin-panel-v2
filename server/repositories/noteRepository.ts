@@ -59,15 +59,12 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
 
 export const deleteNote = async (noteId: any) => {
   try {
-    console.log('in delete note');
-    console.log('noteId is ', noteId);
 
     // Fetch all complaints related to the note
     const complaints = await prisma.complaint.findMany({
       where: { noteId : noteId},
     });
 
-    console.log('related complaints are ', complaints);
 
     // Delete all complaints related to the note
     if (complaints) {
@@ -78,7 +75,6 @@ export const deleteNote = async (noteId: any) => {
 
     // Delete the note
     const result = await prisma.note.delete({ where: { id: noteId } });
-    console.log('RESULT IS ', result);
     return true;
   } catch (error) {
     console.log(error);
@@ -98,7 +94,6 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
-    console.log('NOTE ID IS ', noteId);
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

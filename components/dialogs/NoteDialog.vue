@@ -29,7 +29,7 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo v-model:phaseTwoForm="form" />
+              <PhaseTwo :phase-two-form="entries" @update:phaseTwoForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -89,6 +89,7 @@
 <script>
 import { createNoteService } from '~/services/note';
 import { createComplaintService } from '~/services/complaint';
+import { createEntryService } from '~~/services/entry';
 import { formatISO, parseISO } from 'date-fns';
 import PhaseOne from './phases/PhaseOne.vue';
 import PhaseTwo from './phases/PhaseTwo.vue';
@@ -141,6 +142,7 @@ export default {
         phaseThreeRoomAssignment: 13,
         phaseFourRoomAssignment: 978,
       },
+      spinalGrid: [],
       complaints: [
         {
           text: '',
@@ -202,6 +204,7 @@ export default {
   async mounted() {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
+    this.entryService = createEntryService(this.$api);
     // this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
     // console.log('complaints ', this.complaints);
   },
@@ -219,6 +222,50 @@ export default {
           painLevel: 0,
         });
       },
+      async saveSpinalEntries(noteId) {
+        console.log('entering savespinal')
+      // Define mapping for i to spinalLevel
+      const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+
+      // Define mapping for j to entry fields
+      const entryFields = ['sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+
+      let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+
+      console.log('spinal grid is ', this.spinalGrid);
+      // Iterate through each row of the grid
+      for(let i = 0; i < this.spinalGrid.length; i++) {
+        // Define entryData outside the j loop, so the data can be accumulated
+        let entryData = {
+          noteId: noteId,
+          spinalLevel: spinalLevels[i]
+        };
+
+        // Iterate through each column of each row
+        for(let j = 0; j < this.spinalGrid[i].length; j++) {
+          // Only save the entry if it is not null
+          if (this.spinalGrid[i][j]) {
+            // Map j to entry field and set the value
+            entryData[entryFields[j]] = this.spinalGrid[i][j];
+          }
+        }
+
+        // Fetch the existing entry
+        // let existingEntry = await this.entryService.getEntry({ noteId, spinalLevel: spinalLevels[i] });
+        // TODO: assign existingEntry to an entry that matches the spinalLevel field on noteEntries, if it does not exist, then existingEntry should be null
+
+        let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
+
+        if(existingEntry) {
+          // If an entry already exists, update it
+          await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+        } else {
+          // If no entry exists, create a new one
+          console.log('calling add entry and entry data is ', entryData);
+          await this.entryService.addEntry(entryData, noteId);
+        }
+      }
+    },
     resetForm() {
       this.tab = 0
       this.form = {
@@ -259,7 +306,7 @@ export default {
         } else {
           const noteId = res.id;
           await this.saveComplaints(noteId);
-
+          await this.saveSpinalEntries(noteId); 
           this.$emit('note-added');
           this.closeDialog();
         }
