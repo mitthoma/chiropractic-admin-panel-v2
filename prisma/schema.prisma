@@ -114,6 +114,7 @@ enum entry_extremitylevel_enum {
   thigh
   leg
   knee
+  knee_cap
   scap
   ankle
   foot

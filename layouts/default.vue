@@ -122,6 +122,11 @@ const items =  [
           title: 'Patients',
           to: '/patient'
         },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'User Management',
+          to: '/patient'
+        },
         // todo: make this view valuable
         // {
         //   icon: 'mdi-chart-bubble',

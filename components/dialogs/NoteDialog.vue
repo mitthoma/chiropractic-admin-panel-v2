@@ -3,19 +3,19 @@
     <v-card>
       <v-card-title class="d-flex">
         <span class="justify-start text-h5 pa-4">{{ title }}</span>
-          <v-spacer></v-spacer> <!-- Spacer to move the icon to the end of the row -->
-          <v-icon class="justify-end ma-4" @click="confirmExit">mdi-close</v-icon> <!-- Close icon that calls confirmExit when clicked -->
+          <v-spacer></v-spacer>
+          <v-icon class="justify-end ma-4" @click="confirmExit">mdi-close</v-icon>
       </v-card-title>
       <v-tabs
         color="deep-purple-accent-4"
         align-tabs="center"
       >
-        <v-tab :value="tab === 0" :disabled="tab < 0" @click="switchTab(0)">Phase 1</v-tab>
-        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Phase 2</v-tab>
-        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Phase 3</v-tab>
-        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Phase 4</v-tab>
-        <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Phase 5</v-tab>
-        <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Phase 6</v-tab>
+        <v-tab :value="tab === 0" :disabled="tab < 0" @click="switchTab(0)">Subj. Complaints</v-tab>
+        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Obj. Findings 1</v-tab>
+        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Obj. Findings 2</v-tab>
+        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Obj. Findings 3</v-tab>
+        <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Assessment</v-tab>
+        <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Treatment & Plan</v-tab>
 
       </v-tabs>
       <v-window v-model="tab" class="phaseWindow">
@@ -29,28 +29,30 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo :phase-two-form="entries" @update:phaseTwoForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
+              <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree v-model:phaseThreeForm="form"  />
+              <!-- <PhaseThree v-model:phaseThreeForm="form"  /> -->
+              <PhaseThree :phase-three-form="entries" @update:phaseThreeForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
+
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event"/>
+              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event" @update:extremityGrid="extremityGrid = $event" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
-              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event"/>
+              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -67,8 +69,8 @@
         <v-card-text class="justify-start">Height: {{ form.heightFeet }}' {{ form.heightInches }}"</v-card-text>
         <v-card-text class="justify-start">Weight: {{ form.weight }} lbs</v-card-text>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">Cancel</v-btn>
-        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 3 ? saveButtonText : 'Next' }}</v-btn>
+        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{ tab === 1 ? 'Back' : 'Cancel' }}</v-btn>
+        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 5 ? saveButtonText : 'Save & Next' }}</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="exitConfirmDialog" max-width="300px">
@@ -124,25 +126,27 @@ export default {
   data() {
     return {
       form: {
+        visitDate: null,
         visitDateText: null,
-        heightFeet: 3,
-        heightInches: 3,
-        weight: 3,
-        temperature: 3,
+        heightFeet: null,
+        heightInches: null,
+        weight: null,
+        temperature: null,
         respiration: null,
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        physio: 234,
-        tx: 234,
+        physio: null,
+        tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: 998,
-        phaseTwoRoomAssignment: 12,
-        phaseThreeRoomAssignment: 13,
-        phaseFourRoomAssignment: 978,
+        phaseOneRoomAssignment: 1,
+        phaseTwoRoomAssignment: null,
+        phaseThreeRoomAssignment: null,
+        phaseFourRoomAssignment: null,
       },
       spinalGrid: [],
+      extremityGrid: [],
       complaints: [
         {
           text: '',
@@ -205,8 +209,6 @@ export default {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
-    // this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
-    // console.log('complaints ', this.complaints);
   },
   methods: {
     async populateFormData(item) {
@@ -223,52 +225,74 @@ export default {
         });
       },
       async saveSpinalEntries(noteId) {
-        console.log('entering savespinal')
-      // Define mapping for i to spinalLevel
-      const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
-      // Define mapping for j to entry fields
-      const entryFields = ['sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+        for(let i = 0; i < this.spinalGrid.length; i++) {
+          let entryData = {
+            noteId: noteId,
+            spinalLevel: spinalLevels[i]
+          };
 
-      let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+          for(let j = 0; j < this.spinalGrid[i].length; j++) {
+            if (this.spinalGrid[i][j]) {
+              entryData[entryFields[j]] = this.spinalGrid[i][j];
+            }
+          }
 
-      console.log('spinal grid is ', this.spinalGrid);
-      // Iterate through each row of the grid
-      for(let i = 0; i < this.spinalGrid.length; i++) {
-        // Define entryData outside the j loop, so the data can be accumulated
-        let entryData = {
-          noteId: noteId,
-          spinalLevel: spinalLevels[i]
-        };
+          if (this.hasAnyField(entryData, entryFields)) {
+            let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
 
-        // Iterate through each column of each row
-        for(let j = 0; j < this.spinalGrid[i].length; j++) {
-          // Only save the entry if it is not null
-          if (this.spinalGrid[i][j]) {
-            // Map j to entry field and set the value
-            entryData[entryFields[j]] = this.spinalGrid[i][j];
+            if(existingEntry) {
+              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+            } else {
+              await this.entryService.addEntry(entryData, noteId);
+            }
           }
         }
+      },
+      hasAnyField(entryData, entryFields) {
+          for (let field of entryFields) {
+            if (entryData.hasOwnProperty(field)) {
+              return true;
+            }
+          }
+          return false;
+        },
+      async saveExtremityEntries(noteId) {
+        const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Knee Cap', 'Ankle', 'Foot'];
+        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
-        // Fetch the existing entry
-        // let existingEntry = await this.entryService.getEntry({ noteId, spinalLevel: spinalLevels[i] });
-        // TODO: assign existingEntry to an entry that matches the spinalLevel field on noteEntries, if it does not exist, then existingEntry should be null
+        for(let i = 0; i < this.extremityGrid.length; i++) {
+          console.log('CURRENT SPINAL LEVEL IS ', extremityLevels[i])
+          let entryData = {
+            noteId: noteId,
+            extremityLevel: extremityLevels[i]
+          };
 
-        let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
+          for(let j = 0; j < this.extremityGrid[i].length; j++) {
+            if (this.extremityGrid[i][j]) {
+              entryData[entryFields[j]] = this.extremityGrid[i][j];
+            }
+          }
 
-        if(existingEntry) {
-          // If an entry already exists, update it
-          await this.entryService.updateEntry({ ...existingEntry, ...entryData });
-        } else {
-          // If no entry exists, create a new one
-          console.log('calling add entry and entry data is ', entryData);
-          await this.entryService.addEntry(entryData, noteId);
+          if (this.hasAnyField(entryData, entryFields)) {
+            let existingEntry = noteEntries.find(entry => entry.extremityLevel === extremityLevels[i]);
+
+            if(existingEntry) {
+              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+            } else {
+              await this.entryService.addEntry(entryData, noteId);
+            }
+          }
         }
-      }
-    },
+      },
     resetForm() {
       this.tab = 0
       this.form = {
+        visitDate: null,
         visitDateText: null,
         heightFeet: null,
         heightInches: null,
@@ -319,6 +343,9 @@ export default {
       } else {
         alert("Please fill in all required fields before switching tabs.");
       }
+    },
+    updateVisitDateTime(datetime) {
+      this.form.visitDate = datetime;
     },
     async saveComplaints(noteId) {
       // save complaints associated with the note ID

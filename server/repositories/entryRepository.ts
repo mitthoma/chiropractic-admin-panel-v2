@@ -1,26 +1,84 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma, entry_spinallevel_enum, entry_category_enum, entry_region_enum, entry_extremitylevel_enum, entry_side_enum } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
-export const addEntry = async (payload: any, noteId: string) => {
-  try {
-    console.log("in add entry, note id is ", noteId);
-    console.log ("in add entry, payload is ", payload);
+interface EntryPayload {
+  createdDate?: Date; // Optional because Prisma provides a default value
+  category: entry_category_enum; 
+  region?: entry_region_enum; // Optional because it's optional in the schema
+  spinalLevel?: entry_spinallevel_enum; // Optional because it's optional in the schema
+  extremityLevel?: entry_extremitylevel_enum; // Optional because it's optional in the schema
+  side: entry_side_enum;
+  sublux: boolean;
+  muscleSpasm: boolean;
+  triggerPoints: boolean;
+  tenderness: boolean;
+  numbness: boolean;
+  edema: boolean;
+  swelling: boolean;
+  reducedMotion: boolean;
+  coldPack: boolean;
+  hotPack: boolean;
+  electStim: boolean;
+  traction: boolean;
+  massage: boolean;
+  technique: string;
+  manipulation: boolean;
+  noteId?: string; // Optional because it's optional in the schema
+  physioPositioning: string;
+  treatmentPositioning: string;
+}
 
-    // First, validate if the noteId is present in the database.
+export const addEntry = async (payload: EntryPayload) => {
+  try {
+    const defaultPayload = {
+      createdDate: new Date(),
+      category: 'spinal', // Replace with a valid default category
+      region: null,
+      spinalLevel: null,
+      extremityLevel: null,
+      side: 'l', // Replace with a valid default side
+      sublux: false,
+      muscleSpasm: false,
+      triggerPoints: false,
+      tenderness: false,
+      numbness: false,
+      edema: false,
+      swelling: false,
+      reducedMotion: false,
+      coldPack: false,
+      hotPack: false,
+      electStim: false,
+      traction: false,
+      massage: false,
+      technique: '',
+      manipulation: false,
+      physioPositioning: '',
+      treatmentPositioning: ''
+    };
+
+    const completePayload = {
+      ...defaultPayload,
+      ...payload
+    };
+
+    const { noteId, ...dataWithoutNoteId } = completePayload;
+
     const note = await prisma.note.findUnique({ where: { id: noteId } });
 
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);
     }
 
-    console.log('ABOUT TO SAVE PAYLOAD AND PAYLOAD IS ', payload);
     const newEntry = await prisma.entry.create({
       data: {
-        ...payload,
+        ...dataWithoutNoteId,
         note: {
-          connect: { id: noteId } // Use noteId field to connect with the note
-        }
-      }
+          connect: {
+            id: noteId,
+          },
+        },
+      },
     });
 
     return newEntry;

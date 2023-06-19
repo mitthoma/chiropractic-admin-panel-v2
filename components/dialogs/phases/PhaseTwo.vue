@@ -1,132 +1,209 @@
 <template>
-  <div class="grid-container">
-    <v-row class="header-row text-center">
-      <v-col></v-col>
-      <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
+  <v-row>
+    <v-col cols="4">
+      <v-label>Room Assignment</v-label>
+    </v-col>
+    <v-col cols="4">
+      <v-label>Date Appointment</v-label>
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col cols="4">
+      <v-text-field 
+          :value="phaseTwoForm.phaseTwoRoomAssignment"
+          label="Room Assignment"
+          type="number"
+          @input="updatePhaseTwoRoomAssignment"     
+      ></v-text-field>
       </v-col>
-    </v-row>
-    <div class="scrollable-content">
-      <v-row v-for="(row, i) in rows" :key="i">
-        <v-col class="text-center static-col">
-          <div class="mb-1"><strong>{{ row }}</strong></div>
-        </v-col>
-        <v-col v-for="(col, j) in cols" :key="j">
-          <v-text-field
-            v-model="grid[i][j]" 
-            hide-details 
-            dense 
-            class="input-field" 
-            :placeholder="PHs[cols[j]]"
-            @input="updateValue(i, j, $event)" />
-        </v-col>
-      </v-row>
-    </div>
-  </div>
+      <v-col cols="4">
+        <VueDatePicker label="Date and Time" dark @change="$emit('editVisitDateTime', $event)" />
+      </v-col>
+      <v-col cols="4">
+      <v-text-field 
+          :value="phaseTwoForm.visitDateText"
+          label="Room Assignment"
+          type="number"
+          @input="updatePhaseTwoVisitDateText"     
+      ></v-text-field>
+      </v-col>
+  </v-row>
+  <v-row>
+    <v-col cols="4">
+      <v-label>Height</v-label>
+    </v-col>
+    <v-col cols="2">
+      <v-label>Weight</v-label>
+    </v-col>
+    <v-col cols="2">
+      <v-label>Temperature</v-label>
+    </v-col>
+    <v-col cols="4">
+      <v-label>Blood Pressure</v-label>
+    </v-col>
+  </v-row>
+  
+  <v-row>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.heightFeet"
+          label="ft."
+          type="number"
+          @input="updatePhaseTwoHeightFeet"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.heightInches"
+          label="in."
+          type="number"
+          @input="updatePhaseTwoHeightInches"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.weight"
+          label="lb."
+          type="number"
+          @input="updatePhaseTwoWeight"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.temperature"
+          label="F"
+          type="number"
+          @input="updatePhaseTwoTemperature"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.systolic"
+          label="Sys"
+          type="number"
+          @input="updatePhaseTwoSystolic"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.diastolic"
+          label="Dia"
+          type="number"
+          @input="updatePhaseTwoDiastolic"     
+      ></v-text-field>
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col cols="2">
+      <v-label>Pulse</v-label>
+    </v-col>
+    <v-col cols="2">
+      <v-label>Respiration</v-label>
+    </v-col>
+  </v-row>
+  <v-row class="mb-12">
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.pulse"
+          label="ppm"
+          type="number"
+          @input="updatePhaseTwoPulse"     
+      ></v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-text-field 
+          :value="phaseTwoForm.respiration"
+          label="bpm"
+          type="number"
+          @input="updatePhaseTwoRespiration"     
+      ></v-text-field>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-export default {
-  props: {
-    phaseTwoForm: {
-      type: Object,
-      required: true
-    }
-  },
-  data() {
-  return {
-    dialog: true,
-    valid: true,
-    rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
-    cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 27}, () => Array(9).fill(null)),
-    PHs: {
-      'Sides': 'LRB',
-      'Subluxation': 'SX',
-      'Muscle Spasm': 'MS',
-      'Trigger Points': 'TP',
-      'Tenderness': 'TN',
-      'Numbness': 'NB',
-      'Edema': 'ED',
-      'Swelling': 'SW',
-      'Reduced Motion': 'RM'
-    },
-    changes: []
-  };
-},
-  methods: {
-    updateValue(i, j, value) {
-      this.$emit('update:phaseTwoForm', this.grid); // emit the changes
-      this.$emit('update:spinalGrid', this.grid);
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
-    },
+export default {
+      components: {
+        VueDatePicker
+      },
+      props: {
+          phaseTwoForm: {
+              type: Object,
+              required: true
+          }
+      },
+      methods: {
+        updatePhaseTwoRoomAssignment(newVal) {
+          console.log('newVal is ', newVal);
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            phaseTwoRoomAssignment: newVal.target.value
+          });
+        },
+        updatePhaseTwoHeightFeet(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            heightFeet: newVal.target.value
+          });
+        },
+        updatePhaseTwoHeightInches(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            heightInches: newVal.target.value
+          });
+        },
+        updatePhaseTwoWeight(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            weight: newVal.target.value
+          });
+        },
+        updatePhaseTwoTemperature(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            temperature: newVal.target.value
+          });
+        },
+        updatePhaseTwoSystolic(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            systolic: newVal.target.value
+          });
+        },
+        updatePhaseTwoDiastolic(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            diastolic: newVal.target.value
+          });
+        },
+        updatePhaseTwoPulse(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            pulse: newVal.target.value
+          });
+        },
+        updatePhaseTwoRespiration(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            respiration: newVal.target.value
+          });
+        },
+        // updatePhaseTwoVisitDateTime(newVal) {
+        //   this.$emit('update:phaseTwoForm', {
+        //     ...this.phaseTwoForm,
+        //     visit: newVal.target.value
+        //   });
+        // },
+        updatePhaseTwoVisitDateText(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            respiration: newVal.target.value
+          });
+        },
+      }
   }
-}
 </script>
 
-<style scoped>
-/* .v-text-field {
-  max-width: 50px;
-  margin: 0;
-} */
-
-/* .rotate {
-  transform: rotate(90deg);
-  margin-bottom: 10px;
-} */
-
-.grid-container {
-  max-height: 70vh;
-  padding: 20px;
-}
-
-.dialog-card {
-  max-width: 90vw;
-}
-
-.header-row {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  padding-bottom: 50px; /* Added padding */
-}
-
-.static-col {
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  padding-right: 50px;
-}
-
-.scrollable-content {
-  overflow: auto;
-  max-height: 70vh;
-  overflow-x: auto; /* Added overflow-x */
-  padding-top: 15px;
-}
-.v-text-field {
-  width: 100%;
-  /* margin: 0 auto; */
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-.v-col {
-  padding: 0;
-  flex: 1;
-  margin: 10px;
-}
-
-.rotate {
-  transform: rotate(90deg);
-  margin-bottom: 10px;
-  white-space: normal; 
-  line-height: 1.2;
-  height: 80px;   
-  width: 100px;  
-  overflow: hidden;
-  /* padding-top: 15px; */
-  text-align: center; /* Centers the header text */
-}
-
-</style>

@@ -1,12 +1,12 @@
 <template>
     <v-row>
       <v-col cols="6">
-        <v-text-field 
+        <!-- <v-text-field 
             :value="phaseFiveForm.phaseFiveRoomAssignment"
             label="Phase 5 Room Assignment"
             type="number"
             @input="updatePhaseFiveRoomAssignment"     
-        ></v-text-field>
+        ></v-text-field> -->
       </v-col>
     </v-row>
 

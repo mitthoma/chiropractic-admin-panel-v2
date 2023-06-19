@@ -13,13 +13,10 @@ export const createEntryService = (api : AxiosInstance) => ({
     },
 
     addEntry: async (payload : any, noteId : any) => {
-        console.log('HITTING ADD ENTRY');
-        console.log("note id is ", noteId);
         payload = {
             ...payload,
             noteId
         }
-        console.log('IN ENTRY SERVICE AND PAYLOAD IS ', payload);
         const { data } = await api.post('/entry/entry', payload);
         return data.data;
     },
