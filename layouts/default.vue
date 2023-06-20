@@ -74,12 +74,6 @@
                     Edit Account
                   </v-btn>
                   <v-divider class="my-3"></v-divider>
-                  <!-- <v-btn
-                    rounded
-                    variant="text"
-                  >
-                    Disconnect
-                  </v-btn> -->
                 </div>
               </v-card-text>
             </v-card>
@@ -125,7 +119,12 @@ const items =  [
         {
           icon: 'mdi-chart-bubble',
           title: 'User Management',
-          to: '/patient'
+          to: '/user'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'App Settings',
+          to: '/settings'
         },
         // todo: make this view valuable
         // {

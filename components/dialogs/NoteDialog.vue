@@ -216,7 +216,24 @@ export default {
         this.form = {
           ...item,
         };
-        this.visitDate = visitDate;
+        this.visitDateTime = visitDate;
+
+        // Fetch and populate the complaints
+        const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
+        this.complaints = complaints.map(complaint => ({ text: complaint.text, painLevel: complaint.painLevel }));
+
+        // Fetch and populate the entries
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId: item.id });
+        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        this.spinalGrid = spinalLevels.map(level => {
+          const entry = noteEntries.find(entry => entry.spinalLevel === level);
+          if (entry) {
+            return [entry.side, entry.sublux, entry.muscleSpasm, entry.triggerPoints, entry.tenderness, entry.numbness, entry.edema, entry.swelling, entry.reducedMotion];
+          } else {
+            return [null, null, null, null, null, null, null, null, null];
+          }
+        });
+        // Do similar mapping for extremityGrid
       },
       addComplaint() {
         this.complaints.push({
@@ -322,9 +339,7 @@ export default {
           ...this.form,
           visitDate: this.visitDate ? formatISO(this.visitDate) : null,
         };
-        const res = this.isUpdateMode
-          ? await this.noteService.updateNote(formData)
-          : await this.noteService.addNote(formData, patientId);
+        await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
         } else {
@@ -336,6 +351,47 @@ export default {
         }
       } else {
       }
+    },
+    async updateNote() {
+      const formData = {
+        ...this.form,
+        visitDate: this.visitDate ? formatISO(this.visitDate) : null,
+      };
+
+      await this.saveComplaints(this.selectedItem.id);
+      await this.saveSpinalEntries(this.selectedItem.id); 
+
+      const entries = await this.entryService.getEntriesForNote({
+        noteId: this.selectedItem.id,
+      });
+
+      const updateNote = await this.noteService.updateNote(formData);
+
+      if (updateNote instanceof Error) {
+        console.log('Note not updated');
+        return;
+      }
+
+      for (let i = 0; i < this.complaints.length; i++) {
+        const complaint = this.complaints[i];
+        const updateComplaint = await this.complaintService.updateComplaint({ complaint });
+
+        if (updateComplaint instanceof Error) {
+          console.log(`Complaint ${i} not updated`);
+        }
+      }
+
+      for (let i = 0; i < entries.length; i++) {
+        const entry = this.entries[i];
+        const updateEntry = await this.entryService.updateEntry({entry});
+
+        if (updateEntry instanceof Error) {
+          console.log(`Entry ${i} not updated`);
+        }
+      }
+
+      this.$emit('note-updated');
+      this.closeDialog();
     },
     async switchTab(tabNumber) {
       if (await this.validateForm(this.tab)) {
@@ -362,7 +418,11 @@ export default {
     async processPhase() {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
-          this.submitNoteForm();
+          if (this.isUpdateMode) {
+            await this.updateNote();
+          } else {
+            this.submitNoteForm();
+          }
         } else {
           this.tab++;
         }
