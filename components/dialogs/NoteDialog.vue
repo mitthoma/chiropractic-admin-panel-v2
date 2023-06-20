@@ -22,15 +22,19 @@
         <v-window-item :value="0">
           <v-container fluid>
             <v-form ref="form0">
-              <PhaseOne :complaints="complaints" :add-complaint="addComplaint" />
+              <PhaseOne 
+                :complaints="complaints" 
+                :add-complaint="addComplaint"
+                @update-complaint-text="updateComplaintText"
+                @update-complaint-pain-level="updateComplaintPainLevel"
+              />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
-
+              <PhaseTwo :phase-two-form="form" :selected-item="selectedItem" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -150,6 +154,7 @@ export default {
       extremityGrid: [],
       complaints: [
         {
+          id: null,
           text: '',
           painLevel: 0,
         }
@@ -191,7 +196,7 @@ export default {
     },
     currentPatient() {
       return this.patient;
-    }
+    },
   },
   watch: {
     selectedItem(newItem, oldItem) {
@@ -204,6 +209,12 @@ export default {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
+    if (this.isUpdateMode) {
+      this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.selectedItem.id });
+      this.form = {
+        ...this.selectedItem,
+      };
+    }
   },
   methods: {
     async populateFormData(item) {
@@ -212,12 +223,9 @@ export default {
           ...item,
         };
         this.visitDateTime = visitDate;
-
-        // Fetch and populate the complaints
         const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
-        this.complaints = complaints.map(complaint => ({ text: complaint.text, painLevel: complaint.painLevel }));
+        this.complaints = complaints.map(complaint => ({ id: complaint.id, text: complaint.text, painLevel: complaint.painLevel }));
 
-        // Fetch and populate the entries
         let noteEntries = await this.entryService.getEntriesForNote({ noteId: item.id });
         const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
         this.spinalGrid = spinalLevels.map(level => {
@@ -229,6 +237,12 @@ export default {
           }
         });
         // Do similar mapping for extremityGrid
+      },
+      updateComplaintText(index, newText) {
+        this.complaints[index].text = newText;
+      },
+      updateComplaintPainLevel(index, newPainLevel) {
+        this.complaints[index].painLevel = newPainLevel;
       },
       addComplaint() {
         this.complaints.push({
@@ -278,7 +292,6 @@ export default {
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
         for(let i = 0; i < this.extremityGrid.length; i++) {
-          console.log('CURRENT SPINAL LEVEL IS ', extremityLevels[i])
           let entryData = {
             noteId: noteId,
             extremityLevel: extremityLevels[i]
@@ -355,7 +368,7 @@ export default {
         visitDate: this.visitDate ? formatISO(this.visitDate) : null,
       };
 
-      await this.saveComplaints(this.selectedItem.id);
+      // await this.saveComplaints(this.selectedItem.id);
       await this.saveSpinalEntries(this.selectedItem.id); 
       await this.saveExtremityEntries(this.selectedItem.id);
 
@@ -363,7 +376,7 @@ export default {
         noteId: this.selectedItem.id,
       });
 
-      const updateNote = await this.noteService.updateNote(formData);
+      const updateNote = await this.noteService.updateNote({...formData, id: this.selectedItem.id});
 
       if (updateNote instanceof Error) {
         console.log('Note not updated');
@@ -372,9 +385,12 @@ export default {
 
       for (let i = 0; i < this.complaints.length; i++) {
         const complaint = this.complaints[i];
-        const updateComplaint = await this.complaintService.updateComplaint({ complaint });
 
-        if (updateComplaint instanceof Error) {
+        const res = complaint.id
+          ? await this.complaintService.updateComplaint({ ...complaint, noteId: this.selectedItem.id}, complaint.id)
+          : await this.complaintService.addComplaint({ ...complaint }, this.selectedItem.id);
+
+        if (res instanceof Error) {
           console.log(`Complaint ${i} not updated`);
         }
       }
@@ -418,8 +434,10 @@ export default {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
           if (this.isUpdateMode) {
+            console.log('WE ARE UPDATING');
             await this.updateNote();
           } else {
+            console.log('WE ARE CREATING NEW');
             this.submitNoteForm();
           }
         } else {
@@ -442,6 +460,7 @@ export default {
       this.$emit('close-dialog');
       this.resetForm();
     },
+    
   },
 };
 </script>

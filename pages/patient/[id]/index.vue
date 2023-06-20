@@ -104,7 +104,7 @@
                     <div class="d-flex align-center justify-space-around">
                       <v-col cols="12" class="text-center">
                         <v-label class="pb-0 mb-0">Phone Number</v-label>
-                        <v-card-text class="pt-0">{{currentPatient?.phoneNumber}}</v-card-text>
+                        <v-card-text class="pt-0">{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</v-card-text>
                       </v-col>
                     </div>
                 </v-card>
@@ -246,6 +246,15 @@
         } else if (type === 'excel') {
           generateXLSX(this.payload);
         }
+      },
+      formatPhoneNumber(number) {
+        if (!number) return '';
+        const cleaned = ('' + number).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+          return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+        }
+        return null;
       },
       async assignPayload(note) {
         // 1. get list of entries for note
