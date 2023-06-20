@@ -46,7 +46,7 @@
     },
     methods: {
         getValue(i, j) {
-            const entry = this.entries.find(entry => entry.spinalLevel.toLowerCase() === this.rows[i].toLowerCase());
+            const entry = this.entries.find(entry => entry.spinalLevel?.toLowerCase() === this.rows[i]?.toLowerCase());
             return entry ? entry[this.mapColsToFields[this.cols[j]]] : '';
 
       }

@@ -7,6 +7,8 @@ export default defineEventHandler(async event => {
     const formattedRoomAssignment3 = parseInt(body.phaseThreeRoomAssignment);
     const formattedRoomAssignment4 = parseInt(body.phaseFourRoomAssignment);
 
+    console.log('body is ', body);
+
     const formattedBody = {
         ...body,
         phaseOneRoomAssignment: formattedRoomAssignment1 || null,
@@ -23,9 +25,8 @@ export default defineEventHandler(async event => {
         physio: parseInt(body.physio) || null,
         respiration: parseInt(body.respiration) || null,
         pulse: parseInt(body.pulse) || null,
-
     }
 
-    const response = await addNewNote(formattedBody, parseInt(body.patientId)); // using 1 as a test for now, but will need to parse the payload for the attendee ID
+    const response = await addNewNote(formattedBody, parseInt(body.patientId));
     return response;
 })

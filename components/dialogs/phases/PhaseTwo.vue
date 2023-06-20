@@ -24,6 +24,7 @@
           dark
           type="datetime"
           :minute-interval="30"
+          @change="$emit('edit-visit-date-time', visitDateTime)"
         />
       </v-col>
       <v-col cols="4">
@@ -176,18 +177,12 @@ export default {
           
         };
       },
-      // watch: {
-      //   selectedItem: {
-      //     immediate: true,
-      //     handler(val) {
-      //       if (val) {
-      //         this.form = { ...val };
-      //       } else {
-      //         this.resetForm();
-      //       }
-      //     },
-      //   },
-      // },
+      watch: {
+        visitDateTime(newVal) {
+          this.updatePhaseTwoVisitDateTime(newVal);
+        },
+
+      },
       methods: {
         updatePhaseTwoRoomAssignment(newVal) {
           this.$emit('update:phaseTwoForm', {
@@ -246,7 +241,7 @@ export default {
         updatePhaseTwoVisitDateTime(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
-            visit: newVal.target.value
+            visitDate: newVal
           });
         },
         updatePhaseTwoVisitDateText(newVal) {

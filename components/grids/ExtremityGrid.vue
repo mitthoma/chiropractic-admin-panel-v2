@@ -1,6 +1,5 @@
 <template>
     <div class="grid-container">
-        {{ entries }}
       <v-row class="header-row text-center">
         <v-col></v-col>
         <v-col v-for="(col, j) in cols" :key="j">
@@ -47,7 +46,7 @@
     },
     methods: {
         getValue(i, j) {
-            const entry = this.entries.find(entry => entry.extremityLevel.toLowerCase() === this.rows[i].toLowerCase());
+            const entry = this.entries.find(entry => entry.extremityLevel?.toLowerCase() === this.rows[i]?.toLowerCase());
             return entry ? entry[this.mapColsToFields[this.cols[j]]] : '';
 
       }

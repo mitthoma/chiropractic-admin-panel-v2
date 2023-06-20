@@ -7,19 +7,19 @@ import { deleteEntry } from './entryRepository';
 export const addNewNote = async (payload: any, patientId: number) => {
   try {
     const patientsRepository = prisma.patient;
+    console.log('entering addnewnote and patientId is ', patientId);
 
     // Fetch the patient from the database
     const patient = await patientsRepository.findUnique({ where: { id: patientId as number} });
+    console.log('patient we found is ', patient);
 
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
-
-    console.log('payload is ', payload);
     const newNote = await prisma.note.create({
       data: {
         ...payload,
-        patientId: patient.id
+        patientId: patient.id as number
       },
     });
 

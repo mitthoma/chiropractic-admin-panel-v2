@@ -2,10 +2,8 @@
     <div>
       <v-container>
         <v-btn class="mx-5 mb-4" @click="backToPatients()">Back to Patient List</v-btn>
-
         <v-row>
           <v-col cols="8">
-
             <v-card class="elevation-4 mx-5 my-5">
               <div class="py-5 d-flex">
                 <v-card-title>
@@ -19,7 +17,10 @@
               </div>
               <v-table>
                 <thead>
-                  <tr >
+                  <tr>
+                    <th class="text-left">
+                      #
+                    </th>
                     <th class="text-left">
                       Visit Date
                     </th>
@@ -46,7 +47,6 @@
                         <template #activator="{ props }">
                             <v-icon class="mt-3" v-bind="props">mdi-export-variant</v-icon> <!-- Update button with export icon -->
                         </template>
-
                         <v-list>
                           <v-list-item
                             v-for="(exportItem, i) in exportItems"

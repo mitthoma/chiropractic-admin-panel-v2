@@ -90,7 +90,7 @@
                             :key="item.id"
                         >
                             <td>{{ item.text }}</td>
-                            <td>{{ item.painLevel }}</td>
+                            <td>{{ item.text ? item.painLevel : '' }}</td>
                         </tr>
                         </tbody>
                     </v-table>
@@ -114,7 +114,7 @@
                     Objective Findings - Extremity
                 </v-card-title>
                 <v-card class="pa-5">
-                    <ExtremityGrid :entries="extremityEntries" />
+                    <ExtremityGrid :entries="spinalEntries" />
                 </v-card>
             </v-col>
         </v-row>

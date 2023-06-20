@@ -34,7 +34,7 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo :phase-two-form="form" :selected-item="selectedItem" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
+              <PhaseTwo :phase-two-form="form" :selected-item="selectedItem" @update:phaseTwoForm="form = $event" @edit-visit-date-time="updateVisitDateTime" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -50,7 +50,7 @@
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event" @update:extremityGrid="extremityGrid = $event" />
+              <PhaseFour :phase-four-form="entries" @update:phaseFourForm="entries = $event" @update:extremityGrid="extremityGrid = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -215,6 +215,9 @@ export default {
       };
     }
   },
+  beforeUnmount() {
+    this.resetForm();
+  },
   methods: {
     async populateFormData(item) {
         const visitDate = parseISO(item.visitDate);
@@ -294,7 +297,7 @@ export default {
           return false;
         },
       async saveExtremityEntries(noteId) {
-        const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Knee Cap', 'Ankle', 'Foot'];
+        const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
@@ -316,6 +319,9 @@ export default {
             if(existingEntry) {
               await this.entryService.updateEntry({ ...existingEntry, ...entryData });
             } else {
+              console.log('at add entry');
+              console.log('entry data is ', entryData);
+              console.log('noteId is ', noteId);
               await this.entryService.addEntry(entryData, noteId);
             }
           }
@@ -338,7 +344,7 @@ export default {
         tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: null,
+        phaseOneRoomAssignment: 1,
         phaseTwoRoomAssignment: null,
         phaseThreeRoomAssignment: null,
         phaseFourRoomAssignment: null,
@@ -346,15 +352,25 @@ export default {
       this.visitDateTime = null;
       this.formIsValid = [false, false, false, false, false, false];
       this.exitConfirmDialog = false;
+      this.spinalGrid = [];
+      this.extremityGrid = [];
+      this.complaints = [
+        {
+          text: '',
+          painLevel: 0,
+        }
+      ];
     },
     async submitNoteForm() {
       const patientId = this.$route.params.id;
       if (this.isFormValid) {
+        console.log('form visitDate ', this.form.visitDate);
         const formData = {
           ...this.form,
           visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
         };
-
+        console.log('adding note and formdata is ', formData);
+        console.log('adding note and patient id is ', patientId);
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
@@ -362,6 +378,7 @@ export default {
           const noteId = res.id;
           await this.saveComplaints(noteId);
           await this.saveSpinalEntries(noteId); 
+          console.log('about to save extremeties');
           await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
           this.closeDialog();

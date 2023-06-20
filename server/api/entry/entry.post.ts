@@ -21,6 +21,8 @@ export default defineEventHandler(async event => {
     body.manipulation = false
     body.treatmentPositioning = 'test'
     body.physioPositioning = 'test'
+    body.spinalLevel = body.spinalLevel ? body.spinalLevel.toLowerCase() : null;
+    body.extremityLevel = body.extremityLevel ? body.extremityLevel.toLowerCase() : null;
     const response = await addEntry(body); // TODO: using example as a test for now, but will need to parse the payload for the note ID
     return response;
 })
