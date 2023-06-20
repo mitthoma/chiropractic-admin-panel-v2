@@ -17,7 +17,13 @@
       ></v-text-field>
       </v-col>
       <v-col cols="4">
-        <VueDatePicker label="Date and Time" dark @change="$emit('editVisitDateTime', $event)" />
+        <VueDatePicker
+          v-model="visitDateTime"
+          label="Visit Date and Time"
+          dark
+          type="datetime"
+          :minute-interval="30"
+        />
       </v-col>
       <v-col cols="4">
       <v-text-field 
@@ -135,9 +141,26 @@ export default {
               required: true
           }
       },
+      data() {
+        return {
+          visitDateTime: null,
+          visitDate: null,
+        };
+      },
+      watch: {
+        visitDateTime(val) {
+          if (val) {
+            // const isoString = val.toISOString();
+            // this.visitDate = isoString.substring(0, 10);
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              visitDate: this.visitDateTime,
+            });
+          }
+        },
+      },
       methods: {
         updatePhaseTwoRoomAssignment(newVal) {
-          console.log('newVal is ', newVal);
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
             phaseTwoRoomAssignment: newVal.target.value
@@ -191,12 +214,12 @@ export default {
             respiration: newVal.target.value
           });
         },
-        // updatePhaseTwoVisitDateTime(newVal) {
-        //   this.$emit('update:phaseTwoForm', {
-        //     ...this.phaseTwoForm,
-        //     visit: newVal.target.value
-        //   });
-        // },
+        updatePhaseTwoVisitDateTime(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            visit: newVal.target.value
+          });
+        },
         updatePhaseTwoVisitDateText(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,

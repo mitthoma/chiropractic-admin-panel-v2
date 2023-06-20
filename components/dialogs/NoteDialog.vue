@@ -30,6 +30,7 @@
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
               <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
+
             </v-form>
           </v-container>
         </v-window-item>
@@ -193,12 +194,6 @@ export default {
     }
   },
   watch: {
-    visitDateTime(val) {
-      if (val) {
-        const isoString = val.toISOString();
-        this.form.visitDate = isoString.substring(0, 10);
-      }
-    },
     selectedItem(newItem, oldItem) {
       if (newItem && newItem !== oldItem) {
         this.populateFormData(newItem);
@@ -337,8 +332,9 @@ export default {
       if (this.isFormValid) {
         const formData = {
           ...this.form,
-          visitDate: this.visitDate ? formatISO(this.visitDate) : null,
+          visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
         };
+
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
@@ -346,6 +342,7 @@ export default {
           const noteId = res.id;
           await this.saveComplaints(noteId);
           await this.saveSpinalEntries(noteId); 
+          await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
           this.closeDialog();
         }
@@ -360,6 +357,7 @@ export default {
 
       await this.saveComplaints(this.selectedItem.id);
       await this.saveSpinalEntries(this.selectedItem.id); 
+      await this.saveExtremityEntries(this.selectedItem.id);
 
       const entries = await this.entryService.getEntriesForNote({
         noteId: this.selectedItem.id,
@@ -401,6 +399,7 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
+      console.log('DATE TIME IS ', datetime);
       this.form.visitDate = datetime;
     },
     async saveComplaints(noteId) {
