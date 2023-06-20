@@ -19,7 +19,6 @@
       </v-col>
     </v-row>
   </div>
-  <!-- add complaint button -->
   <v-row>
     <v-btn @click="addComplaint">Add New Complaint</v-btn>
   </v-row>

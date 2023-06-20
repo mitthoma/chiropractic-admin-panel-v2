@@ -3,19 +3,19 @@
     <v-card>
       <v-card-title class="d-flex">
         <span class="justify-start text-h5 pa-4">{{ title }}</span>
-          <v-spacer></v-spacer> <!-- Spacer to move the icon to the end of the row -->
-          <v-icon class="justify-end ma-4" @click="confirmExit">mdi-close</v-icon> <!-- Close icon that calls confirmExit when clicked -->
+          <v-spacer></v-spacer>
+          <v-icon class="justify-end ma-4" @click="confirmExit">mdi-close</v-icon>
       </v-card-title>
       <v-tabs
         color="deep-purple-accent-4"
         align-tabs="center"
       >
-        <v-tab :value="tab === 0" :disabled="tab < 0" @click="switchTab(0)">Phase 1</v-tab>
-        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Phase 2</v-tab>
-        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Phase 3</v-tab>
-        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Phase 4</v-tab>
-        <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Phase 5</v-tab>
-        <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Phase 6</v-tab>
+        <v-tab :value="tab === 0" :disabled="tab < 0" @click="switchTab(0)">Subj. Complaints</v-tab>
+        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Obj. Findings 1</v-tab>
+        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Obj. Findings 2</v-tab>
+        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Obj. Findings 3</v-tab>
+        <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Assessment</v-tab>
+        <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Treatment & Plan</v-tab>
 
       </v-tabs>
       <v-window v-model="tab" class="phaseWindow">
@@ -29,28 +29,30 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo v-model:phaseTwoForm="form" />
+              <PhaseTwo :phase-two-form="form" @update:phaseTwoForm="form = $event" @editVisitDateTime="updateVisitDateTime" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree v-model:phaseThreeForm="form"  />
+              <!-- <PhaseThree v-model:phaseThreeForm="form"  /> -->
+              <PhaseThree :phase-three-form="entries" @update:phaseThreeForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
+
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event"/>
+              <PhaseFour :phase-four-form="form" @update:phaseFourForm="form = $event" @update:extremityGrid="extremityGrid = $event" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
-              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event"/>
+              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -67,8 +69,8 @@
         <v-card-text class="justify-start">Height: {{ form.heightFeet }}' {{ form.heightInches }}"</v-card-text>
         <v-card-text class="justify-start">Weight: {{ form.weight }} lbs</v-card-text>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">Cancel</v-btn>
-        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 3 ? saveButtonText : 'Next' }}</v-btn>
+        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{ tab === 1 ? 'Back' : 'Cancel' }}</v-btn>
+        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 5 ? saveButtonText : 'Save & Next' }}</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="exitConfirmDialog" max-width="300px">
@@ -89,6 +91,7 @@
 <script>
 import { createNoteService } from '~/services/note';
 import { createComplaintService } from '~/services/complaint';
+import { createEntryService } from '~~/services/entry';
 import { formatISO, parseISO } from 'date-fns';
 import PhaseOne from './phases/PhaseOne.vue';
 import PhaseTwo from './phases/PhaseTwo.vue';
@@ -123,24 +126,27 @@ export default {
   data() {
     return {
       form: {
+        visitDate: null,
         visitDateText: null,
-        heightFeet: 3,
-        heightInches: 3,
-        weight: 3,
-        temperature: 3,
+        heightFeet: null,
+        heightInches: null,
+        weight: null,
+        temperature: null,
         respiration: null,
         systolic: null,
         diastolic: null,
         physiotherapy: null,
-        physio: 234,
-        tx: 234,
+        physio: null,
+        tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: 998,
-        phaseTwoRoomAssignment: 12,
-        phaseThreeRoomAssignment: 13,
-        phaseFourRoomAssignment: 978,
+        phaseOneRoomAssignment: 1,
+        phaseTwoRoomAssignment: null,
+        phaseThreeRoomAssignment: null,
+        phaseFourRoomAssignment: null,
       },
+      spinalGrid: [],
+      extremityGrid: [],
       complaints: [
         {
           text: '',
@@ -202,8 +208,7 @@ export default {
   async mounted() {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
-    // this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
-    // console.log('complaints ', this.complaints);
+    this.entryService = createEntryService(this.$api);
   },
   methods: {
     async populateFormData(item) {
@@ -211,7 +216,24 @@ export default {
         this.form = {
           ...item,
         };
-        this.visitDate = visitDate;
+        this.visitDateTime = visitDate;
+
+        // Fetch and populate the complaints
+        const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
+        this.complaints = complaints.map(complaint => ({ text: complaint.text, painLevel: complaint.painLevel }));
+
+        // Fetch and populate the entries
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId: item.id });
+        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        this.spinalGrid = spinalLevels.map(level => {
+          const entry = noteEntries.find(entry => entry.spinalLevel === level);
+          if (entry) {
+            return [entry.side, entry.sublux, entry.muscleSpasm, entry.triggerPoints, entry.tenderness, entry.numbness, entry.edema, entry.swelling, entry.reducedMotion];
+          } else {
+            return [null, null, null, null, null, null, null, null, null];
+          }
+        });
+        // Do similar mapping for extremityGrid
       },
       addComplaint() {
         this.complaints.push({
@@ -219,9 +241,75 @@ export default {
           painLevel: 0,
         });
       },
+      async saveSpinalEntries(noteId) {
+        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+
+        for(let i = 0; i < this.spinalGrid.length; i++) {
+          let entryData = {
+            noteId: noteId,
+            spinalLevel: spinalLevels[i]
+          };
+
+          for(let j = 0; j < this.spinalGrid[i].length; j++) {
+            if (this.spinalGrid[i][j]) {
+              entryData[entryFields[j]] = this.spinalGrid[i][j];
+            }
+          }
+
+          if (this.hasAnyField(entryData, entryFields)) {
+            let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
+
+            if(existingEntry) {
+              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+            } else {
+              await this.entryService.addEntry(entryData, noteId);
+            }
+          }
+        }
+      },
+      hasAnyField(entryData, entryFields) {
+          for (let field of entryFields) {
+            if (entryData.hasOwnProperty(field)) {
+              return true;
+            }
+          }
+          return false;
+        },
+      async saveExtremityEntries(noteId) {
+        const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Knee Cap', 'Ankle', 'Foot'];
+        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+
+        for(let i = 0; i < this.extremityGrid.length; i++) {
+          console.log('CURRENT SPINAL LEVEL IS ', extremityLevels[i])
+          let entryData = {
+            noteId: noteId,
+            extremityLevel: extremityLevels[i]
+          };
+
+          for(let j = 0; j < this.extremityGrid[i].length; j++) {
+            if (this.extremityGrid[i][j]) {
+              entryData[entryFields[j]] = this.extremityGrid[i][j];
+            }
+          }
+
+          if (this.hasAnyField(entryData, entryFields)) {
+            let existingEntry = noteEntries.find(entry => entry.extremityLevel === extremityLevels[i]);
+
+            if(existingEntry) {
+              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+            } else {
+              await this.entryService.addEntry(entryData, noteId);
+            }
+          }
+        }
+      },
     resetForm() {
       this.tab = 0
       this.form = {
+        visitDate: null,
         visitDateText: null,
         heightFeet: null,
         heightInches: null,
@@ -251,20 +339,59 @@ export default {
           ...this.form,
           visitDate: this.visitDate ? formatISO(this.visitDate) : null,
         };
-        const res = this.isUpdateMode
-          ? await this.noteService.updateNote(formData)
-          : await this.noteService.addNote(formData, patientId);
+        await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
         } else {
           const noteId = res.id;
           await this.saveComplaints(noteId);
-
+          await this.saveSpinalEntries(noteId); 
           this.$emit('note-added');
           this.closeDialog();
         }
       } else {
       }
+    },
+    async updateNote() {
+      const formData = {
+        ...this.form,
+        visitDate: this.visitDate ? formatISO(this.visitDate) : null,
+      };
+
+      await this.saveComplaints(this.selectedItem.id);
+      await this.saveSpinalEntries(this.selectedItem.id); 
+
+      const entries = await this.entryService.getEntriesForNote({
+        noteId: this.selectedItem.id,
+      });
+
+      const updateNote = await this.noteService.updateNote(formData);
+
+      if (updateNote instanceof Error) {
+        console.log('Note not updated');
+        return;
+      }
+
+      for (let i = 0; i < this.complaints.length; i++) {
+        const complaint = this.complaints[i];
+        const updateComplaint = await this.complaintService.updateComplaint({ complaint });
+
+        if (updateComplaint instanceof Error) {
+          console.log(`Complaint ${i} not updated`);
+        }
+      }
+
+      for (let i = 0; i < entries.length; i++) {
+        const entry = this.entries[i];
+        const updateEntry = await this.entryService.updateEntry({entry});
+
+        if (updateEntry instanceof Error) {
+          console.log(`Entry ${i} not updated`);
+        }
+      }
+
+      this.$emit('note-updated');
+      this.closeDialog();
     },
     async switchTab(tabNumber) {
       if (await this.validateForm(this.tab)) {
@@ -272,6 +399,9 @@ export default {
       } else {
         alert("Please fill in all required fields before switching tabs.");
       }
+    },
+    updateVisitDateTime(datetime) {
+      this.form.visitDate = datetime;
     },
     async saveComplaints(noteId) {
       // save complaints associated with the note ID
@@ -288,7 +418,11 @@ export default {
     async processPhase() {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
-          this.submitNoteForm();
+          if (this.isUpdateMode) {
+            await this.updateNote();
+          } else {
+            this.submitNoteForm();
+          }
         } else {
           this.tab++;
         }

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import { deleteComplaint } from './complaintRepository';
-import { complaint } from '@prisma/client';
+import { deleteEntry } from './entryRepository';
 
 //patient must exist for a note to be added so we don't need to add new patients here
 export const addNewNote = async (payload: any, patientId: number) => {
@@ -59,15 +59,10 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
 
 export const deleteNote = async (noteId: any) => {
   try {
-    console.log('in delete note');
-    console.log('noteId is ', noteId);
-
     // Fetch all complaints related to the note
     const complaints = await prisma.complaint.findMany({
-      where: { noteId : noteId},
+      where: { noteId : noteId },
     });
-
-    console.log('related complaints are ', complaints);
 
     // Delete all complaints related to the note
     if (complaints) {
@@ -76,9 +71,20 @@ export const deleteNote = async (noteId: any) => {
       }
     }
 
+    // Fetch all entries related to the note
+    const entries = await prisma.entry.findMany({
+      where: { noteId : noteId },
+    });
+
+    // Delete all entries related to the note
+    if (entries) {
+      for (const entry of entries) {
+        await deleteEntry(entry.id);
+      }
+    }
+
     // Delete the note
     const result = await prisma.note.delete({ where: { id: noteId } });
-    console.log('RESULT IS ', result);
     return true;
   } catch (error) {
     console.log(error);
@@ -98,7 +104,6 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
-    console.log('NOTE ID IS ', noteId);
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

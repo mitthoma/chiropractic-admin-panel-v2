@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { UUID } from "crypto";
 
 // TODO: give payload typings 
 export const createEntryService = (api : AxiosInstance) => ({
@@ -14,7 +13,6 @@ export const createEntryService = (api : AxiosInstance) => ({
     },
 
     addEntry: async (payload : any, noteId : any) => {
-        console.log("note id is ", noteId);
         payload = {
             ...payload,
             noteId

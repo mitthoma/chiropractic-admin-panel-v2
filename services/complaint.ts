@@ -19,7 +19,6 @@ export const createComplaintService = (api : AxiosInstance) => ({
     },
 
     addComplaint: async (payload : any, noteId : any) => {
-        console.log('payload is ', payload);
         payload = {
             ...payload,
             noteId: noteId,

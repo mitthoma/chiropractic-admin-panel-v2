@@ -39,8 +39,6 @@ export const updatePatient = async (
 
 export const deletePatient = async (id: number): Promise<boolean> => {
   try {
-    console.log('ENTERING DELETE');
-    
     // Fetch all notes related to the patient
     const notes = await prisma.note.findMany({
       where: { patientId : id },
@@ -76,10 +74,7 @@ export const getPatient = async (id: number): Promise<patient | null> => {
 export const getPatients = async (
   params: Prisma.patientFindManyArgs
 ): Promise<patient[]> => {
-    console.log('entering getpatients');
   try {
-    console.log('entering getpatients');
-    console.log('prisma is ', prisma);
     const patients = await prisma.patient.findMany(params);
     return patients;
   } catch (error) {
@@ -89,13 +84,7 @@ export const getPatients = async (
 };
 
 export const getAllPatients = async (): Promise<patient[]> => {
-    console.log('entering getpatients');
-    // console.log("PRISMA CLIENT IS ", prisma);
   try {
-
-    console.log('getAllPatients');
-    // console.log("PRISMA CLIENT IS ", prisma);
-
     const patients = await prisma.patient.findMany();
     return patients;
     // return [] as Patient[];

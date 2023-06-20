@@ -4,7 +4,7 @@
         <v-btn class="mx-5 mb-4" @click="backToPatients()">Back to Patient List</v-btn>
 
         <v-row>
-          <v-col cols="8">
+          <v-col cols="10">
 
             <v-card class="elevation-4 mx-5 my-5">
               <div class="py-5 d-flex">
@@ -19,14 +19,15 @@
               </div>
               <v-table>
                 <thead>
-                  <tr>
+                  <tr >
                     <th class="text-left">
                       Visit Date
                     </th>
                     <th class="text-left">
                       Last Updated
                     </th>
-                    <th class="text-left">
+                    <th class="text-right pr-8">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -56,7 +57,7 @@
                         </v-list>
                       </v-menu>
                       <v-icon class="ma-3" @click="goToNote(item)">mdi-eye</v-icon> <!-- Update button with eye icon -->
-                     <v-icon class="mt-3" @click="deleteNote(item)">mdi-delete</v-icon> <!-- Add delete button -->
+                     <v-icon class="mt-3" @click="openDeleteDialog(item)">mdi-delete</v-icon> <!-- Add delete button -->
                     </td>
                   </tr>
                 </tbody>
@@ -69,7 +70,7 @@
               ></v-pagination>
             </v-card>
           </v-col>
-          <v-col class="px-1" cols="4">
+          <v-col class="px-1" cols="2">
                 <v-card class="px-1 mx-2 my-5">
                     <div class="d-flex align-center justify-space-around py-16">
                         <v-avatar color="info" size="x-large">
@@ -77,43 +78,33 @@
                         </v-avatar>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Account Number</v-label>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Account Number</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.acctNo}}</v-card-text>
                       </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.acctNo}}</v-card-text>
+                    </div>
+                    <div class="d-flex align-center">
+                      <v-col cols="12" class="text-center pt-0 mt-0">
+                        <v-label class="pb-0 mb-0">First Name</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.firstName}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">First Name</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.firstName}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Last Name</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.lastName}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Last Name</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.lastName}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Email</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.email}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Email</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.email}}</v-card-text>
-                      </v-col>
-                    </div>
-                    <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Phone Number</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text class="">{{currentPatient?.phoneNumber}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Phone Number</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.phoneNumber}}</v-card-text>
                       </v-col>
                     </div>
                 </v-card>
@@ -121,6 +112,19 @@
         </v-row>
       </v-container>
     </div>
+    <v-dialog v-model="deleteDialog" max-width="500px">
+    <v-card>
+      <v-card-title class="headline">Delete Note</v-card-title>
+      <v-card-text>
+        Are you sure you want to delete this note? Deleting this note will delete all subjective complaint and entry data associated with it.
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red darken-1" text @click="deleteDialog = false">Cancel</v-btn>
+        <v-btn color="darken-1" text @click="deleteConfirmed()">Delete Note</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   </template>
   
   <script>
@@ -165,6 +169,8 @@
         complaintTotalPages: 1,
         displayedComplaints: [],
         selectedComplaintItem: null,
+        deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
+        noteToDelete: null, // To hold the note object to be deleted
       };
     },
     computed: {
@@ -212,6 +218,16 @@
         this.totalPages = Math.ceil(this.notes.length / this.itemsPerPage);
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         this.displayedNotes = this.notes.slice(startIndex, startIndex + this.itemsPerPage);
+      },
+       // New methods for handling delete confirmation dialog
+      openDeleteDialog(note) {
+        this.noteToDelete = note;
+        this.deleteDialog = true;
+      },
+      async deleteConfirmed() {
+        await this.deleteNote(this.noteToDelete);
+        this.deleteDialog = false;
+        this.noteToDelete = null;
       },
       async deleteNote(item) {
         try {
