@@ -4,14 +4,11 @@ import { AxiosInstance } from "axios";
 export const createNoteService = (api : AxiosInstance) => ({
     getNotes: async () => {
         const { data } = await api.get('/notes/notes');
-        console.log("data is ", data);
         return data.data;
     },
 
     getNotesForPatient: async (payload : any) => {
-        console.log("entering here");
         const { data } = await api.post('/notes/patient-notes', payload);
-        console.log('data is ', data.data);
         return data.data;
     },
 
@@ -21,19 +18,16 @@ export const createNoteService = (api : AxiosInstance) => ({
     },
 
     addNote: async (payload : any, patientId : number) => {
-        console.log('payload is ', payload);
-        console.log('patientid is ', patientId);
         payload = {
             ...payload,
             patientId
         }
         const { data } = await api.post('/notes/note', payload);
-        console.log('data is ', data);
-        console.log('and data.data is ', data.data);
         return data;
     },
 
     updateNote: async (payload : any) => {
+        console.log('note payload is ', payload);
         const { data } = await api.post('/notes/update-note', payload);
         return data.data;
     },

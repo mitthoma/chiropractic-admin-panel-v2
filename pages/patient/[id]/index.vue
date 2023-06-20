@@ -2,10 +2,8 @@
     <div>
       <v-container>
         <v-btn class="mx-5 mb-4" @click="backToPatients()">Back to Patient List</v-btn>
-
         <v-row>
           <v-col cols="8">
-
             <v-card class="elevation-4 mx-5 my-5">
               <div class="py-5 d-flex">
                 <v-card-title>
@@ -21,22 +19,27 @@
                 <thead>
                   <tr>
                     <th class="text-left">
+                      #
+                    </th>
+                    <th class="text-left">
                       Visit Date
                     </th>
                     <th class="text-left">
                       Last Updated
                     </th>
-                    <th class="text-left">
+                    <th class="text-right pr-8">
+                      Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody class="">
                   <tr
-                    v-for="item in shownNotes"
+                    v-for="(item, index) in shownNotes"
                     :key="item.id"
                   >
-                    <td>{{ formatDate(item.visitDate, item) }}</td>
-                    <td>{{ item.phaseOneRoomAssignment }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatVisitDate(item.visitDate, item) }}</td>
+                    <td>{{ formatDate(item.lastEdited, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-menu
                         transition="slide-x-transition"
@@ -44,7 +47,6 @@
                         <template #activator="{ props }">
                             <v-icon class="mt-3" v-bind="props">mdi-export-variant</v-icon> <!-- Update button with export icon -->
                         </template>
-
                         <v-list>
                           <v-list-item
                             v-for="(exportItem, i) in exportItems"
@@ -56,7 +58,7 @@
                         </v-list>
                       </v-menu>
                       <v-icon class="ma-3" @click="goToNote(item)">mdi-eye</v-icon> <!-- Update button with eye icon -->
-                     <v-icon class="mt-3" @click="deleteNote(item)">mdi-delete</v-icon> <!-- Add delete button -->
+                     <v-icon class="mt-3" @click="openDeleteDialog(item)">mdi-delete</v-icon> <!-- Add delete button -->
                     </td>
                   </tr>
                 </tbody>
@@ -77,43 +79,33 @@
                         </v-avatar>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Account Number</v-label>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Account Number</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.acctNo}}</v-card-text>
                       </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.acctNo}}</v-card-text>
+                    </div>
+                    <div class="d-flex align-center">
+                      <v-col cols="12" class="text-center pt-0 mt-0">
+                        <v-label class="pb-0 mb-0">First Name</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.firstName}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">First Name</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.firstName}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Last Name</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.lastName}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Last Name</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.lastName}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Email</v-label>
+                        <v-card-text class="pt-0">{{currentPatient?.email}}</v-card-text>
                       </v-col>
                     </div>
                     <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Email</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text>{{currentPatient?.email}}</v-card-text>
-                      </v-col>
-                    </div>
-                    <div class="d-flex align-center justify-space-around">
-                      <v-col cols="4">
-                        <v-label class="">Phone Number</v-label>
-                      </v-col>
-                      <v-col cols="8">
-                        <v-card-text class="">{{currentPatient?.phoneNumber}}</v-card-text>
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Phone Number</v-label>
+                        <v-card-text class="pt-0">{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</v-card-text>
                       </v-col>
                     </div>
                 </v-card>
@@ -121,6 +113,19 @@
         </v-row>
       </v-container>
     </div>
+    <v-dialog v-model="deleteDialog" max-width="500px">
+    <v-card>
+      <v-card-title class="headline">Delete Note</v-card-title>
+      <v-card-text>
+        Are you sure you want to delete this note? Deleting this note will delete all subjective complaint and entry data associated with it.
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red darken-1" text @click="deleteDialog = false">Cancel</v-btn>
+        <v-btn color="darken-1" text @click="deleteConfirmed()">Delete Note</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   </template>
   
   <script>
@@ -165,6 +170,8 @@
         complaintTotalPages: 1,
         displayedComplaints: [],
         selectedComplaintItem: null,
+        deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
+        noteToDelete: null, // To hold the note object to be deleted
       };
     },
     computed: {
@@ -213,6 +220,16 @@
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         this.displayedNotes = this.notes.slice(startIndex, startIndex + this.itemsPerPage);
       },
+       // New methods for handling delete confirmation dialog
+      openDeleteDialog(note) {
+        this.noteToDelete = note;
+        this.deleteDialog = true;
+      },
+      async deleteConfirmed() {
+        await this.deleteNote(this.noteToDelete);
+        this.deleteDialog = false;
+        this.noteToDelete = null;
+      },
       async deleteNote(item) {
         try {
           await this.noteService.deleteNote({
@@ -230,6 +247,15 @@
         } else if (type === 'excel') {
           generateXLSX(this.payload);
         }
+      },
+      formatPhoneNumber(number) {
+        if (!number) return '';
+        const cleaned = ('' + number).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+          return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+        }
+        return null;
       },
       async assignPayload(note) {
         // 1. get list of entries for note
@@ -322,6 +348,23 @@
             }).format(new Date(date));
 
             return `${formattedDate}`;
+        },
+        formatVisitDate(date, item) {
+          if (!date && !item.visitDateText) {
+              return "No Date Data";
+          }
+          if (!date || isNaN(Date.parse(date))) {
+              return item.visitDateText;
+          }
+
+          const formattedDate = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(new Date(date));
+
+          return `${formattedDate}`;
+          
         },
         async getCurrentPatient() {
             this.patientService = createPatientService(this.$api);

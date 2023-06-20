@@ -1,11 +1,12 @@
 
-import { PrismaClient, Prisma, Patient } from '@prisma/client';
+import { PrismaClient, Prisma, patient } from '@prisma/client';
+import { deleteNote } from './noteRepository';
 console.log('Prisma client created');
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
-  payload: Prisma.PatientCreateInput
-): Promise<{ success: boolean; patient?: Patient; error?: string }> => {
+  payload: Prisma.patientCreateInput
+): Promise<{ success: boolean; patient?: patient; error?: string }> => {
   try {
     const existingPatient = await prisma.patient.findFirst({ where: { email: payload.email } });
     if (existingPatient) {
@@ -22,8 +23,8 @@ export const saveNewPatient = async (
 
 export const updatePatient = async (
   id: number,
-  payload: Prisma.PatientUpdateInput
-): Promise<Patient | null> => {
+  payload: Prisma.patientUpdateInput
+): Promise<patient | null> => {
   try {
     const updatedPatient = await prisma.patient.update({
       where: { id },
@@ -38,7 +39,20 @@ export const updatePatient = async (
 
 export const deletePatient = async (id: number): Promise<boolean> => {
   try {
+    // Fetch all notes related to the patient
+    const notes = await prisma.note.findMany({
+      where: { patientId : id },
+    });
+
+    // Delete all notes related to the patient
+    if (notes) {
+      for (const note of notes) {
+        await deleteNote(note.id);
+      }
+    }
+    
     const result = await prisma.patient.delete({ where: { id } });
+    console.log('result is ', result);
     return !!result;
   } catch (error) {
     console.error(error);
@@ -46,8 +60,9 @@ export const deletePatient = async (id: number): Promise<boolean> => {
   }
 };
 
-export const getPatient = async (id: number): Promise<Patient | null> => {
+export const getPatient = async (id: number): Promise<patient | null> => {
   try {
+    console.log("type of ", typeof id);
     const patient = await prisma.patient.findUnique({ where: { id } });
     return patient;
   } catch (error) {
@@ -57,12 +72,9 @@ export const getPatient = async (id: number): Promise<Patient | null> => {
 };
 
 export const getPatients = async (
-  params: Prisma.PatientFindManyArgs
-): Promise<Patient[]> => {
-    console.log('entering getpatients');
+  params: Prisma.patientFindManyArgs
+): Promise<patient[]> => {
   try {
-    console.log('entering getpatients');
-    console.log('prisma is ', prisma);
     const patients = await prisma.patient.findMany(params);
     return patients;
   } catch (error) {
@@ -71,14 +83,8 @@ export const getPatients = async (
   }
 };
 
-export const getAllPatients = async (): Promise<Patient[]> => {
-    console.log('entering getpatients');
-    // console.log("PRISMA CLIENT IS ", prisma);
+export const getAllPatients = async (): Promise<patient[]> => {
   try {
-
-    console.log('getAllPatients');
-    // console.log("PRISMA CLIENT IS ", prisma);
-
     const patients = await prisma.patient.findMany();
     return patients;
     // return [] as Patient[];

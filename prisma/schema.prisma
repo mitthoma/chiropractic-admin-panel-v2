@@ -13,8 +13,8 @@ model complaint {
   text       String
   painLevel  Int
   lastEdited DateTime @default(now()) @db.Timestamp(6)
-  note_id    String?  @db.Uuid
-  note       note?    @relation(fields: [note_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_complaint_note")
+  noteId     String?  @db.Uuid
+  note       note?    @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_complaint_note")
 }
 
 model entry {
@@ -114,6 +114,7 @@ enum entry_extremitylevel_enum {
   thigh
   leg
   knee
+  knee_cap
   scap
   ankle
   foot

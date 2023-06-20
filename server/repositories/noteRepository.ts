@@ -1,22 +1,25 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+import { deleteComplaint } from './complaintRepository';
+import { deleteEntry } from './entryRepository';
 
 //patient must exist for a note to be added so we don't need to add new patients here
 export const addNewNote = async (payload: any, patientId: number) => {
   try {
     const patientsRepository = prisma.patient;
+    console.log('entering addnewnote and patientId is ', patientId);
 
     // Fetch the patient from the database
     const patient = await patientsRepository.findUnique({ where: { id: patientId as number} });
+    console.log('patient we found is ', patient);
 
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
-
     const newNote = await prisma.note.create({
       data: {
         ...payload,
-        patientId: patient.id
+        patientId: patient.id as number
       },
     });
 
@@ -56,10 +59,32 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
 
 export const deleteNote = async (noteId: any) => {
   try {
-    console.log('in delete note');
-    console.log('noteId is ', noteId)
+    // Fetch all complaints related to the note
+    const complaints = await prisma.complaint.findMany({
+      where: { noteId : noteId },
+    });
+
+    // Delete all complaints related to the note
+    if (complaints) {
+      for (const complaint of complaints) {
+        await deleteComplaint(complaint.id);
+      }
+    }
+
+    // Fetch all entries related to the note
+    const entries = await prisma.entry.findMany({
+      where: { noteId : noteId },
+    });
+
+    // Delete all entries related to the note
+    if (entries) {
+      for (const entry of entries) {
+        await deleteEntry(entry.id);
+      }
+    }
+
+    // Delete the note
     const result = await prisma.note.delete({ where: { id: noteId } });
-    console.log('RESULT IS ', result);
     return true;
   } catch (error) {
     console.log(error);
