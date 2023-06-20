@@ -4,7 +4,7 @@
         <v-btn class="mx-5 mb-4" @click="backToPatients()">Back to Patient List</v-btn>
 
         <v-row>
-          <v-col cols="10">
+          <v-col cols="8">
 
             <v-card class="elevation-4 mx-5 my-5">
               <div class="py-5 d-flex">
@@ -70,7 +70,7 @@
               ></v-pagination>
             </v-card>
           </v-col>
-          <v-col class="px-1" cols="2">
+          <v-col class="px-1" cols="4">
                 <v-card class="px-1 mx-2 my-5">
                     <div class="d-flex align-center justify-space-around py-16">
                         <v-avatar color="info" size="x-large">

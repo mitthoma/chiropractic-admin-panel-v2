@@ -339,7 +339,7 @@ export default {
           ...this.form,
           visitDate: this.visitDate ? formatISO(this.visitDate) : null,
         };
-        await this.noteService.addNote(formData, patientId);
+        const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
         } else {

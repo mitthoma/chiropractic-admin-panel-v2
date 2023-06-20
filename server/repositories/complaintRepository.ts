@@ -62,11 +62,10 @@ export const deleteComplaint = async (complaintId: string) => {
   }
 };
 
-// TODO: 
-export const getComplaintsByPatientId = async (patientId: number) => {
+export const getComplaintsByNoteId = async (noteId: string) => {
   try {
-    // const complaints = await prisma.complaint.findMany({ where: { patientId } });
-    // return complaints;
+    const complaints = await prisma.complaint.findMany({ where: { noteId } });
+    return complaints;
   } catch (error) {
     console.log(error);
     return error;
