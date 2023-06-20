@@ -33,9 +33,10 @@
                 </thead>
                 <tbody class="">
                   <tr
-                    v-for="item in shownNotes"
+                    v-for="(item, index) in shownNotes"
                     :key="item.id"
                   >
+                    <td>{{ index + 1 }}</td>
                     <td>{{ formatVisitDate(item.visitDate, item) }}</td>
                     <td>{{ formatDate(item.lastEdited, item) }}</td>
                     <td class="d-flex justify-end">

@@ -12,31 +12,31 @@
                     <v-row>
                             <v-col cols="6">
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Room Assignment</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.phaseTwoRoomAssignment}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Visit Date</v-label>
-                                        <v-card-text class="pt-0">{{ formatDate(currentNote?.visitDate) }}</v-card-text>
+                                        <!-- <v-card-text class="pt-0">{{ formatDate(currentNote?.lastEdited, currentNote) || null }}</v-card-text> -->
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Weight</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.weight}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Height</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.heightFeet}}' {{ currentNote?.heightInches }}"</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Temperature</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.temperature}}</v-card-text>
                                     </v-col>
@@ -44,25 +44,25 @@
                             </v-col>
                             <v-col cols="6">
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Systolic</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.systolic}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Diastolic</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.diastolic}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Respiration</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.respiration}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-left">
+                                    <v-col cols="12" class="text-center">
                                         <v-label class="pb-0 mb-0">Pulse</v-label>
                                         <v-card-text class="pt-0">{{currentNote?.pulse}}</v-card-text>
                                     </v-col>
@@ -80,8 +80,8 @@
                     <v-table>
                         <thead>
                         <tr>
-                            <th class="text-left" @click="sortNotes('text')">Complaint</th>
-                            <th class="text-left" @click="sortNotes('painLevel')">Pain Level</th>
+                            <th class="text-center" @click="sortNotes('text')">Complaint</th>
+                            <th class="text-center" @click="sortNotes('painLevel')">Pain Level</th>
                         </tr>
                         </thead>
                         <tbody class="">
@@ -190,9 +190,12 @@ export default {
             this.selectedNoteItem = item;
             this.noteDialog = true;
         },
-        closeNoteDialog() {
+        async closeNoteDialog() {
             this.selectedNoteItem = null;
             this.noteDialog = false;
+            this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote.id });
+            await this.fetchEntries();
+
         },
         backToPatient() {
             this.$router.push(`/patient/${this.$route.params.id}`);
@@ -206,18 +209,22 @@ export default {
                 console.warn("Current note is not available.");
             }
         },
-        formatDate(date) {
-            if (isNaN(Date.parse(date))) {
-                return "Invalid date";
-            }
+        formatVisitDate(date, item) {
+          if (!date && !item.visitDateText) {
+              return "No Date Data";
+          }
+          if (!date || isNaN(Date.parse(date))) {
+              return item.visitDateText;
+          }
 
-            const formattedDate = new Intl.DateTimeFormat("en-US", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-            }).format(new Date(date));
+          const formattedDate = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(new Date(date));
 
-            return `${formattedDate}`;
+          return `${formattedDate}`;
+          
         },
     },
 }   

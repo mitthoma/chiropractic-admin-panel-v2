@@ -154,7 +154,6 @@ export default {
       extremityGrid: [],
       complaints: [
         {
-          id: null,
           text: '',
           painLevel: 0,
         }
@@ -226,17 +225,25 @@ export default {
         const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
         this.complaints = complaints.map(complaint => ({ id: complaint.id, text: complaint.text, painLevel: complaint.painLevel }));
 
-        let noteEntries = await this.entryService.getEntriesForNote({ noteId: item.id });
+        await this.loadSpinalGrid(item.id);
+        // Do similar mapping for extremityGrid
+      },
+      async loadSpinalGrid(noteId) {
+        // Get the data from your service
+        const entries = await this.entryService.getEntriesForNote({ noteId });
+        console.log('entries loaded are ', entries);
+
+        // Here, you can map your entries to your spinalGrid. For example:
         const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+
         this.spinalGrid = spinalLevels.map(level => {
-          const entry = noteEntries.find(entry => entry.spinalLevel === level);
+          const entry = entries.find(entry => entry.spinalLevel === level);
           if (entry) {
             return [entry.side, entry.sublux, entry.muscleSpasm, entry.triggerPoints, entry.tenderness, entry.numbness, entry.edema, entry.swelling, entry.reducedMotion];
           } else {
             return [null, null, null, null, null, null, null, null, null];
           }
         });
-        // Do similar mapping for extremityGrid
       },
       updateComplaintText(index, newText) {
         this.complaints[index].text = newText;
