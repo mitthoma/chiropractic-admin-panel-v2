@@ -1,28 +1,37 @@
 <template>
   <v-row>
     <v-col cols="4">
-      <v-label>Room Assignment</v-label>
+      <v-suffix>Room Assignment</v-suffix>
     </v-col>
     <v-col cols="4">
-      <v-label>Date Appointment</v-label>
+      <v-suffix>Date of Appointment</v-suffix>
     </v-col>
   </v-row>
   <v-row>
     <v-col cols="4">
       <v-text-field 
+          variant="outlined"
           :value="phaseTwoForm.phaseTwoRoomAssignment"
-          label="Room Assignment"
           type="number"
+          placeholder="Room Assignment"
           @input="updatePhaseTwoRoomAssignment"     
       ></v-text-field>
       </v-col>
       <v-col cols="4">
-        <VueDatePicker label="Date and Time" dark @change="$emit('editVisitDateTime', $event)" />
+        <VueDatePicker
+          v-model="visitDateTime"
+          placeholder="Visit Date and Time"
+          dark
+          type="datetime"
+          :minute-interval="30"
+          @change="$emit('edit-visit-date-time', visitDateTime)"
+        />
       </v-col>
       <v-col cols="4">
       <v-text-field 
+          variant="outlined"
           :value="phaseTwoForm.visitDateText"
-          label="Room Assignment"
+          placeholder="Visit Date Text Entry"
           type="number"
           @input="updatePhaseTwoVisitDateText"     
       ></v-text-field>
@@ -30,92 +39,115 @@
   </v-row>
   <v-row>
     <v-col cols="4">
-      <v-label>Height</v-label>
+      <v-suffix>Height</v-suffix>
     </v-col>
     <v-col cols="2">
-      <v-label>Weight</v-label>
+      <v-suffix>Weight</v-suffix>
     </v-col>
     <v-col cols="2">
-      <v-label>Temperature</v-label>
+      <v-suffix>Temperature</v-suffix>
     </v-col>
     <v-col cols="4">
-      <v-label>Blood Pressure</v-label>
+      <v-suffix>Blood Pressure</v-suffix>
     </v-col>
   </v-row>
   
   <v-row>
     <v-col cols="2">
-      <v-text-field 
+      <v-text-field
+          variant="outlined"
           :value="phaseTwoForm.heightFeet"
-          label="ft."
+          suffix="ft."
           type="number"
-          @input="updatePhaseTwoHeightFeet"     
+          placeholder="Height in Feet"     
+          @input="updatePhaseTwoHeightFeet"
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+        variant="outlined"
           :value="phaseTwoForm.heightInches"
-          label="in."
+          suffix="in."
           type="number"
-          @input="updatePhaseTwoHeightInches"     
+          placeholder="Height in Inches"     
+          @input="updatePhaseTwoHeightInches"
+
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+        variant="outlined"
           :value="phaseTwoForm.weight"
-          label="lb."
+          suffix="lb."
           type="number"
-          @input="updatePhaseTwoWeight"     
+          placeholder="Weight"     
+          @input="updatePhaseTwoWeight"
+
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+      variant="outlined"
           :value="phaseTwoForm.temperature"
-          label="F"
+          suffix="F"
           type="number"
-          @input="updatePhaseTwoTemperature"     
+          placeholder="Temperature"     
+          @input="updatePhaseTwoTemperature"
+
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+      variant="outlined"
           :value="phaseTwoForm.systolic"
-          label="Sys"
+          suffix="Sys"
           type="number"
-          @input="updatePhaseTwoSystolic"     
+          placeholder="Systolic"    
+          @input="updatePhaseTwoSystolic"
+
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+      variant="outlined"
           :value="phaseTwoForm.diastolic"
-          label="Dia"
+          suffix="Dia"
           type="number"
-          @input="updatePhaseTwoDiastolic"     
+          placeholder="Diastolic"  
+          @input="updatePhaseTwoDiastolic"
+
       ></v-text-field>
     </v-col>
   </v-row>
   <v-row>
     <v-col cols="2">
-      <v-label>Pulse</v-label>
+      <v-suffix>Pulse</v-suffix>
     </v-col>
     <v-col cols="2">
-      <v-label>Respiration</v-label>
+      <v-suffix>Respiration</v-suffix>
     </v-col>
   </v-row>
   <v-row class="mb-12">
     <v-col cols="2">
       <v-text-field 
+      variant="outlined"
           :value="phaseTwoForm.pulse"
-          label="ppm"
+          suffix="ppm"
           type="number"
-          @input="updatePhaseTwoPulse"     
+          placeholder="Pulse"    
+          @input="updatePhaseTwoPulse"
+
       ></v-text-field>
     </v-col>
     <v-col cols="2">
       <v-text-field 
+        variant="outlined"
           :value="phaseTwoForm.respiration"
-          label="bpm"
+          suffix="bpm"
           type="number"
-          @input="updatePhaseTwoRespiration"     
+          placeholder="Respiration"     
+          @input="updatePhaseTwoRespiration"
+
       ></v-text-field>
     </v-col>
   </v-row>
@@ -130,14 +162,29 @@ export default {
         VueDatePicker
       },
       props: {
-          phaseTwoForm: {
-              type: Object,
-              required: true
-          }
+        phaseTwoForm: {
+          type: Object,
+          required: true,
+        },
+        selectedItem: {
+          type: Object,
+        },
+      },
+      data() {
+        return {
+          visitDateTime: null,
+          visitDate: null,
+          
+        };
+      },
+      watch: {
+        visitDateTime(newVal) {
+          this.updatePhaseTwoVisitDateTime(newVal);
+        },
+
       },
       methods: {
         updatePhaseTwoRoomAssignment(newVal) {
-          console.log('newVal is ', newVal);
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
             phaseTwoRoomAssignment: newVal.target.value
@@ -191,12 +238,12 @@ export default {
             respiration: newVal.target.value
           });
         },
-        // updatePhaseTwoVisitDateTime(newVal) {
-        //   this.$emit('update:phaseTwoForm', {
-        //     ...this.phaseTwoForm,
-        //     visit: newVal.target.value
-        //   });
-        // },
+        updatePhaseTwoVisitDateTime(newVal) {
+          this.$emit('update:phaseTwoForm', {
+            ...this.phaseTwoForm,
+            visitDate: newVal
+          });
+        },
         updatePhaseTwoVisitDateText(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,

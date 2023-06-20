@@ -1,32 +1,45 @@
 <template>
-  <!-- dynamic complaints form -->
-  <div v-for="(complaint, index) in complaints" :key="index">
-    <v-row>
-      <v-col cols="6">
-        <v-text-field
-          v-model="complaint.text"
-          label="Complaint Text"
-          required
-        ></v-text-field>
-      </v-col>
-      <v-col cols="6">
-        <v-slider
-          v-model="complaint.painLevel"
-          :max="5"
-          :step="1"
-          label="Pain Level"
-        ></v-slider>
-      </v-col>
+  <div style="max-height: 500px; overflow-y: auto;">
+    <div v-for="(complaint, index) in complaints" :key="index">
+      <v-row class="mx-5">
+        <v-col cols="6">
+          <v-text-field
+            v-model="complaint.text"
+            :value="complaint.text"
+            label="Complaint Text"
+            required
+            @input="updateComplaintText(index, $event)"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-slider
+            v-model="complaint.painLevel"
+            :value="complaint.painLevel"
+            :max="5"
+            :step="1"
+            label="Pain Level"
+            @input="updateComplaintPainLevel(index, $event)"
+          ></v-slider>
+        </v-col>
+      </v-row>
+    </div>
+    <v-row class="mx-5">
+      <v-btn @click="addComplaint">Add New Complaint</v-btn>
     </v-row>
   </div>
-  <v-row>
-    <v-btn @click="addComplaint">Add New Complaint</v-btn>
-  </v-row>
 </template>
 
 <script>
 export default {
   name: 'PhaseOne',
   props: ['complaints', 'addComplaint'],
+  methods: {
+    updateComplaintText(index, newText) {
+      this.$emit('update-complaint-text', index, newText.target.value);
+    },
+    updateComplaintPainLevel(index, newPainLevel) {
+      this.$emit('update-complaint-pain-level', index, newPainLevel.target.value);
+    }
+  }
 };
 </script>

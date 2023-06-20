@@ -2,10 +2,8 @@
     <div>
       <v-container>
         <v-btn class="mx-5 mb-4" @click="backToPatients()">Back to Patient List</v-btn>
-
         <v-row>
-          <v-col cols="10">
-
+          <v-col cols="8">
             <v-card class="elevation-4 mx-5 my-5">
               <div class="py-5 d-flex">
                 <v-card-title>
@@ -19,7 +17,10 @@
               </div>
               <v-table>
                 <thead>
-                  <tr >
+                  <tr>
+                    <th class="text-left">
+                      #
+                    </th>
                     <th class="text-left">
                       Visit Date
                     </th>
@@ -33,9 +34,10 @@
                 </thead>
                 <tbody class="">
                   <tr
-                    v-for="item in shownNotes"
+                    v-for="(item, index) in shownNotes"
                     :key="item.id"
                   >
+                    <td>{{ index + 1 }}</td>
                     <td>{{ formatVisitDate(item.visitDate, item) }}</td>
                     <td>{{ formatDate(item.lastEdited, item) }}</td>
                     <td class="d-flex justify-end">
@@ -45,7 +47,6 @@
                         <template #activator="{ props }">
                             <v-icon class="mt-3" v-bind="props">mdi-export-variant</v-icon> <!-- Update button with export icon -->
                         </template>
-
                         <v-list>
                           <v-list-item
                             v-for="(exportItem, i) in exportItems"
@@ -70,7 +71,7 @@
               ></v-pagination>
             </v-card>
           </v-col>
-          <v-col class="px-1" cols="2">
+          <v-col class="px-1" cols="4">
                 <v-card class="px-1 mx-2 my-5">
                     <div class="d-flex align-center justify-space-around py-16">
                         <v-avatar color="info" size="x-large">
@@ -104,7 +105,7 @@
                     <div class="d-flex align-center justify-space-around">
                       <v-col cols="12" class="text-center">
                         <v-label class="pb-0 mb-0">Phone Number</v-label>
-                        <v-card-text class="pt-0">{{currentPatient?.phoneNumber}}</v-card-text>
+                        <v-card-text class="pt-0">{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</v-card-text>
                       </v-col>
                     </div>
                 </v-card>
@@ -246,6 +247,15 @@
         } else if (type === 'excel') {
           generateXLSX(this.payload);
         }
+      },
+      formatPhoneNumber(number) {
+        if (!number) return '';
+        const cleaned = ('' + number).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+          return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+        }
+        return null;
       },
       async assignPayload(note) {
         // 1. get list of entries for note

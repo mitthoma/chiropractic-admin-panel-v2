@@ -3,114 +3,148 @@
       <v-container>
         <v-btn class="mb-4 mr-3" @click="backToPatient()">Back to Patient Profile</v-btn>
         <v-btn class="mb-4" color="primary" @click="editNote(currentNote)">Edit Note</v-btn>
-
         <v-row>
-            <v-col cols="4">
-                <v-card class="w-full h-full">
-                    <div class="d-flex  pt-8 pb-5 px-5">
-                        <v-avatar color="info" size="x-large">
-                          {{currentPatient?.firstName[0]}}{{currentPatient?.lastName[0]}}
-                        </v-avatar>
-                    </div>
-                    <v-card-title>Note Visit {{ formatDate(currentNote?.visitDate) }}</v-card-title>
-                    <v-card-subtitle>For {{ currentPatient?.firstName }} {{ currentPatient?.lastName }} </v-card-subtitle>
-                    <div class="px-2 py-5">
-                            <div class="d-flex">
-                                <v-card-title>Vitals</v-card-title>
-                                <!-- <v-btn color="primary" class="justify-end">Edit General</v-btn> -->
-                            </div>
-                            <v-divider></v-divider>
-                            <v-row>
-                                <v-col class="py-5 px-2"  cols="6">
-                                    <v-card-text v-if="currentNote?.heightFeet">Height: {{currentNote?.heightFeet}}' {{ currentNote?.heightInches }}"</v-card-text>
-                                    <v-card-text v-else>Height: N/A</v-card-text>
-
-                                    <v-card-text v-if="currentNote?.weight">Weight: {{ currentNote?.weight }} lbs </v-card-text>
-                                    <v-card-text v-else>Weight: N/A </v-card-text>
-
-                                    <v-card-text>Temperature: {{currentNote?.temperature }} </v-card-text>
-                                </v-col>
-                                <v-col class="py-5 px-2" cols="6">
-                                    <v-card-text>Respiration: {{currentNote?.respiration}} </v-card-text>
-                                    <v-card-text>Systolic: {{ currentNote?.systolic }} </v-card-text>
-                                    <v-card-text>Diastolic: {{ currentNote?.diastolic }} </v-card-text>
-                                    <v-card-text>Pulse: {{ currentNote?.pulse }} </v-card-text>
-
-                                </v-col>
+            <v-col cols="6">
+                <v-card-title>
+                    General Info / Vitals
+                </v-card-title>
+                <v-card class="pa-5">
+                    <v-row>
+                            <v-col cols="6">
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Room Assignment</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.phaseTwoRoomAssignment}}</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Visit Date</v-label>
+                                        <!-- <v-card-text class="pt-0">{{ formatDate(currentNote?.lastEdited, currentNote) || null }}</v-card-text> -->
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Weight</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.weight}}</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Height</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.heightFeet}}' {{ currentNote?.heightInches }}"</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Temperature</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.temperature}}</v-card-text>
+                                    </v-col>
+                                </div>
+                            </v-col>
+                            <v-col cols="6">
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Systolic</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.systolic}}</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Diastolic</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.diastolic}}</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Respiration</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.respiration}}</v-card-text>
+                                    </v-col>
+                                </div>
+                                <div class="d-flex align-center justify-space-around">
+                                    <v-col cols="12" class="text-center">
+                                        <v-label class="pb-0 mb-0">Pulse</v-label>
+                                        <v-card-text class="pt-0">{{currentNote?.pulse}}</v-card-text>
+                                    </v-col>
+                                </div>
+                            </v-col>
                         </v-row>
-                    </div>
-                </v-card>
-                </v-col>
-                <v-col cols="8">
-                    <v-card class="elevation-4">
-                        <div class="py-5 d-flex">
-                        <v-card-title>Spinal Entries</v-card-title>
-                        <v-spacer></v-spacer>
-                        <v-btn color="primary" class="mr-3" @click="spinalDialog = true">Add Entry</v-btn>
-                        </div>
-                        <EntriesTable :items="spinalEntries" @edit-item="editSpinalItem" />
-                    </v-card>
-                    </v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="4">
-                <v-card class="w-full h-full">
-                    <div class="px-5 py-5"> 
-                        <div class="d-flex">
-                                <v-card-title>Additional Notes</v-card-title>
-                                <!-- <v-btn color="primary" class="justify-end">Edit</v-btn> -->
-                            </div>
-                            <v-divider></v-divider>
-                            <div class="px-5 py-5">
-                                <p>
-                                    {{currentNote?.otherNotes}}
-                                </p>
-                            </div>
-                    </div>
+
                 </v-card>
             </v-col>
-            
-            <v-col cols="8">
-      <v-card class="elevation-4">
-        <div class="py-5 d-flex">
-          <v-card-title>Extremity Entries</v-card-title>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" class="mr-3" @click="extremityDialog = true">Add Entry</v-btn>
-        </div>
-        <EntriesTable :items="extremityEntries"  :extremity-table="true" @edit-item="editExtremityItem" />
-      </v-card>
-    </v-col>
+            <v-col cols="6">
+                <v-card-title>
+                    Subjective Complaints
+                </v-card-title>
+                <v-card class="pa-5">
+                    <v-table>
+                        <thead>
+                        <tr>
+                            <th class="text-center" @click="sortNotes('text')">Complaint</th>
+                            <th class="text-center" @click="sortNotes('painLevel')">Pain Level</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+                        <tr
+                            v-for="item in complaints"
+                            :key="item.id"
+                        >
+                            <td>{{ item.text }}</td>
+                            <td>{{ item.text ? item.painLevel : '' }}</td>
+                        </tr>
+                        </tbody>
+                    </v-table>
+                    
+                </v-card>
+            </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-card-title>
+                    Objective Findings - Spinal
+                </v-card-title>
+                <v-card class="pa-5">
+                    <SpinalGrid :entries="spinalEntries" />
+                </v-card>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-card-title>
+                    Objective Findings - Extremity
+                </v-card-title>
+                <v-card class="pa-5">
+                    <ExtremityGrid :entries="spinalEntries" />
+                </v-card>
+            </v-col>
+        </v-row>
+
       </v-container>
-    <SpinalDialog v-model="spinalDialog" :current-note="currentNote" :selected-item="selectedSpinalItem" @entry-added="fetchEntries" @close-dialog="closeSpinalDialog" />
-    <ExtremityDialog v-model="extremityDialog" :selected-item="selectedExtremityItem" @entry-added="fetchEntries" @close-dialog="closeExtremityDialog" />
     <NoteDialog v-model="noteDialog" :selected-item="selectedNoteItem" :patient="currentPatient" @note-added="getCurrentNote" @close-dialog="closeNoteDialog" />
 </div>  
 </template>
   
 <script>
-import SpinalDialog from '~/components/dialogs/SpinalDialog.vue';
-import ExtremityDialog from '~/components/dialogs/ExtremityDialog.vue';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
-import EntriesTable from '~/components/tables/EntriesTable.vue';
 import { noteStore } from '~/store/note';
 import { patientStore } from '~/store/patient';
 import { createEntryService } from '~/services/entry';
 import { createNoteService } from '~/services/note';
+import { createComplaintService } from '~/services/complaint';
+import SpinalGrid from '~/components/grids/SpinalGrid.vue';
+import ExtremityGrid from '~/components/grids/ExtremityGrid.vue';
 
 export default {
     name: 'NotePage',
     components: {
-        SpinalDialog,
-        ExtremityDialog,
-        EntriesTable,
-        NoteDialog
+        NoteDialog,
+        SpinalGrid,
+        ExtremityGrid,
     },
     data () {
         return {
             noteService: null,
-            spinalDialog: false,
-            extremityDialog: false,
+            complaintService: null,
             noteDialog: false,
             noteStore: null,
             patientStore: null,
@@ -122,6 +156,11 @@ export default {
             selectedExtremityItem: null,
             selectedNoteItem: null,
             currentNote: null,
+            complaints: [],
+            complaintsPagination: {
+                page: 1,
+                itemsPerPage: 8, // Number of rows per page
+            }
         }
     },
     computed: {
@@ -134,14 +173,12 @@ export default {
         this.patientStore = patientStore();
         this.entryService = createEntryService(this.$api);
         this.noteService = createNoteService(this.$api);
+        this.complaintService = createComplaintService(this.$api);
         await this.getCurrentNote();
         this.fetchEntries();
+        this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote.id });
     },
     methods: {
-        editSpinalItem(item) {
-            this.selectedSpinalItem = item;
-            this.spinalDialog = true;
-        },
         async getCurrentNote() {
             if (this.noteStore?.getCurrentNote) {
                 this.currentNote = this.noteStore.getCurrentNote;
@@ -149,25 +186,16 @@ export default {
                 this.currentNote = await this.noteService?.getNote({ id: this.$route.params.noteId });
             }
         },
-        editExtremityItem(item) {
-            this.selectedExtremityItem = item;
-            this.extremityDialog = true;
-        },
         editNote(item) {
             this.selectedNoteItem = item;
             this.noteDialog = true;
         },
-        closeSpinalDialog() {
-            this.selectedExtremityItem = null;
-            this.spinalDialog = false;
-        },
-        closeExtremityDialog() {
-            this.selectedExtremityItem = null;
-            this.extremityDialog = false;
-        },
-        closeNoteDialog() {
+        async closeNoteDialog() {
             this.selectedNoteItem = null;
             this.noteDialog = false;
+            this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote.id });
+            await this.fetchEntries();
+
         },
         backToPatient() {
             this.$router.push(`/patient/${this.$route.params.id}`);
@@ -181,18 +209,22 @@ export default {
                 console.warn("Current note is not available.");
             }
         },
-        formatDate(date) {
-            if (isNaN(Date.parse(date))) {
-                return "Invalid date";
-            }
+        formatVisitDate(date, item) {
+          if (!date && !item.visitDateText) {
+              return "No Date Data";
+          }
+          if (!date || isNaN(Date.parse(date))) {
+              return item.visitDateText;
+          }
 
-            const formattedDate = new Intl.DateTimeFormat("en-US", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-            }).format(new Date(date));
+          const formattedDate = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(new Date(date));
 
-            return `${formattedDate}`;
+          return `${formattedDate}`;
+          
         },
     },
 }   
