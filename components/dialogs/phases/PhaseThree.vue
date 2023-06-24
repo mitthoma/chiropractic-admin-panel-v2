@@ -1,7 +1,6 @@
 <template>
   <div class="grid-container">
     <v-row class="header-row text-center">
-      phase two form is {{ spinalGrid }}
       <v-col></v-col>
       <v-col v-for="(col, j) in cols" :key="j">
         <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
@@ -100,7 +99,7 @@ mounted() {
           console.log('entry.side is ', entry.side);
           let colIndex = this.cols.findIndex(col => col === 'Sides');
           let sideOption = this.sidesOptions.find(option => option.value === entry.side);
-          this.grid[rowIndex][colIndex] = sideOption;
+          this.grid[rowIndex][colIndex] = sideOption.text;
         }
       }
     }
