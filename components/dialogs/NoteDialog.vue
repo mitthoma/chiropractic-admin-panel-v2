@@ -41,9 +41,7 @@
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <!-- <PhaseThree v-model:phaseThreeForm="form"  /> -->
               <PhaseThree :phase-three-form="entries" @update:phaseThreeForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
-
             </v-form>
           </v-container>
         </v-window-item>

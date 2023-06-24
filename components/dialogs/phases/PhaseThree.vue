@@ -13,11 +13,28 @@
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
           <v-text-field
+            v-if="col !== 'Sides' && !booleanColumns.includes(col)"
             v-model="grid[i][j]" 
             hide-details 
             dense 
             class="input-field" 
-            :placeholder="PHs[cols[j]]"
+            :placeholder="PHs[col]"
+            @input="updateValue(i, j, $event)" />
+          <v-select
+            v-else-if="col === 'Sides'"
+            v-model="grid[i][j]" 
+            hide-details 
+            dense 
+            class="input-field" 
+            :items="sidesOptions"
+            @input="updateValue(i, j, $event)" />
+          <v-select
+            v-else
+            v-model="grid[i][j]" 
+            hide-details 
+            dense 
+            class="input-field" 
+            :items="['true', 'false']"
             @input="updateValue(i, j, $event)" />
         </v-col>
       </v-row>
@@ -51,7 +68,13 @@ export default {
       'Swelling': 'SW',
       'Reduced Motion': 'RM'
     },
-    changes: []
+    changes: [],
+    booleanColumns: ['Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+    sidesOptions: [
+        { text: 'Left', value: 'l' },
+        { text: 'Right', value: 'r' },
+        { text: 'Both', value: 'b' },
+      ],
   };
 },
   methods: {

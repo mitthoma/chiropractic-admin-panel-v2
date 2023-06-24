@@ -41,15 +41,37 @@
           'Edema': 'edema',
           'Swelling': 'swelling',
           'Reduced Motion': 'reducedMotion',
-        }
+        },
+        booleanFields: ['sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'],
+
       };
     },
     methods: {
-        getValue(i, j) {
-            const entry = this.entries.find(entry => entry.extremityLevel?.toLowerCase() === this.rows[i]?.toLowerCase());
-            return entry ? entry[this.mapColsToFields[this.cols[j]]] : '';
+      getValue(i, j) {
+        const entry = this.entries.find(entry => entry.extremityLevel?.toLowerCase() === this.rows[i]?.toLowerCase());
+        if (!entry) return '';
 
-      }
+        const fieldName = this.mapColsToFields[this.cols[j]];
+        const value = entry[fieldName];
+        
+        if (this.booleanFields.includes(fieldName)) {
+          return value ? 'True' : '';
+        }
+
+        return this.getDisplayedValue(value);
+      },
+      getDisplayedValue(value) {
+        switch (value) {
+          case 'l':
+            return 'Left';
+          case 'r':
+            return 'Right';
+          case 'b':
+            return 'Both';
+          default:
+            return value;
+        }
+      },
     }
   }
   </script>
