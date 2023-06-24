@@ -41,7 +41,12 @@
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree :phase-three-form="entries" @update:phaseThreeForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
+              <PhaseThree 
+                :phase-three-form="entries" 
+                :existing-data="spinalGrid" 
+                @update:phaseThreeForm="entries = $event" 
+                @update:spinalGrid="spinalGrid = $event" 
+              />
             </v-form>
           </v-container>
         </v-window-item>
@@ -150,6 +155,7 @@ export default {
       },
       spinalGrid: [],
       extremityGrid: [],
+      existingEntriesForUpdate: [],
       complaints: [
         {
           text: '',
@@ -199,6 +205,7 @@ export default {
     selectedItem(newItem, oldItem) {
       if (newItem && newItem !== oldItem) {
         this.populateFormData(newItem);
+        this.loadSpinalGrid(newItem.id);
       }
     },
   },
@@ -211,6 +218,7 @@ export default {
       this.form = {
         ...this.selectedItem,
       };
+      this.loadSpinalGrid(this.selectedItem.id);
     }
   },
   beforeUnmount() {
@@ -240,11 +248,12 @@ export default {
         this.spinalGrid = spinalLevels.map(level => {
           const entry = entries.find(entry => entry.spinalLevel === level);
           if (entry) {
-            return [entry.side, entry.sublux, entry.muscleSpasm, entry.triggerPoints, entry.tenderness, entry.numbness, entry.edema, entry.swelling, entry.reducedMotion];
+            return entry;
           } else {
-            return [null, null, null, null, null, null, null, null, null];
+            return null;
           }
         });
+        console.log('this spinal grid is ', this.spinalGrid);
       },
       updateComplaintText(index, newText) {
         this.complaints[index].text = newText;

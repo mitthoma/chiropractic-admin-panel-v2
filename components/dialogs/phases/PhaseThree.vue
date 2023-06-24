@@ -1,6 +1,7 @@
 <template>
   <div class="grid-container">
     <v-row class="header-row text-center">
+      phase two form is {{ spinalGrid }}
       <v-col></v-col>
       <v-col v-for="(col, j) in cols" :key="j">
         <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
@@ -48,34 +49,62 @@ export default {
     phaseTwoForm: {
       type: Object,
       required: true
+    },
+    existingData: {
+      type: Object,
+      required: false
     }
   },
   data() {
-  return {
-    dialog: true,
-    valid: true,
-    rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
-    cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 27}, () => Array(9).fill(null)),
-    PHs: {
-      'Sides': 'LRB',
-      'Subluxation': 'SX',
-      'Muscle Spasm': 'MS',
-      'Trigger Points': 'TP',
-      'Tenderness': 'TN',
-      'Numbness': 'NB',
-      'Edema': 'ED',
-      'Swelling': 'SW',
-      'Reduced Motion': 'RM'
-    },
-    changes: [],
-    booleanColumns: ['Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    sidesOptions: [
-        { text: 'Left', value: 'l' },
-        { text: 'Right', value: 'r' },
-        { text: 'Both', value: 'b' },
-      ],
-  };
+    return {
+      dialog: true,
+      valid: true,
+      rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
+      cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      grid: Array.from({length: 27}, () => Array(9).fill(null)),
+      PHs: {
+        'Sides': 'LRB',
+        'Subluxation': 'SX',
+        'Muscle Spasm': 'MS',
+        'Trigger Points': 'TP',
+        'Tenderness': 'TN',
+        'Numbness': 'NB',
+        'Edema': 'ED',
+        'Swelling': 'SW',
+        'Reduced Motion': 'RM'
+      },
+      changes: [],
+      booleanColumns: ['Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      sidesOptions: [
+          { text: 'Left', value: 'l' },
+          { text: 'Right', value: 'r' },
+          { text: 'Both', value: 'b' },
+        ],
+    };
+},
+mounted() {
+  if (this.existingData) {
+    for (let entry of this.existingData) {
+      if (entry) {
+        console.log('entry is ', entry);
+        // find index of the spinal level in the rows
+        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
+        // for each booleanColumns check if it exists in the entry, if so set the corresponding grid cell to true
+        this.booleanColumns.forEach((col, colIndex) => {
+          if (entry[col.toLowerCase()]) {
+            this.grid[rowIndex][colIndex] = 'true';
+          }
+        });
+        // check if side exists in the entry, if so set the corresponding grid cell
+        if (entry.side) {
+          console.log('entry.side is ', entry.side);
+          let colIndex = this.cols.findIndex(col => col === 'Sides');
+          let sideOption = this.sidesOptions.find(option => option.value === entry.side);
+          this.grid[rowIndex][colIndex] = sideOption;
+        }
+      }
+    }
+  }
 },
   methods: {
     updateValue(i, j, value) {
