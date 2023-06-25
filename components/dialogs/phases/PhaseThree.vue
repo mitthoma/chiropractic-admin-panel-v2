@@ -79,6 +79,17 @@ export default {
           { text: 'Right', value: 'r' },
           { text: 'Both', value: 'b' },
         ],
+      camelCaseColumns: {
+        'Sides': 'sides',
+        'Subluxation': 'subluxation',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        'Tenderness': 'tenderness',
+        'Numbness': 'numbness',
+        'Edema': 'edema',
+        'Swelling': 'swelling',
+        'Reduced Motion': 'reducedMotion'
+      },
     };
 },
 mounted() {
@@ -90,10 +101,11 @@ mounted() {
         let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
         // for each booleanColumns check if it exists in the entry, if so set the corresponding grid cell to true
         this.booleanColumns.forEach((col, colIndex) => {
-          if (entry[col.toLowerCase()]) {
-            this.grid[rowIndex][colIndex] = 'true';
-          }
-        });
+            const key = this.camelCaseColumns[col];
+            if (entry[key] !== undefined) {
+              this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
+            }
+          });
         // check if side exists in the entry, if so set the corresponding grid cell
         if (entry.side) {
           console.log('entry.side is ', entry.side);
