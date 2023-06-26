@@ -1,7 +1,6 @@
 
 import { PrismaClient, Prisma, patient } from '@prisma/client';
 import { deleteNote } from './noteRepository';
-console.log('Prisma client created');
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
@@ -52,7 +51,6 @@ export const deletePatient = async (id: number): Promise<boolean> => {
     }
     
     const result = await prisma.patient.delete({ where: { id } });
-    console.log('result is ', result);
     return !!result;
   } catch (error) {
     console.error(error);
@@ -62,7 +60,6 @@ export const deletePatient = async (id: number): Promise<boolean> => {
 
 export const getPatient = async (id: number): Promise<patient | null> => {
   try {
-    console.log("type of ", typeof id);
     const patient = await prisma.patient.findUnique({ where: { id } });
     return patient;
   } catch (error) {

@@ -31,6 +31,7 @@ interface EntryPayload {
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
+    console.log('received on repo and received payload is ', payload);
     const defaultPayload = {
       createdDate: new Date(),
       category: 'spinal', // Replace with a valid default category
@@ -70,6 +71,7 @@ export const addEntry = async (payload: EntryPayload) => {
       throw new Error(`Note with id ${noteId} not found`);
     }
 
+    console.log('data without note id is ', dataWithoutNoteId);
     const newEntry = await prisma.entry.create({
       data: {
         ...dataWithoutNoteId,

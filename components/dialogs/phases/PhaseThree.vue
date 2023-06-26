@@ -26,16 +26,16 @@
             hide-details 
             dense 
             class="input-field" 
-            :items="sidesOptions"
-            @input="updateValue(i, j, $event)" />
+            :items="['Left', 'Right', 'Both']"
+            @update:modelValue="updateValue(i, j, $event)" />
           <v-select
             v-else
             v-model="grid[i][j]" 
             hide-details 
             dense 
             class="input-field" 
-            :items="['true', 'false']"
-            @input="updateValue(i, j, $event)" />
+            :items="['True', 'False']"
+            @update:modelValue="updateValue(i, j, $event)" />
         </v-col>
       </v-row>
     </div>
@@ -119,10 +119,38 @@ mounted() {
 },
   methods: {
     updateValue(i, j, value) {
-      this.$emit('update:phaseTwoForm', this.grid); // emit the changes
-      this.$emit('update:spinalGrid', this.grid);
+      console.log('UPDATE VALUE BEING CALLED and value is ', value);
+        // Convert "Left", "Right", "Both" to "l", "r", "b"
+        if (this.cols[j] === 'Sides') {
+          switch (value) {
+            case 'Left':
+              this.grid[i][j] = 'l';
+              break;
+            case 'Right':
+              this.grid[i][j] = 'r';
+              break;
+            case 'Both':
+              this.grid[i][j] = 'b';
+              break;
+            default:
+              this.grid[i][j] = null;
+          }
+          console.log('this grid i j is', this.grid[i][j])
+        }
 
-    },
+
+        // Convert "True", "False" to boolean true, false
+        else if (this.booleanColumns.includes(this.cols[j])) {
+          this.grid[i][j] = value === 'True' ? true : false;
+        }
+
+        else {
+          this.grid[i][j] = value;
+        }
+
+        this.$emit('update:phaseTwoForm', this.grid); // emit the changes
+        this.$emit('update:spinalGrid', this.grid);
+      }
   }
 }
 </script>

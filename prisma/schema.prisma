@@ -94,7 +94,7 @@ model user {
   lastName    String?
   email       String         @default("john@gmail.com")
   role        user_role_enum @default(user)
-  firebaseUid String
+  firebaseUid String         @unique
 }
 
 enum entry_category_enum {

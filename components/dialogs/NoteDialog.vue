@@ -267,34 +267,6 @@ export default {
           painLevel: 0,
         });
       },
-      async saveSpinalEntries(noteId) {
-        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
-        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
-        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
-
-        for(let i = 0; i < this.spinalGrid.length; i++) {
-          let entryData = {
-            noteId: noteId,
-            spinalLevel: spinalLevels[i]
-          };
-
-          for(let j = 0; j < this.spinalGrid[i].length; j++) {
-            if (this.spinalGrid[i][j]) {
-              entryData[entryFields[j]] = this.spinalGrid[i][j];
-            }
-          }
-
-          if (this.hasAnyField(entryData, entryFields)) {
-            let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
-
-            if(existingEntry) {
-              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
-            } else {
-              await this.entryService.addEntry(entryData, noteId);
-            }
-          }
-        }
-      },
       hasAnyField(entryData, entryFields) {
           for (let field of entryFields) {
             if (entryData.hasOwnProperty(field)) {
@@ -303,6 +275,45 @@ export default {
           }
           return false;
         },
+      async saveSpinalEntries(noteId) {
+        const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
+        const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+
+        // get old entries 
+        let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+
+        for(let i = 0; i < this.spinalGrid.length; i++) {
+          let entryData = {
+            noteId: noteId,
+            spinalLevel: spinalLevels[i]
+          };
+
+          console.log('SPINAL GRID I IS ', this.spinalGrid[i]);
+          for(let j = 0; j < this.spinalGrid[i].length; j++) {
+            if (this.spinalGrid[i][j]) {
+              console.log('SPINAL GRID I J IS TRUE AND IT IS ', this.spinalGrid[i][j])
+              entryData[entryFields[j]] = this.spinalGrid[i][j];
+              console.log('ENTRY DATA IS NOW ', entryData);
+            }
+          }
+
+          if (this.hasAnyField(entryData, entryFields)) {
+            console.log('IN HAS ANY FIELDS NOW');
+            let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
+            console.log('existing entry is ', existingEntry);
+
+            if(existingEntry) {
+              console.log('updating existing');
+              await this.entryService.updateEntry({ ...existingEntry, ...entryData });
+            } else {
+              console.log('adding a new entry');
+              console.log('entrydata for the new entry is ', entryData);
+              await this.entryService.addEntry(entryData, noteId);
+            }
+          }
+        }
+      },
+      
       async saveExtremityEntries(noteId) {
         const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
@@ -376,8 +387,6 @@ export default {
           ...this.form,
           visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
         };
-        console.log('adding note and formdata is ', formData);
-        console.log('adding note and patient id is ', patientId);
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
           console.log('Note not added');
@@ -385,7 +394,6 @@ export default {
           const noteId = res.id;
           await this.saveComplaints(noteId);
           await this.saveSpinalEntries(noteId); 
-          console.log('about to save extremeties');
           await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
           this.closeDialog();
@@ -394,6 +402,7 @@ export default {
       }
     },
     async updateNote() {
+      console.log('update note called');
       const formData = {
         ...this.form,
         visitDate: this.visitDate ? formatISO(this.visitDate) : null,
@@ -426,12 +435,37 @@ export default {
         }
       }
 
+      console.log('this.entries is ', this.spinalGrid);
+      console.log('entries is ', entries);
       for (let i = 0; i < entries.length; i++) {
-        const entry = this.entries[i];
-        const updateEntry = await this.entryService.updateEntry({entry});
-
-        if (updateEntry instanceof Error) {
-          console.log(`Entry ${i} not updated`);
+        const entry = entries[i];
+        if (entry.category === 'spinal') {
+          for(let i = 0; i < this.spinalGrid.length; i++) {
+              for (let j = 0; j < this.spinalGrid[i].length; j++) {
+                const currEntry = this.spinalGrid[i][j]
+                if (currEntry) {
+                  if (currEntry.id === entry.id) {
+                    const updateEntry = await this.entryService.updateEntry(currEntry);
+                    if (updateEntry instanceof Error) {
+                      console.log(`Entry ${i} not updated`);
+                    }
+                  }
+                }
+              }
+          }
+        
+        } else {
+          for(let i = 0; i < this.extremityGrid.length; i++) {
+              for (let j = 0; j < this.extremityGrid[i].length; j++) {
+                const currEntry = this.extremityGrid[i][j]
+                if (currEntry.id === entry.id) {
+                  const updateEntry = await this.entryService.updateEntry(currEntry);
+                  if (updateEntry instanceof Error) {
+                    console.log(`Entry ${i} not updated`);
+                  }
+                }
+              }
+          }
         }
       }
 
