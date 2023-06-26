@@ -1,22 +1,22 @@
 import { defineStore } from 'pinia'
-import { Patient } from '~/server/typeorm/entity/Patient'
+import { patient } from '@prisma/client';
 
 interface PatientState {
-  currentPatient: Patient;
+  currentPatient: patient;
 }
 
 export const patientStore = defineStore('patient', {
   state: () => ({
-    currentPatient: {} as Patient,
+    currentPatient: {} as patient,
   }),
 
   getters: {
     // getCurrentPatient: (state) => state.currentPatient,
-    getCurrentPatient: (state: PatientState): Patient | null =>
+    getCurrentPatient: (state: PatientState): patient | null =>
       Object.keys(state.currentPatient).length > 0 ? state.currentPatient : null,
   },
   actions: {
-    setCurrentPatient(patient: Patient) {
+    setCurrentPatient(patient: patient) {
         this.currentPatient = patient;
     },
   },

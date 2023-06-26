@@ -5,7 +5,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { createAuthService } from "~/services/auth";
 import { createUserService } from "~/services/user";
 import { userStore } from '~/store/user';
-import { User } from '~/server/typeorm/entity/User';
+import { user } from "@prisma/client";
 import { getApiInstance } from "~/utils/apiInstance";
 
 
@@ -85,7 +85,7 @@ export const signOutUser = async () => {
     const auth = getAuth();
     const result = await auth.signOut();
     store.setIsLoggedIn(false);
-    store.setUser({} as User);
+    store.setUser({} as user);
     return result;
 }
 

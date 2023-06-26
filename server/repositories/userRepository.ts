@@ -13,7 +13,7 @@ export const getAllUsers = async () => {
 };
 
 export const saveNewUser = async (
-  payload: Prisma.UserCreateInput
+  payload: Prisma.userCreateInput
 ): Promise<Prisma.PromiseReturnType<typeof prisma.user.create>> => {
   try {
     const existingUser = await prisma.user.findUnique({ where: { firebaseUid: payload.firebaseUid } });
@@ -35,7 +35,7 @@ export const saveNewUser = async (
 
 export const updateUser = async (
   id: number,
-  payload: Prisma.UserUpdateInput
+  payload: Prisma.userUpdateInput
 ): Promise<Prisma.PromiseReturnType<typeof prisma.user.update>> => {
   try {
     const existingUser = await prisma.user.findUnique({ where: { id } });

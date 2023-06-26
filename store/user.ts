@@ -1,22 +1,22 @@
 import { defineStore } from 'pinia'
-import { User } from '~/server/typeorm/entity/User';
+import { user } from '@prisma/client';
 
 interface UserState {
-  user: User;
+  user: user;
   isLoggedIn: boolean;
   authInitialized: boolean;
 }
 
 export const userStore = defineStore('user', {
   state: () => ({
-    user: {} as User,
+    user: {} as user,
     isLoggedIn: false,
     authInitialized: false,
   }),
 
   getters: {
     // getCurrentUser: (state) => state.currentUser,
-    getUser: (state: UserState): User | null =>
+    getUser: (state: UserState): user | null =>
       Object.keys(state.user).length > 0 ? state.user : null,
     getIsLoggedIn: (state: UserState): boolean => state.isLoggedIn,
     getAuthInitialized: (state: UserState): boolean => state.authInitialized,
@@ -25,7 +25,7 @@ export const userStore = defineStore('user', {
     setIsLoggedIn(value: boolean) {
         this.isLoggedIn = value;
     },
-    setUser(user: User) {
+    setUser(user: user) {
         this.user = user;
       },
     setAuthInitialized(value: boolean) {
