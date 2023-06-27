@@ -94,6 +94,7 @@ export const getUserByFirebaseUid = async (firebaseUid: string): Promise<Prisma.
     if (!user) {
       throw new Error('User not found');
     }
+    console.log('VALIDATED USER BY FIREBASE UID');
 
     return user;
   } catch (error) {
