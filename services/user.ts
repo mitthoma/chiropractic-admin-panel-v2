@@ -1,7 +1,5 @@
 import { AxiosInstance } from "axios";
 
-
-// TODO: give payload typings 
 export const createUserService = (api : AxiosInstance) => ({
   getUsers: async () => {
     const { data } = await api.get('/user/users');
@@ -18,16 +16,17 @@ export const createUserService = (api : AxiosInstance) => ({
     return data.data;
   },
   
-  addUser: async (payload : any) => {
+  addUser: async (payload: any) => {
     try {
   
       const credentials = await createUser(payload.email, payload.password);
       if (credentials && credentials.user) {
         const firebaseUid = credentials.user.uid;
   
-        // Save user data in your PostgreSQL database
         const response = await api.post('/user/user', {
-          payload,
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          email: payload.email,
           firebaseUid
         });
   

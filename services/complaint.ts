@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
 export const createComplaintService = (api : AxiosInstance) => ({
     getComplaints: async () => {
         const { data } = await api.get('/complaint/complaints');
-        console.log("data is ", data);
         return data.data;
     },
 

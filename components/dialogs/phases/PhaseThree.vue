@@ -13,12 +13,29 @@
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
           <v-text-field
+            v-if="col !== 'Sides' && !booleanColumns.includes(col)"
             v-model="grid[i][j]" 
             hide-details 
             dense 
             class="input-field" 
-            :placeholder="PHs[cols[j]]"
+            :placeholder="PHs[col]"
             @input="updateValue(i, j, $event)" />
+          <v-select
+            v-else-if="col === 'Sides'"
+            v-model="grid[i][j]" 
+            hide-details 
+            dense 
+            class="input-field" 
+            :items="['Left', 'Right', 'Both']"
+            @update:modelValue="updateValue(i, j, $event)" />
+          <v-select
+            v-else
+            v-model="grid[i][j]" 
+            hide-details 
+            dense 
+            class="input-field" 
+            :items="['True', 'False']"
+            @update:modelValue="updateValue(i, j, $event)" />
         </v-col>
       </v-row>
     </div>
@@ -31,35 +48,98 @@ export default {
     phaseTwoForm: {
       type: Object,
       required: true
+    },
+    existingData: {
+      type: Object,
+      required: false
     }
   },
   data() {
-  return {
-    dialog: true,
-    valid: true,
-    rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
-    cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 27}, () => Array(9).fill(null)),
-    PHs: {
-      'Sides': 'LRB',
-      'Subluxation': 'SX',
-      'Muscle Spasm': 'MS',
-      'Trigger Points': 'TP',
-      'Tenderness': 'TN',
-      'Numbness': 'NB',
-      'Edema': 'ED',
-      'Swelling': 'SW',
-      'Reduced Motion': 'RM'
-    },
-    changes: []
-  };
+    return {
+      dialog: true,
+      valid: true,
+      rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
+      cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      grid: Array.from({length: 29}, () => Array(9).fill(null)),
+      PHs: {
+        'Sides': 'LRB',
+        'Subluxation': 'SX',
+        'Muscle Spasm': 'MS',
+        'Trigger Points': 'TP',
+        'Tenderness': 'TN',
+        'Numbness': 'NB',
+        'Edema': 'ED',
+        'Swelling': 'SW',
+        'Reduced Motion': 'RM'
+      },
+      changes: [],
+      booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      sidesOptions: [
+          { text: 'Left', value: 'l' },
+          { text: 'Right', value: 'r' },
+          { text: 'Both', value: 'b' },
+        ],
+      camelCaseColumns: {
+        'Sides': 'sides',
+        'Subluxation': 'subluxation',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        'Tenderness': 'tenderness',
+        'Numbness': 'numbness',
+        'Edema': 'edema',
+        'Swelling': 'swelling',
+        'Reduced Motion': 'reducedMotion'
+      },
+    };
+},
+mounted() {
+  if (this.existingData) {
+    for (let entry of this.existingData) {
+      if (entry) {
+        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
+        this.booleanColumns.forEach((col, colIndex) => {
+            const key = this.camelCaseColumns[col];
+            if (entry[key] !== undefined) {
+              this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
+            }
+          });
+        if (entry.side) {
+          let colIndex = this.cols.findIndex(col => col === 'Sides');
+          let sideOption = this.sidesOptions.find(option => option.value === entry.side);
+          this.grid[rowIndex][colIndex] = sideOption.text;
+        }
+      }
+    }
+  }
 },
   methods: {
     updateValue(i, j, value) {
-      this.$emit('update:phaseTwoForm', this.grid); // emit the changes
-      this.$emit('update:spinalGrid', this.grid);
+        if (this.cols[j] === 'Sides') {
+          switch (value) {
+            case 'Left':
+              this.grid[i][j] = 'l';
+              break;
+            case 'Right':
+              this.grid[i][j] = 'r';
+              break;
+            case 'Both':
+              this.grid[i][j] = 'b';
+              break;
+            default:
+              this.grid[i][j] = null;
+          }
+        }
 
-    },
+        else if (this.booleanColumns.includes(this.cols[j])) {
+          this.grid[i][j] = value === 'True' ? true : false;
+        }
+        else {
+          this.grid[i][j] = value;
+        }
+
+        this.$emit('update:phaseTwoForm', this.grid); // emit the changes
+        this.$emit('update:spinalGrid', this.grid);
+      }
   }
 }
 </script>

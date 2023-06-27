@@ -3,6 +3,7 @@
       <v-container>
         <v-card class="elevation-4">
           <div class="py-5 d-flex">
+            
             <v-card-title>
               Note List
             </v-card-title>
@@ -124,7 +125,6 @@
         },
         formatDate(date, item) {
             if (isNaN(Date.parse(date))) {
-                console.log('item.visitdatetext ', item.visitDateText);
                 return item.visitDateText || "Invalid date";
             }
 

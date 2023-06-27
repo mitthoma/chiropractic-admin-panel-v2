@@ -3,11 +3,7 @@
 export default defineNuxtConfig({
     css: ['vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
     build: {
-        transpile: ['vuetify', '@vuepic/vue-datepicker', 'chart.js', '@/server/typeorm/entity/User',
-        '@/server/typeorm/entity/Note',
-        '@/server/typeorm/entity/Patient',
-        '@/server/typeorm/entity/Entry',]
-
+        transpile: ['vuetify', '@vuepic/vue-datepicker', 'chart.js',]
     },
     
     plugins: [

@@ -1,27 +1,26 @@
 //https://firebase.google.com/docs/auth/web/start
-
 import { AxiosInstance } from "axios";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { createAuthService } from "~/services/auth";
 import { createUserService } from "~/services/user";
 import { userStore } from '~/store/user';
-import { User } from '~/server/typeorm/entity/User';
+import { user } from "@prisma/client";
 import { getApiInstance } from "~/utils/apiInstance";
 
 
 
 export const createUser = async (email : string, password : string) => {
-    const auth = getAuth();
-
-    const credentials = await createUserWithEmailAndPassword(auth, email, password)
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-        });
-
-        return credentials;
+  if (!password) {
+    throw new Error('Password is not provided');
+  }
+  const auth = getAuth();
+  try {
+    const credentials = await createUserWithEmailAndPassword(auth, email, password);
+    return credentials;
+  } catch (error: any) {
+    throw error;
+  }
 }
-
 export const signInUser = async (email: string, password: string) => {
     const api = getApiInstance();
     const auth = getAuth();
@@ -30,24 +29,22 @@ export const signInUser = async (email: string, password: string) => {
     try {
         const credentials = await signInWithEmailAndPassword(auth, email, password);
         if (credentials) {
-            const res = await authService.signInUserWithAPI(credentials.user.uid);
-            if (res instanceof Error) {
-                return {
-                    error: res.message
-                }
-            } else if (credentials && res) {
-                store.setUser(res);
-                store.setIsLoggedIn(true);
-                return { success: true, credentials };
-            } else {
-                return { success: false, error: 'Error signing user in.' };
-            }
-        }
-        const res = { success: false, error: 'Error signing user in. Not receiving credentials from Firebase' }
-        return res
-    } catch (error : any) {
-        console.log('Error signing user in:', error);
-        return { success: false, error: error.message };
+          const res = await authService.signInUserWithAPI(credentials.user.uid);
+          if (res instanceof Error) {
+              console.log(res.message);
+              return { success: false, error: res.message };
+          } else if (res) {
+              store.setUser(res);
+              store.setIsLoggedIn(true);
+              return { success: true };
+          } else {
+              return { success: false, error: 'Error signing user in.' };
+          }
+      }
+      return { success: false, error: 'Error signing user in. Not receiving credentials from Firebase' }
+    } catch (error) {
+        console.log(error);
+        return { success: false };
     }
   };
 
@@ -60,15 +57,12 @@ export const signInUser = async (email: string, password: string) => {
   
     return new Promise((resolve) => {
       onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          // If the user is logged in, fetch their data from your PostgreSQL database
-          const response = await userService.getUserByFirebaseUID(user.uid);
 
-          // console.log('response is ', response);
+        if (user) {
+          const response = await userService.getUserByFirebaseUID({ firebaseUid: user.uid });
   
           if (response instanceof Error) {
-            // console.log("Invalid response from getUserByFirebaseUID");
-            // Update the store with the user data
+            console.log("Invalid response from getUserByFirebaseUID");
           } else {
             store.setUser(response);
             store.setIsLoggedIn(true);
@@ -85,7 +79,7 @@ export const signOutUser = async () => {
     const auth = getAuth();
     const result = await auth.signOut();
     store.setIsLoggedIn(false);
-    store.setUser({} as User);
+    store.setUser({} as user);
     return result;
 }
 
