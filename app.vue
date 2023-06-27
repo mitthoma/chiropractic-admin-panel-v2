@@ -1,80 +1,71 @@
 <template>
-  <!-- <div v-if="!isAuthInitialized">
-    <v-container>
-      <v-row class="my-24">
-        <v-col cols="4"></v-col>
-        <v-col style="text-align: center;" cols="4"><h4>Loading...</h4></v-col>
-        <v-col cols="4"></v-col>
-
-      </v-row>
-    </v-container>
-  </div> -->
-<v-container v-if="!isLoggedIn">
-  <v-row class="pt-16">
-    <v-col cols="4">
-
-    </v-col>
-    <v-col cols="4">
-      <!-- create a vuetify 3 log in page -->
-      <v-card class="w-full">
-        <v-card-title>
-          Log In
-        </v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="email"
-              label="Email"
-              outlined
-              dense
-            ></v-text-field>
-            <v-text-field
-              v-model="password"
-              label="Password"
-              outlined
-              dense
-              type="password"
-            ></v-text-field>
-            <v-btn
-              color="primary"
-              :disabled="loading"
-              @click="signIn()"
-            >
-              Log In
-            </v-btn>
-          </v-form>
-        </v-card-text>
-        <div v-if="loginUnsuccessful">
-          <v-card-text color="red">
-            Sign in unsuccessful. Please check your user credentials and try again.
+  <v-container v-if="!isLoggedIn">
+    <v-row class="pt-16">
+      <v-col cols="2">
+      </v-col>
+      <v-col cols="8">
+        <v-card class="w-full">
+          <v-card-title>
+            Log In
+          </v-card-title>
+          <v-card-text>
+            <v-form ref="loginForm">
+              <v-text-field
+                v-model="email"
+                label="Email"
+                variant="outlined"
+                dense
+              ></v-text-field>
+              <v-text-field
+                v-model="password"
+                :type="visible ? 'text' : 'password'"
+                label="Password"
+                dense
+                variant="outlined"
+                :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="visible = !visible"
+              >
+              </v-text-field>
+              <v-btn
+                color="primary"
+                :disabled="loading"
+                @click="signIn()"
+              >
+                Log In
+              </v-btn>
+            </v-form>
           </v-card-text>
-        </div>
+          <div v-if="loginUnsuccessful">
+            <v-card-text color="red">
+              Sign in unsuccessful. Please check your user credentials and try again.
+            </v-card-text>
+          </div>
+          
+          </v-card>
         
-        </v-card>
-      
-    </v-col>
-    <v-col cols="4">
-    </v-col>
-  </v-row>
-</v-container>
+      </v-col>
+      <v-col cols="2">
+      </v-col>
+    </v-row>
+  </v-container>
 
-<NuxtLayout v-else name="default">
+  <NuxtLayout v-else name="default">
 
-</NuxtLayout>
-
+  </NuxtLayout>
 </template>
 <script>
 import { userStore } from './store/user';
 
-
 export default {
     data () {
         return {
+            visible: false,
             email: '',
             password: '',
             loginUnsuccessful: false,
             store: null,
             loading: false,
+            passwordVisibility: false,
         }
     },
     computed: {
@@ -91,8 +82,6 @@ export default {
         } else  {
           return null;
         }
-        // for debugging purposes
-        // return true;
       },
     },
     async mounted() {
@@ -108,7 +97,8 @@ export default {
           if (result.error) {
             this.loginUnsuccessful = true;
           } else {
-
+            this.$refs.loginForm.reset();
+            this.passwordVisibility = false;
           }
         } catch (err) {
           console.log("Sign in unsuccessful", err);
@@ -117,9 +107,7 @@ export default {
         }
       },
       async initUser() {
-        console.log('running init user upon mounted and calling the useFirebase function');
         await initUser();
-        console.log('FROM APP VUE we are setting store authinitialized to TRUE')
         this.store.setAuthInitialized(true);
     },
 

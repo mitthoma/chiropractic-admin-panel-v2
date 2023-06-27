@@ -4,7 +4,6 @@ export default defineEventHandler(async event => {
     const body = await readBody(event);
     console.log('body incoming is ', body);
 
-    // Change 'Left' to 'l', 'Right' to 'r' and 'Both' to 'b'
     if (body.side === 'Left') {
         body.side = 'l';
     } else if (body.side === 'Right') {
@@ -13,7 +12,6 @@ export default defineEventHandler(async event => {
         body.side = 'b';
     }
 
-    // Define all the boolean fields
     const booleanFields = [
         'sublux',
         'muscleSpasm',
@@ -23,11 +21,8 @@ export default defineEventHandler(async event => {
         'edema',
         'swelling',
         'reducedMotion',
-        // Add other boolean fields here...
     ];
 
-    // Check if any of the boolean fields are null or string 'true' or 'false'
-    // and make them boolean true, false or null if they are
     booleanFields.forEach(field => {
         if (body[field] === null) {
             body[field] = false;

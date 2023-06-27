@@ -96,19 +96,14 @@ mounted() {
   if (this.existingData) {
     for (let entry of this.existingData) {
       if (entry) {
-        console.log('entry is ', entry);
-        // find index of the spinal level in the rows
         let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
-        // for each booleanColumns check if it exists in the entry, if so set the corresponding grid cell to true
         this.booleanColumns.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
               this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
             }
           });
-        // check if side exists in the entry, if so set the corresponding grid cell
         if (entry.side) {
-          console.log('entry.side is ', entry.side);
           let colIndex = this.cols.findIndex(col => col === 'Sides');
           let sideOption = this.sidesOptions.find(option => option.value === entry.side);
           this.grid[rowIndex][colIndex] = sideOption.text;
@@ -133,10 +128,8 @@ mounted() {
             default:
               this.grid[i][j] = null;
           }
-          console.log('this grid i j is', this.grid[i][j])
         }
 
-        // Convert "True", "False" to boolean true, false
         else if (this.booleanColumns.includes(this.cols[j])) {
           this.grid[i][j] = value === 'True' ? true : false;
         }

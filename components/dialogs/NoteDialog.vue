@@ -261,7 +261,6 @@ export default {
       async loadSpinalGrid(noteId) {
         // Get the data from your service
         const entries = await this.entryService.getEntriesForNote({ noteId });
-        console.log('entries loaded are ', entries);
 
         // Here, you can map your entries to your spinalGrid. For example:
         const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
@@ -274,7 +273,6 @@ export default {
             return null;
           }
         });
-        console.log('this spinal grid is ', this.spinalGrid);
       },
       async loadExtremityGrid(noteId) {
         // Get the data from your service
@@ -319,14 +317,12 @@ export default {
         // get old entries 
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
-        console.log('spinal grid is ', this.spinalGrid);
         for(let i = 0; i < this.spinalGrid.length; i++) {
           let entryData = {
             noteId: noteId,
             spinalLevel: spinalLevels[i]
           };
 
-          console.log('here it is');
           if (this.spinalGrid[i] && this.spinalGrid[i]?.length) {
             for(let j = 0; j < this.spinalGrid[i].length; j++) {
               if (this.spinalGrid[i][j]) {
@@ -416,14 +412,12 @@ export default {
     async submitNoteForm() {
       const patientId = this.$route.params.id;
       if (this.isFormValid) {
-        console.log('form visitDate ', this.form.visitDate);
         const formData = {
           ...this.form,
           visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
         };
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
-          console.log('Note not added');
         } else {
           const noteId = res.id;
           await this.saveComplaints(noteId);

@@ -1,7 +1,5 @@
 import { AxiosInstance } from "axios";
 
-
-// TODO: give payload typings 
 export const createUserService = (api : AxiosInstance) => ({
   getUsers: async () => {
     const { data } = await api.get('/user/users');
@@ -14,7 +12,6 @@ export const createUserService = (api : AxiosInstance) => ({
   },
   
   getUserByFirebaseUID: async (payload : any) => {
-    console.log('in getUserByFirebaseUID in the USER SERVICE ON FRONTEND and payload is ', payload);
     const { data } = await api.post('/user/user-uid', payload);
     return data.data;
   },
@@ -26,7 +23,6 @@ export const createUserService = (api : AxiosInstance) => ({
       if (credentials && credentials.user) {
         const firebaseUid = credentials.user.uid;
   
-        // Save user data in your PostgreSQL database
         const response = await api.post('/user/user', {
           firstName: payload.firstName,
           lastName: payload.lastName,

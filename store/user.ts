@@ -23,15 +23,12 @@ export const userStore = defineStore('user', {
   },
   actions: {
     setIsLoggedIn(value: boolean) {
-      console.log('IN PINIA STORE AND SETTING IS LOGGED IN TO ', value);
         this.isLoggedIn = value;
     },
     setUser(user: user) {
-      console.log('IN PINIA STORE AND SETTING USER TO ', user);
         this.user = user;
       },
     setAuthInitialized(value: boolean) {
-      console.log('IN PINIA STORE AND SETTING auth initialized to  ', value);
 
       this.authInitialized = value;
     },
