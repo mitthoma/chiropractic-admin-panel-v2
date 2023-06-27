@@ -31,7 +31,7 @@ function cellReferenceToIndex(ref) {
 // Define the generateCSV function
 export function generateCSV(payload) {
   // Create a 2D array representing the cells of the CSV content
-  const rows = 42; // Define the number of rows
+  const rows = 62; // Define the number of rows
   const cols = 29; // Define the number of columns (A to AC)
   const cells = new Array(rows)
     .fill(null)
@@ -39,6 +39,8 @@ export function generateCSV(payload) {
   // Populate the cells based on the cell mappings
   for (const [ref, value] of Object.entries(cellMappings)) {
     const { row, col } = cellReferenceToIndex(ref);
+    console.log('row is ', row, ' and col is ', col);
+    console.log("cells are ", cells);
     try {
         if (typeof value === 'function') {
           cells[row][col] = value(payload);
@@ -46,7 +48,7 @@ export function generateCSV(payload) {
           cells[row][col] = value;
         }
       } catch (error) {
-        // console.error(`Error populating cell ${ref}:`, error);
+        console.error(`Error populating cell ${ref}:`, error);
         cells[row][col] = ''; // Set an empty string or a default value in case of error
       }
     }
