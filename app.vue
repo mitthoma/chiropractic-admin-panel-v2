@@ -9,6 +9,7 @@
       </v-row>
     </v-container>
   </div> -->
+  is logged in is {{ isLoggedIn }}
 <v-container v-if="!isLoggedIn">
   <v-row class="pt-16">
     <v-col cols="4">
@@ -58,7 +59,9 @@
   </v-row>
 </v-container>
 
-<NuxtLayout v-else name="default"></NuxtLayout>
+<NuxtLayout v-else name="default">
+
+</NuxtLayout>
 
 </template>
 <script>
@@ -102,12 +105,12 @@ export default {
       async signIn() {
         this.loading = true;
         try {
-          const credentials = await signInUser(this.email, this.password);
-          if (!credentials) {
+          const result = await signInUser(this.email, this.password);
+          if (result.error) {
             this.loginUnsuccessful = true;
+          } else {
+
           }
-          console.log('sign in should be successful', )
-          return credentials;
         } catch (err) {
           console.log("Sign in unsuccessful", err);
         } finally {
@@ -115,9 +118,11 @@ export default {
         }
       },
       async initUser() {
+        console.log('running init user upon mounted and calling the useFirebase function');
         await initUser();
+        console.log('FROM APP VUE we are setting store authinitialized to TRUE')
         this.store.setAuthInitialized(true);
-      },
+    },
 
     },
 }

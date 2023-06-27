@@ -22,6 +22,9 @@
                 <th class="text-left" @click="sortUsers('email')">
                   Email
                 </th>
+                <th class="text-left" @click="sortUsers('role')">
+                  User Role
+                </th>
                 <!-- Additional columns as per your requirements -->
                 <th class="text-left"></th>
               </tr>
@@ -34,9 +37,11 @@
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+
                 <!-- Additional fields as per your requirements -->
                 <td class="d-flex justify-end">
-                  <v-btn color="primary" @click="resetPassword(user)">Reset Password</v-btn>
+                  <!-- <v-btn color="primary" @click="resetPassword(user)">Reset Password</v-btn> -->
                   <!-- Additional action items as per your requirements -->
                 </td>
               </tr>
@@ -50,7 +55,7 @@
           ></v-pagination>
         </v-card>
       </v-container>
-      <!-- <UserDialog v-model="userDialog" :selected-item="selectedUserItem" @close-dialog="closeUserDialog" @user-added="refreshUserList" /> -->
+      <UserDialog v-model="userDialog" :selected-item="selectedUserItem" @close-dialog="closeUserDialog" @user-added="refreshUserList" />
     </div>
   </template>
   
@@ -59,11 +64,12 @@
   import { userStore } from '~/store/user'; // Import your userStore
   import { createUser } from '~/composables/useFirebase'; // Import your createUser function
   import {createUserService} from '~/services/user'; // Import your user service
+  import UserDialog from '~/components/dialogs/UserDialog.vue';
   
   export default {
     name: 'UserPage',
     components: {
-        // UserDialog
+        UserDialog
     },
     data () {
         return {
@@ -87,30 +93,58 @@
         this.userService = createUserService(this.$api);
         // Load the users here from your user service
         // this.users = <Your code to load users from Prisma>;
+        this.users = await this.userService.getUsers();
+
   
-        // this.updateDisplayedUsers();
+        this.updateDisplayedUsers();
     },
     methods: {
-      async createUser(email, password) {
-        try {
-          const credentials = await createUser(email, password);
-          // After the user is created in Firebase, you can save it to your PostgreSQL database
-          await this.userService.saveUser({ firebaseUid: credentials.user.uid, email });
-          this.refreshUserList();
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      refreshUserList() {
+      async refreshUserList() {
         // Load the users here from your user service
         // this.users = <Your code to load users from Prisma>;
+        this.users = await this.userService.getUsers();
         this.updateDisplayedUsers();
       },
       updateDisplayedUsers() {
-          this.totalPages = Math.ceil(this.patients.length / this.itemsPerPage);
+          this.totalPages = Math.ceil(this.users.length / this.itemsPerPage);
           const startIndex = (this.currentPage - 1) * this.itemsPerPage;
           this.displayedUsers = this.users.slice(startIndex, startIndex + this.itemsPerPage);
         },
+
+        sortUsers(field) {
+        this.users = this.users.sort((a, b) => {
+          if (a[field] < b[field]) {
+            return -1;
+          }
+          if (a[field] > b[field]) {
+            return 1;
+          }
+          return 0;
+        });
+        this.updateDisplayedUsers();
+      },
+
+      backToDashboard() {
+          this.$router.push('/');
+      },
+      closeUserDialog() {
+          this.selectedUserItem = null;
+          this.userDialog = false;
+      },
+      editUserItem(user) {
+        this.selectedUserItem = user;
+        this.userDialog = true;
+      },
+      async deleteUser(item) {
+        try {
+          await this.userService.deleteUser({
+            id: item.id,
+          });
+          this.refreshUserList();
+        } catch (error) {
+          console.error('Error deleting user:', error);
+        }
+      },
       },
     };
   </script>

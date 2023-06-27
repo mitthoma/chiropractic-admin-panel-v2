@@ -14,11 +14,12 @@ export const createUserService = (api : AxiosInstance) => ({
   },
   
   getUserByFirebaseUID: async (payload : any) => {
+    console.log('in getUserByFirebaseUID in the USER SERVICE ON FRONTEND and payload is ', payload);
     const { data } = await api.post('/user/user-uid', payload);
     return data.data;
   },
   
-  addUser: async (payload : any) => {
+  addUser: async (payload: any) => {
     try {
   
       const credentials = await createUser(payload.email, payload.password);
@@ -27,7 +28,9 @@ export const createUserService = (api : AxiosInstance) => ({
   
         // Save user data in your PostgreSQL database
         const response = await api.post('/user/user', {
-          payload,
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          email: payload.email,
           firebaseUid
         });
   
