@@ -58,9 +58,9 @@ export default {
     return {
       dialog: true,
       valid: true,
-      rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
+      rows: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12', 'L1', 'L2', 'L3', 'L4', 'L5', 'S1', 'S2', 'S3', 'S4', 'S5'],
       cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-      grid: Array.from({length: 27}, () => Array(9).fill(null)),
+      grid: Array.from({length: 29}, () => Array(9).fill(null)),
       PHs: {
         'Sides': 'LRB',
         'Subluxation': 'SX',
@@ -73,7 +73,7 @@ export default {
         'Reduced Motion': 'RM'
       },
       changes: [],
-      booleanColumns: ['Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
       sidesOptions: [
           { text: 'Left', value: 'l' },
           { text: 'Right', value: 'r' },
@@ -119,8 +119,6 @@ mounted() {
 },
   methods: {
     updateValue(i, j, value) {
-      console.log('UPDATE VALUE BEING CALLED and value is ', value);
-        // Convert "Left", "Right", "Both" to "l", "r", "b"
         if (this.cols[j] === 'Sides') {
           switch (value) {
             case 'Left':
@@ -138,12 +136,10 @@ mounted() {
           console.log('this grid i j is', this.grid[i][j])
         }
 
-
         // Convert "True", "False" to boolean true, false
         else if (this.booleanColumns.includes(this.cols[j])) {
           this.grid[i][j] = value === 'True' ? true : false;
         }
-
         else {
           this.grid[i][j] = value;
         }

@@ -26,16 +26,16 @@
             hide-details 
             dense 
             class="input-field" 
-            :items="sidesOptions"
-            @input="updateValue(i, j, $event)" />
+            :items="['Left', 'Right', 'Both']"
+            @update:modelValue="updateValue(i, j, $event)" />
           <v-select
             v-else
             v-model="grid[i][j]" 
             hide-details 
             dense 
             class="input-field" 
-            :items="['true', 'false']"
-            @input="updateValue(i, j, $event)" />
+            :items="['True', 'False']"
+            @update:modelValue="updateValue(i, j, $event)" />
         </v-col>
       </v-row>
     </div>
@@ -48,6 +48,10 @@ export default {
     phaseFourForm: {
       type: Object,
       required: true
+    },
+    existingData: {
+      type: Object,
+      required: false
     }
   },
   data() {
@@ -69,21 +73,73 @@ export default {
       'Reduced Motion': 'RM'
     },
     changes: [],
-    booleanColumns: ['Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+    booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
     sidesOptions: [
         { text: 'Left', value: 'l' },
         { text: 'Right', value: 'r' },
         { text: 'Both', value: 'b' },
       ],
-
+    camelCaseColumns: {
+      'Sides': 'sides',
+      'Subluxation': 'subluxation',
+      'Muscle Spasm': 'muscleSpasm',
+      'Trigger Points': 'triggerPoints',
+      'Tenderness': 'tenderness',
+      'Numbness': 'numbness',
+      'Edema': 'edema',
+      'Swelling': 'swelling',
+      'Reduced Motion': 'reducedMotion'
+    },
   };
+},
+mounted() {
+  if (this.existingData) {
+    for (let entry of this.existingData) {
+      if (entry) {
+        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.extremityLevel);
+        this.booleanColumns.forEach((col, colIndex) => {
+            const key = this.camelCaseColumns[col];
+            if (entry[key] !== undefined) {
+              this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
+            }
+          });
+        if (entry.side) {
+          let colIndex = this.cols.findIndex(col => col === 'Sides');
+          let sideOption = this.sidesOptions.find(option => option.value === entry.side);
+          this.grid[rowIndex][colIndex] = sideOption.text;
+        }
+      }
+    }
+  }
 },
   methods: {
     updateValue(i, j, value) {
-      this.$emit('update:phaseFourForm', this.grid); // emit the changes
-      this.$emit('update:extremityGrid', this.grid);
+        if (this.cols[j] === 'Sides') {
+          switch (value) {
+            case 'Left':
+              this.grid[i][j] = 'l';
+              break;
+            case 'Right':
+              this.grid[i][j] = 'r';
+              break;
+            case 'Both':
+              this.grid[i][j] = 'b';
+              break;
+            default:
+              this.grid[i][j] = null;
+          }
+        }
 
-    },
+        else if (this.booleanColumns.includes(this.cols[j])) {
+          this.grid[i][j] = value === 'True' ? true : false;
+        }
+        else {
+          this.grid[i][j] = value;
+        }
+
+        this.$emit('update:phaseTwoForm', this.grid); // emit the changes
+        this.$emit('update:extremityGrid', this.grid);
+      }
   }
 }
 </script>

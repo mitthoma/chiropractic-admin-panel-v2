@@ -9,7 +9,6 @@
       </v-row>
     </v-container>
   </div> -->
-  is logged in is {{ isLoggedIn }}
 <v-container v-if="!isLoggedIn">
   <v-row class="pt-16">
     <v-col cols="4">
