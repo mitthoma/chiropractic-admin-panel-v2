@@ -24,9 +24,9 @@
 
         <template #append>
           <div class="pa-2">
-            <!-- <v-btn color="primary" block @click="signOut()">
+            <v-btn color="primary" block @click="signOut()">
               Logout
-            </v-btn> -->
+            </v-btn>
           </div>
         </template>
     </v-navigation-drawer>

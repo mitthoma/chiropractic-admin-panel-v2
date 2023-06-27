@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isAuthInitialized">
+  <!-- <div v-if="!isAuthInitialized">
     <v-container>
       <v-row class="my-24">
         <v-col cols="4"></v-col>
@@ -8,8 +8,8 @@
 
       </v-row>
     </v-container>
-  </div>
-<v-container v-else-if="!isLoggedIn">
+  </div> -->
+<v-container v-if="!isLoggedIn">
   <v-row class="pt-16">
     <v-col cols="4">
 
@@ -84,13 +84,13 @@ export default {
         }
       },
       isLoggedIn() {
-        // if (this.store) {
-        //   return this.store.getIsLoggedIn;
-        // } else  {
-        //   return null;
-        // }
+        if (this.store) {
+          return this.store.getIsLoggedIn;
+        } else  {
+          return null;
+        }
         // for debugging purposes
-        return true;
+        // return true;
       },
     },
     async mounted() {
@@ -106,10 +106,10 @@ export default {
           if (!credentials) {
             this.loginUnsuccessful = true;
           }
-          // console.log('sign in should be successful', )
+          console.log('sign in should be successful', )
           return credentials;
         } catch (err) {
-          // console.log("Sign in unsuccessful", err);
+          console.log("Sign in unsuccessful", err);
         } finally {
           this.loading = false;
         }
