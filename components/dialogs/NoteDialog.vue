@@ -41,16 +41,23 @@
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <!-- <PhaseThree v-model:phaseThreeForm="form"  /> -->
-              <PhaseThree :phase-three-form="entries" @update:phaseThreeForm="entries = $event" @update:spinalGrid="spinalGrid = $event" />
-
+              <PhaseThree 
+                :phase-three-form="entries" 
+                :existing-data="spinalGrid" 
+                @update:phaseThreeForm="entries = $event" 
+                @update:spinalGrid="spinalGrid = $event" 
+              />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour :phase-four-form="entries" @update:phaseFourForm="entries = $event" @update:extremityGrid="extremityGrid = $event" />
+              <PhaseFour 
+              :phase-four-form="entries" 
+              :existing-data="extremityGrid"
+              @update:phaseFourForm="entries = $event" 
+              @update:extremityGrid="extremityGrid = $event" />
             </v-form>
           </v-container>
         </v-window-item>
@@ -150,8 +157,23 @@ export default {
         phaseThreeRoomAssignment: null,
         phaseFourRoomAssignment: null,
       },
+      booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      spinalLevels: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'],
+      extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'],
+      camelCaseColumns: {
+        'Sides': 'sides',
+        'Subluxation': 'subluxation',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        'Tenderness': 'tenderness',
+        'Numbness': 'numbness',
+        'Edema': 'edema',
+        'Swelling': 'swelling',
+        'Reduced Motion': 'reducedMotion'
+      },
       spinalGrid: [],
       extremityGrid: [],
+      existingEntriesForUpdate: [],
       complaints: [
         {
           text: '',
@@ -201,6 +223,8 @@ export default {
     selectedItem(newItem, oldItem) {
       if (newItem && newItem !== oldItem) {
         this.populateFormData(newItem);
+        this.loadSpinalGrid(newItem.id);
+        this.loadExtremityGrid(newItem.id);
       }
     },
   },
@@ -213,6 +237,8 @@ export default {
       this.form = {
         ...this.selectedItem,
       };
+      this.loadSpinalGrid(this.selectedItem.id);
+      this.loadExtremityGrid(this.selectedItem.id);
     }
   },
   beforeUnmount() {
@@ -229,12 +255,12 @@ export default {
         this.complaints = complaints.map(complaint => ({ id: complaint.id, text: complaint.text, painLevel: complaint.painLevel }));
 
         await this.loadSpinalGrid(item.id);
+        await this.loadExtremityGrid(item.id);
         // Do similar mapping for extremityGrid
       },
       async loadSpinalGrid(noteId) {
         // Get the data from your service
         const entries = await this.entryService.getEntriesForNote({ noteId });
-        console.log('entries loaded are ', entries);
 
         // Here, you can map your entries to your spinalGrid. For example:
         const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
@@ -242,9 +268,25 @@ export default {
         this.spinalGrid = spinalLevels.map(level => {
           const entry = entries.find(entry => entry.spinalLevel === level);
           if (entry) {
-            return [entry.side, entry.sublux, entry.muscleSpasm, entry.triggerPoints, entry.tenderness, entry.numbness, entry.edema, entry.swelling, entry.reducedMotion];
+            return entry;
           } else {
-            return [null, null, null, null, null, null, null, null, null];
+            return null;
+          }
+        });
+      },
+      async loadExtremityGrid(noteId) {
+        // Get the data from your service
+        const entries = await this.entryService.getEntriesForNote({ noteId });
+
+        // Here, you can map your entries to your spinalGrid. For example:
+        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'];
+
+        this.extremityGrid = extremityLevels.map(level => {
+          const entry = entries.find(entry => entry.extremityLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
           }
         });
       },
@@ -260,9 +302,19 @@ export default {
           painLevel: 0,
         });
       },
+      hasAnyField(entryData, entryFields) {
+          for (let field of entryFields) {
+            if (entryData.hasOwnProperty(field)) {
+              return true;
+            }
+          }
+          return false;
+        },
       async saveSpinalEntries(noteId) {
         const spinalLevels = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12', 'l1', 'l2', 'l3', 'l4', 'l5', 's1', 's2', 's3', 's4', 's5'];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
+
+        // get old entries 
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
         for(let i = 0; i < this.spinalGrid.length; i++) {
@@ -271,11 +323,14 @@ export default {
             spinalLevel: spinalLevels[i]
           };
 
-          for(let j = 0; j < this.spinalGrid[i].length; j++) {
-            if (this.spinalGrid[i][j]) {
-              entryData[entryFields[j]] = this.spinalGrid[i][j];
+          if (this.spinalGrid[i] && this.spinalGrid[i]?.length) {
+            for(let j = 0; j < this.spinalGrid[i].length; j++) {
+              if (this.spinalGrid[i][j]) {
+                entryData[entryFields[j]] = this.spinalGrid[i][j];
+              }
             }
           }
+          
 
           if (this.hasAnyField(entryData, entryFields)) {
             let existingEntry = noteEntries.find(entry => entry.spinalLevel === spinalLevels[i]);
@@ -288,16 +343,9 @@ export default {
           }
         }
       },
-      hasAnyField(entryData, entryFields) {
-          for (let field of entryFields) {
-            if (entryData.hasOwnProperty(field)) {
-              return true;
-            }
-          }
-          return false;
-        },
+      
       async saveExtremityEntries(noteId) {
-        const extremityLevels = ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'];
+        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 
@@ -307,11 +355,14 @@ export default {
             extremityLevel: extremityLevels[i]
           };
 
-          for(let j = 0; j < this.extremityGrid[i].length; j++) {
-            if (this.extremityGrid[i][j]) {
-              entryData[entryFields[j]] = this.extremityGrid[i][j];
+          if (this.extremityGrid[i] && this.extremityGrid[i]?.length) {
+            for(let j = 0; j < this.extremityGrid[i].length; j++) {
+              if (this.extremityGrid[i][j]) {
+                  entryData[entryFields[j]] = this.extremityGrid[i][j];
+                }
             }
           }
+          
 
           if (this.hasAnyField(entryData, entryFields)) {
             let existingEntry = noteEntries.find(entry => entry.extremityLevel === extremityLevels[i]);
@@ -319,9 +370,6 @@ export default {
             if(existingEntry) {
               await this.entryService.updateEntry({ ...existingEntry, ...entryData });
             } else {
-              console.log('at add entry');
-              console.log('entry data is ', entryData);
-              console.log('noteId is ', noteId);
               await this.entryService.addEntry(entryData, noteId);
             }
           }
@@ -364,21 +412,16 @@ export default {
     async submitNoteForm() {
       const patientId = this.$route.params.id;
       if (this.isFormValid) {
-        console.log('form visitDate ', this.form.visitDate);
         const formData = {
           ...this.form,
           visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
         };
-        console.log('adding note and formdata is ', formData);
-        console.log('adding note and patient id is ', patientId);
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {
-          console.log('Note not added');
         } else {
           const noteId = res.id;
           await this.saveComplaints(noteId);
           await this.saveSpinalEntries(noteId); 
-          console.log('about to save extremeties');
           await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
           this.closeDialog();
@@ -419,15 +462,68 @@ export default {
         }
       }
 
-      for (let i = 0; i < entries.length; i++) {
-        const entry = this.entries[i];
-        const updateEntry = await this.entryService.updateEntry({entry});
+      // TODO: UPDATE THE ENTRIES HERE -- SHOULD BE BASED ON THE UPDATED SPINALGRID
 
-        if (updateEntry instanceof Error) {
-          console.log(`Entry ${i} not updated`);
+      for (let i = 0; i < this.spinalGrid.length; i++) {
+        for (let j = 0; j < entries.length; j++) {
+          const updatedEntry = this.spinalGrid[i];
+          const pastEntry = entries[j];
+          if (updatedEntry) {
+            const updateObject = {
+              side: updatedEntry[0] === "" ? false : updatedEntry[0],
+              sublux: updatedEntry[1] === "" ? false : updatedEntry[1],
+              muscleSpasm: updatedEntry[2] === "" ? false : updatedEntry[2],
+              triggerPoints: updatedEntry[3] === "" ? false : updatedEntry[3],
+              tenderness: updatedEntry[4] === "" ? false : updatedEntry[4],
+              numbness: updatedEntry[5] === "" ? false : updatedEntry[5],
+              edema: updatedEntry[6] === "" ? false : updatedEntry[6],
+              swelling: updatedEntry[7] === "" ? false : updatedEntry[7],
+              reducedMotion: updatedEntry[8] === "" ? false : updatedEntry[8],
+              spinalLevel: this.spinalLevels[i],
+            }
+            if (updateObject.spinalLevel === pastEntry.spinalLevel) {
+              const updatedEntry = await this.entryService.updateEntry({
+                ...pastEntry,
+                ...updateObject,
+              });
+              if (updatedEntry instanceof Error) {
+                console.log('Entry not updated');
+              } 
+            }
+          }
+          
         }
       }
 
+      for (let i = 0; i < this.extremityGrid.length; i++) {
+        for (let j = 0; j < entries.length; j++) {
+          const updatedEntry = this.extremityGrid[i];
+          const pastEntry = entries[j];
+          if (updatedEntry) {
+            const updateObject = {
+              side: updatedEntry[0] === "" ? false : updatedEntry[0],
+              sublux: updatedEntry[1] === "" ? false : updatedEntry[1],
+              muscleSpasm: updatedEntry[2] === "" ? false : updatedEntry[2],
+              triggerPoints: updatedEntry[3] === "" ? false : updatedEntry[3],
+              tenderness: updatedEntry[4] === "" ? false : updatedEntry[4],
+              numbness: updatedEntry[5] === "" ? false : updatedEntry[5],
+              edema: updatedEntry[6] === "" ? false : updatedEntry[6],
+              swelling: updatedEntry[7] === "" ? false : updatedEntry[7],
+              reducedMotion: updatedEntry[8] === "" ? false : updatedEntry[8],
+              extremityLevel: this.extremityLevels[i],
+            }
+            if (updateObject.extremityLevel === pastEntry.extremityLevel) {
+              const updatedEntry = await this.entryService.updateEntry({
+                ...pastEntry,
+                ...updateObject,
+              });
+              if (updatedEntry instanceof Error) {
+                console.log('Entry not updated');
+              } 
+            }
+          }
+        }
+      }
       this.$emit('note-updated');
       this.closeDialog();
     },
@@ -439,7 +535,6 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
-      console.log('DATE TIME IS ', datetime);
       this.form.visitDate = datetime;
     },
     async saveComplaints(noteId) {
@@ -449,7 +544,6 @@ export default {
         if(complaint.id) {
           await this.complaintService.updateComplaint(complaint);
         } else {
-          console.log('complaint ', complaint);
           await this.complaintService.addComplaint(complaint, noteId);
         }
       }
@@ -458,10 +552,8 @@ export default {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
           if (this.isUpdateMode) {
-            console.log('WE ARE UPDATING');
             await this.updateNote();
           } else {
-            console.log('WE ARE CREATING NEW');
             this.submitNoteForm();
           }
         } else {

@@ -114,7 +114,7 @@
                     Objective Findings - Extremity
                 </v-card-title>
                 <v-card class="pa-5">
-                    <ExtremityGrid :entries="spinalEntries" />
+                    <ExtremityGrid :entries="extremityEntries" />
                 </v-card>
             </v-col>
         </v-row>

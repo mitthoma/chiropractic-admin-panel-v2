@@ -24,9 +24,9 @@
 
         <template #append>
           <div class="pa-2">
-            <!-- <v-btn color="primary" block @click="signOut()">
+            <v-btn color="primary" block @click="signOut()">
               Logout
-            </v-btn> -->
+            </v-btn>
           </div>
         </template>
     </v-navigation-drawer>
@@ -54,26 +54,27 @@
                 </v-avatar>
               </v-btn>
             </template>
-            <v-card>
+            <v-card class="pa-5">
               <v-card-text>
                 <div class="mx-auto text-center">
                   <v-avatar
                     color="brown"
+                    class="w-full"
                   >
                     <span class="text-h5">{{ user.initials }}</span>
                   </v-avatar>
-                  <h3>{{ user.fullName }}</h3>
+                  <h3>{{ user.firstName }}</h3>
                   <p class="text-caption mt-1">
                     {{ user.email }}
                   </p>
-                  <v-divider class="my-3"></v-divider>
+                  <!-- <v-divider class="my-3"></v-divider>
                   <v-btn
                     rounded
                     variant="text"
                   >
                     Edit Account
                   </v-btn>
-                  <v-divider class="my-3"></v-divider>
+                  <v-divider class="my-3"></v-divider> -->
                 </div>
               </v-card-text>
             </v-card>
@@ -101,9 +102,10 @@ const theme = useTheme();
 const drawer = ref(null);
 const themeToggler = ref(false);
 const user =  {
-        initials: 'TU',
-        fullName: 'Test User',
-        email: 'm@blacsand.io',
+        firstName: store.user.firstName,
+        lastName: store.user.lastName,
+        email: store.user.email,
+        initials: store.user.firstName[0].toUpperCase() + store.user.lastName[0].toUpperCase(),
       };
 const items =  [
         {

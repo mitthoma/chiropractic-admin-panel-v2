@@ -264,6 +264,7 @@
         });
 
         // 2. construct the payload
+        console.log('entries are ', entries);
         let payload = entries.reduce((acc, entry) => {
           const key = entry.spinalLevel || entry.extremityLevel;
           if (!acc[key]) {
@@ -274,6 +275,9 @@
               treatment: {},
             };
           }
+
+          console.log('key is ', key)
+          console.log('acc is ', acc);
 
           acc[key].sides[entry.side] = true;
           acc[key].of.sublux = entry.sublux
@@ -293,6 +297,7 @@
           acc[key].treatment.positioning = entry.treatmentPositioning;
           acc[key].treatment.technique = entry.technique;
           acc[key].treatment.manipulation = entry.manipulation;
+          console.log('done with ', key);
 
           return acc;
         }, {});
@@ -315,6 +320,7 @@
         payload.physiotherapyNumber = note.physiotherapy || ""
         payload.phaseOneRoomAssignments.physio = note.physio || "";
         payload.phaseOneRoomAssignments.tx = note.tx || "";
+        console.log('this payload is ', payload);
 
         this.payload = payload;
       },

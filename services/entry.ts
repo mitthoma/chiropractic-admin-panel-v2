@@ -17,6 +17,7 @@ export const createEntryService = (api : AxiosInstance) => ({
             ...payload,
             noteId
         }
+        console.log('ADDING A NEW ENTRY ON SERVICE AND PAYLOAD IS ', payload);
         const { data } = await api.post('/entry/entry', payload);
         return data.data;
     },

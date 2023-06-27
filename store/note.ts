@@ -1,22 +1,22 @@
 import { defineStore } from 'pinia'
-import { Note } from '~/server/typeorm/entity/Note';
+import { note } from '@prisma/client';
 
 interface NoteState {
-  currentNote: Note;
+  currentNote: note;
 }
 
 export const noteStore = defineStore('note', {
   state: () => ({
-    currentNote: {} as Note,
+    currentNote: {} as note,
   }),
 
   getters: {
     // getCurrentPatient: (state) => state.currentPatient,
-    getCurrentNote: (state: NoteState): Note | null =>
+    getCurrentNote: (state: NoteState): note | null =>
       Object.keys(state.currentNote).length > 0 ? state.currentNote : null,
   },
   actions: {
-    setCurrentNote(note: Note) {
+    setCurrentNote(note: note) {
         this.currentNote = note;
     },
   },

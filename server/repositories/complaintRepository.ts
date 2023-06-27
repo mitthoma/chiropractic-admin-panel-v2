@@ -5,8 +5,6 @@ export const addNewComplaint = async (payload: any, noteId: string) => {
   try {
     const notesRepository = prisma.note;
 
-    console.log('note id is ', noteId);
-
     // Fetch the patient from the database
     const note = await notesRepository.findUnique({ where: { id: noteId } });
 
@@ -47,13 +45,10 @@ export const updateComplaint = async (complaintId: string, payload: Partial<any>
       throw new Error(`Complaint with id ${complaintId} not found`);
     }
 
-    console.log('ABOUT TO UPDATE COMPLAINT AND PAYLOAD IS ', payload);
     const updatedComplaint = await prisma.complaint.update({
       where: { id: complaintId },
       data: payload // Here, we're using payload directly instead of payload.complaint
     });
-
-    console.log('updatedcomplaint is ', updatedComplaint);
 
     return updatedComplaint;
   } catch (error) {
@@ -75,7 +70,6 @@ export const deleteComplaint = async (complaintId: string) => {
 export const getComplaintsByNoteId = async (noteId: string) => {
   try {
     const complaints = await prisma.complaint.findMany({ where: { noteId } });
-    console.log('COMPLAINTS ARE ', complaints);
     return complaints;
   } catch (error) {
     console.log(error);
@@ -85,7 +79,6 @@ export const getComplaintsByNoteId = async (noteId: string) => {
 
 export const getComplaintById = async (complaintId: string) => {
   try {
-    console.log('ADD COMPLAINT, COMPLAINT ID IS ', complaintId);
 
     const complaint = await prisma.complaint.findUnique({
       where: { id: complaintId },

@@ -7,8 +7,6 @@ export default defineEventHandler(async event => {
     const formattedRoomAssignment3 = parseInt(body.phaseThreeRoomAssignment);
     const formattedRoomAssignment4 = parseInt(body.phaseFourRoomAssignment);
 
-    console.log('body is ', body);
-
     const formattedBody = {
         ...body,
         phaseOneRoomAssignment: formattedRoomAssignment1 || null,
