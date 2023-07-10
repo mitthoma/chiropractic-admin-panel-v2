@@ -33,6 +33,7 @@
               >
                 Log In
               </v-btn>
+              <!-- <GoogleLogin /> -->
             </v-form>
           </v-card-text>
           <div v-if="loginUnsuccessful">
