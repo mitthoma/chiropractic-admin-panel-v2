@@ -1,5 +1,8 @@
 <template>
   <v-container v-if="!isLoggedIn">
+    <div class="text-center mt-12">
+      <h3>Pynkerton Chiropractic Portal</h3>
+    </div>
     <v-row class="pt-16">
       <v-col cols="2">
       </v-col>
@@ -26,43 +29,60 @@
                 @click:append-inner="visible = !visible"
               >
               </v-text-field>
-              <v-btn
+              <div class="d-flex ">
+                <v-btn
                 color="primary"
                 :disabled="loading"
+                class="justify-start"
                 @click="signIn()"
               >
                 Log In
               </v-btn>
+              <v-spacer></v-spacer>
               <v-btn
                   color="primary"
-                  outlined
-                  @click="showResetDialog = true"
+                  variant="outlined"
+                  class="justify-end"
+                 @click="showResetDialog = true"
+
                 >
                   Forgot password?
                 </v-btn>
-                <v-dialog v-if="clientSide" v-model="showResetDialog">
-                  <v-card>
-                    <v-card-title>
-                      Forgot password
-                    </v-card-title>
-                    <v-card-text>
-                      <v-form ref="resetForm">
-                        <v-text-field
-                          v-model="resetEmail"
-                          label="Email"
-                          variant="outlined"
-                          dense
-                        ></v-text-field>
-                        <v-btn
-                          color="primary"
-                          :disabled="loading"
-                          @click="sendResetEmail"
-                        >
-                          Send reset email
-                        </v-btn>
-                      </v-form>
-                    </v-card-text>
-                  </v-card>
+
+              </div>
+              
+                <v-dialog v-if="clientSide" v-model="showResetDialog" class="align-center">
+                  <v-row>
+                    <v-col cols="3"></v-col>
+                    <v-col cols="6">
+                      <v-card class="py-5">
+                        <v-card-title>
+                          Forgot password
+                        </v-card-title>
+                        <v-card-text>
+                          <v-form ref="resetForm">
+                            <v-text-field
+                              v-model="resetEmail"
+                              label="Email"
+                              variant="outlined"
+                              dense
+                            ></v-text-field>
+                            <v-btn
+                              color="primary"
+                              :disabled="loading"
+                              @click="sendResetEmail"
+                            >
+                              Send reset email
+                            </v-btn>
+                          </v-form>
+                        </v-card-text>
+                      </v-card>
+                      
+                    </v-col>
+                    <v-col cols="3"></v-col>
+
+                  </v-row>
+                  
                 </v-dialog>
               <!-- <GoogleLogin /> -->
             </v-form>
