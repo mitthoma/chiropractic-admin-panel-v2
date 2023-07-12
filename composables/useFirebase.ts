@@ -1,6 +1,6 @@
 //https://firebase.google.com/docs/auth/web/start
 import { AxiosInstance } from "axios";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 import { createAuthService } from "~/services/auth";
 import { createUserService } from "~/services/user";
 import { userStore } from '~/store/user';
@@ -82,5 +82,14 @@ export const signOutUser = async () => {
     store.setUser({} as user);
     return result;
 }
+
+export const resetPassword = async (email: string) => {
+  const auth = getAuth();
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error: any) {
+    throw error;
+  }
+};
 
 

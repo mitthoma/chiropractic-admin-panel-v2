@@ -33,6 +33,37 @@
               >
                 Log In
               </v-btn>
+              <v-btn
+                  color="primary"
+                  outlined
+                  @click="showResetDialog = true"
+                >
+                  Forgot password?
+                </v-btn>
+                <v-dialog v-if="clientSide" v-model="showResetDialog">
+                  <v-card>
+                    <v-card-title>
+                      Forgot password
+                    </v-card-title>
+                    <v-card-text>
+                      <v-form ref="resetForm">
+                        <v-text-field
+                          v-model="resetEmail"
+                          label="Email"
+                          variant="outlined"
+                          dense
+                        ></v-text-field>
+                        <v-btn
+                          color="primary"
+                          :disabled="loading"
+                          @click="sendResetEmail"
+                        >
+                          Send reset email
+                        </v-btn>
+                      </v-form>
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
               <!-- <GoogleLogin /> -->
             </v-form>
           </v-card-text>
@@ -67,6 +98,9 @@ export default {
             store: null,
             loading: false,
             passwordVisibility: false,
+            showResetDialog: false,
+            resetEmail: '',
+            clientSide: false,
         }
     },
     computed: {
@@ -85,9 +119,18 @@ export default {
         }
       },
     },
+    watch: {
+  isLoggedIn(newVal) {
+    if (newVal) {
+      // You could handle reinitialization logic here, like resetting the store or fetching the updated user data
+      this.initUser();
+    }
+  }
+},
     async mounted() {
       this.store = userStore();
       await this.initUser();
+      this.clientSide = true; 
 
     },
     methods: {
@@ -98,7 +141,7 @@ export default {
           if (result.error) {
             this.loginUnsuccessful = true;
           } else {
-            this.$refs.loginForm.reset();
+            this.$refs.loginForm?.reset();
             this.passwordVisibility = false;
           }
         } catch (err) {
@@ -111,7 +154,22 @@ export default {
         await initUser();
         this.store.setAuthInitialized(true);
     },
+    async sendResetEmail() {
+  this.loading = true;
+  try {
+    await resetPassword(this.resetEmail);
+    this.store.reset(); // Assuming reset() is a method that resets your store
+    location.reload(); // Reload the page
+  } catch (err) {
+    console.log("Failed to send reset email", err);
+    // Show an error message
+  } finally {
+    this.loading = false;
+    this.showResetDialog = false;
+    this.resetEmail = ''; 
+  }
+},
 
-    },
+    }
 }
 </script>
