@@ -9,13 +9,13 @@
   </v-row>
   <v-row>
     <v-col cols="4">
-      <v-text-field 
-          variant="outlined"
-          :value="phaseTwoForm.phaseTwoRoomAssignment"
-          type="number"
-          placeholder="Room Assignment"
-          @input="updatePhaseTwoRoomAssignment"     
-      ></v-text-field>
+      <!-- TODO: KILLED THE LINTER FOR THIS TO WORK. FIGURE IT OUT. -->
+      <v-select
+        :items="rooms"
+        v-model="phaseTwoForm.phaseTwoRoomAssignment"
+        placeholder="Room Assignment"
+        @change="updatePhaseTwoRoomAssignment"
+      ></v-select>
       </v-col>
       <v-col cols="4">
         <VueDatePicker
@@ -156,6 +156,7 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import { createRoomService } from '~~/services/room';
 
 export default {
       components: {
@@ -170,10 +171,17 @@ export default {
           type: Object,
         },
       },
+      async mounted() {
+        this.roomService = createRoomService(this.$api);
+        await this.loadRooms();
+
+      },
       data() {
         return {
           visitDateTime: null,
           visitDate: null,
+          rooms: [],
+          roomService: null,
           
         };
       },
@@ -185,6 +193,7 @@ export default {
       },
       methods: {
         updatePhaseTwoRoomAssignment(newVal) {
+          console.log('newVal', newVal.target.value);
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
             phaseTwoRoomAssignment: newVal.target.value
@@ -250,6 +259,17 @@ export default {
             respiration: newVal.target.value
           });
         },
+        async loadRooms() {
+    try {
+        const roomsData = await this.roomService.getRooms();
+        roomsData.forEach((room) => {
+          console.log('room text is ', room.text);
+            this.rooms.push(room.text);
+            });
+    } catch (error) {
+        console.error(error);
+    }
+}
       }
   }
 </script>

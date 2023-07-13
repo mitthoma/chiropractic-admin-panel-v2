@@ -65,16 +65,16 @@ model note {
   systolic                 Int?
   diastolic                Int?
   physiotherapy            Int?
-  phaseOneRoomAssignment   Int?
+  phaseOneRoomAssignment   String?
   physio                   Int?
   tx                       Int?
   otherNotes               String?
   patientId                Int?
   pulse                    Int?
   visitDateText            String?
-  phaseTwoRoomAssignment   Int?
-  phaseThreeRoomAssignment Int?
-  phaseFourRoomAssignment  Int?
+  phaseTwoRoomAssignment   String?
+  phaseThreeRoomAssignment String?
+  phaseFourRoomAssignment  String?
   weight                   Int?
   entry                    entry[]
   complaint                complaint[]
