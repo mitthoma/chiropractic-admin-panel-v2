@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "room" (
+    "id" SERIAL NOT NULL,
+    "text" TEXT NOT NULL,
+    "lastEdited" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "room_pkey" PRIMARY KEY ("id")
+);
