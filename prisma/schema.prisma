@@ -46,6 +46,13 @@ model entry {
   note                 note?                      @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_df491c2c902d007610301eff36d")
 }
 
+model room {
+  id         Int       @id @default(autoincrement())
+  text       String
+  lastEdited DateTime @default(now()) @db.Timestamp(6)
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+}
+
 model note {
   id                       String    @id(map: "PK_96d0c172a4fba276b1bbed43058") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   visitDate                DateTime? @default(now()) @db.Timestamp(6)
@@ -58,16 +65,16 @@ model note {
   systolic                 Int?
   diastolic                Int?
   physiotherapy            Int?
-  phaseOneRoomAssignment   Int?
+  phaseOneRoomAssignment   String?
   physio                   Int?
   tx                       Int?
   otherNotes               String?
   patientId                Int?
   pulse                    Int?
   visitDateText            String?
-  phaseTwoRoomAssignment   Int?
-  phaseThreeRoomAssignment Int?
-  phaseFourRoomAssignment  Int?
+  phaseTwoRoomAssignment   String?
+  phaseThreeRoomAssignment String?
+  phaseFourRoomAssignment  String?
   weight                   Int?
   entry                    entry[]
   complaint                complaint[]
