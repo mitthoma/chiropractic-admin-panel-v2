@@ -5,6 +5,14 @@ export default defineNuxtConfig({
     build: {
         transpile: ['vuetify', '@vuepic/vue-datepicker', 'chart.js',]
     },
+    auth: {
+        strategies: {
+            google: {
+                clientId: process.env.GOOGLE_AUTH_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
+            },
+        },
+        },
     
     plugins: [
         '~/plugins/firebaseAuth.ts', 

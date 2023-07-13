@@ -155,6 +155,11 @@ mounted() {
   margin-bottom: 10px;
 } */
 
+.input-field {
+  text-transform: capitalize;
+}
+
+
 .grid-container {
   max-height: 70vh;
   padding: 20px;

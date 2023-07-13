@@ -152,7 +152,7 @@ export default {
         tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: 1,
+        phaseOneRoomAssignment: null,
         phaseTwoRoomAssignment: null,
         phaseThreeRoomAssignment: null,
         phaseFourRoomAssignment: null,
