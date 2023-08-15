@@ -152,10 +152,6 @@ export default {
         tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: null,
-        phaseTwoRoomAssignment: null,
-        phaseThreeRoomAssignment: null,
-        phaseFourRoomAssignment: null,
       },
       booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
       spinalLevels: [
@@ -479,10 +475,6 @@ export default {
         tx: null,
         pulse: null,
         otherNotes: "",
-        phaseOneRoomAssignment: 1,
-        phaseTwoRoomAssignment: null,
-        phaseThreeRoomAssignment: null,
-        phaseFourRoomAssignment: null,
       };
       this.visitDateTime = null;
       this.formIsValid = [false, false, false, false, false, false];

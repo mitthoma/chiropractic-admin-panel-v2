@@ -12,14 +12,14 @@ export default defineEventHandler(async event => {
         systolic: body.systolic ? parseInt(body.systolic) : null,
         diastolic: body.diastolic ? parseInt(body.diastolic) : null,
         physiotherapy: body.physiotherapy ? parseInt(body.physiotherapy) : null,
-        phaseOneRoomAssignment: body.phaseOneRoomAssignment ? parseInt(body.phaseOneRoomAssignment) : null,
+        // phaseOneRoomAssignment: body.phaseOneRoomAssignment ? parseInt(body.phaseOneRoomAssignment) : null,
         physio: body.physio ? parseInt(body.physio) : null,
         tx: body.tx ? parseInt(body.tx) : null,
         patientId: body.patientId ? parseInt(body.patientId) : null,
         pulse: body.pulse ? parseInt(body.pulse) : null,
-        phaseTwoRoomAssignment: body.phaseTwoRoomAssignment ? parseInt(body.phaseTwoRoomAssignment) : null,
-        phaseThreeRoomAssignment: body.phaseThreeRoomAssignment ? parseInt(body.phaseThreeRoomAssignment) : null,
-        phaseFourRoomAssignment: body.phaseFourRoomAssignment ? parseInt(body.phaseFourRoomAssignment) : null,
+        // phaseTwoRoomAssignment: body.phaseTwoRoomAssignment ? parseInt(body.phaseTwoRoomAssignment) : null,
+        // phaseThreeRoomAssignment: body.phaseThreeRoomAssignment ? parseInt(body.phaseThreeRoomAssignment) : null,
+        // phaseFourRoomAssignment: body.phaseFourRoomAssignment ? parseInt(body.phaseFourRoomAssignment) : null,
         weight: body.weight ? parseInt(body.weight) : null
     }
 
