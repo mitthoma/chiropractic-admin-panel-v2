@@ -13,8 +13,6 @@
                             <v-col cols="6">
                                 <div class="d-flex align-center justify-space-around">
                                     <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Room Assignment</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.phaseTwoRoomAssignment}}</v-card-text>
                                     </v-col>
                                 </div>
                                 <div class="d-flex align-center justify-space-around">
@@ -72,7 +70,7 @@
 
                 </v-card>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12">
                 <v-card-title>
                     Subjective Complaints
                 </v-card-title>
@@ -82,6 +80,8 @@
                         <tr>
                             <th class="text-center" @click="sortNotes('text')">Complaint</th>
                             <th class="text-center" @click="sortNotes('painLevel')">Pain Level</th>
+                            <th class="text-center" @click="sortNotes('lastEdited')">Edited Last</th>
+
                         </tr>
                         </thead>
                         <tbody class="">
@@ -89,8 +89,10 @@
                             v-for="item in complaints"
                             :key="item.id"
                         >
-                            <td>{{ item.text }}</td>
-                            <td>{{ item.text ? item.painLevel : '' }}</td>
+                            <td class="text-center">{{ item.text }}</td>
+                            <td class="text-center">{{ item.text ? item.painLevel : '' }}</td>
+                            <td class="text-center">{{ formatDate(item.lastEdited)}}</td>
+
                         </tr>
                         </tbody>
                     </v-table>
@@ -209,9 +211,22 @@ export default {
                 console.warn("Current note is not available.");
             }
         },
+        formatDate(date) {
+            if (isNaN(Date.parse(date))) {
+                return "Invalid date";
+            }
+
+            const formattedDate = new Intl.DateTimeFormat("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            }).format(new Date(date));
+
+            return `${formattedDate}`;
+        },
         formatVisitDate(date, item) {
           if (!date && !item.visitDateText) {
-              return "No Date Data";
+              return "No Date Data";f
           }
           if (!date || isNaN(Date.parse(date))) {
               return item.visitDateText;

@@ -17,6 +17,8 @@
             :value="complaint.painLevel"
             :max="5"
             :step="1"
+            :ticks='[0, 1, 2, 3, 4, 5]'
+            show-ticks="always"
             label="Pain Level"
             @input="updateComplaintPainLevel(index, $event)"
           ></v-slider>
