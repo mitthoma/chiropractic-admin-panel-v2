@@ -11,10 +11,55 @@
         <!-- C Levels Group -->
         <v-row>
         <v-col cols="1" class="text-center static-col extra-info-group">
-          <div class="mb-1">C Levels</div>
+          <div class="mb-1">Sub Occ</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(0, 7)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(0, 1)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Upper Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(1, 3)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Mid Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(3, 5)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Lower Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(5, 7)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -27,10 +72,10 @@
       <!-- T Levels Group -->
       <v-row>
         <v-col cols="1" class="text-center static-col extra-info-group">
-          <div class="mb-1">T Levels</div>
+          <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(7, 19)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(7, 10)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -40,13 +85,59 @@
           </v-row>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Mid T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(10, 14)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i + 7, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Lower T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(14, 19)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i + 7, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      
       <!-- L Levels Group -->
       <v-row>
         <v-col cols="1" class="text-center static-col extra-info-group">
-          <div class="mb-1">L Levels</div>
+          <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(19, 24)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(19, 22)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i + 19, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Lower L</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(22, 24)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -59,10 +150,25 @@
       <!-- S Levels Group -->
       <v-row>
         <v-col cols="1" class="text-center static-col extra-info-group">
-          <div class="mb-1">S Levels</div>
+          <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(24, 29)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(24, 27)" :key="i">
+            <v-col class="text-center static-col grid-cell">
+              <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+              <div>{{ getValue(i + 24, j) }}</div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col extra-info-group">
+          <div class="mb-1">Lower S</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="(row, i) in rows.slice(27, 29)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -146,7 +252,7 @@
         const value = entry[fieldName];
         
         if (this.booleanFields.includes(fieldName)) {
-          return value ? 'True' : '';
+          return value ? 'X' : '';
         }
 
         return this.getDisplayedValue(value);
@@ -182,6 +288,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(1.5rem * 5); /* Adjust height as needed */
+  /* min-height: calc(1.5rem * 5); Adjust height as needed */
 }
 </style>
