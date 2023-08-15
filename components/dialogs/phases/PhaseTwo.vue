@@ -8,15 +8,6 @@
     </v-col>
   </v-row>
   <v-row>
-    <v-col cols="4">
-      <!-- TODO: KILLED THE LINTER FOR THIS TO WORK. FIGURE IT OUT. -->
-      <v-select
-        :items="rooms"
-        v-model="phaseTwoForm.phaseTwoRoomAssignment"
-        placeholder="Room Assignment"
-        @change="updatePhaseTwoRoomAssignment"
-      ></v-select>
-      </v-col>
       <v-col cols="4">
         <VueDatePicker
           v-model="visitDateTime"
@@ -192,13 +183,6 @@ export default {
 
       },
       methods: {
-        updatePhaseTwoRoomAssignment(newVal) {
-          console.log('newVal', newVal.target.value);
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            phaseTwoRoomAssignment: newVal.target.value
-          });
-        },
         updatePhaseTwoHeightFeet(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
