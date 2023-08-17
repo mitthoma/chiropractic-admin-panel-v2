@@ -30,11 +30,11 @@
             @update:modelValue="updateValue(i, j, $event)" />
           <v-select
             v-else
-            v-model="grid[i][j]" 
+            v-model="displayGrid[i][j]" 
             hide-details 
             dense 
             class="input-field" 
-            :items="['True', 'False']"
+            :items="['X', '']"
             @update:modelValue="updateValue(i, j, $event)" />
         </v-col>
       </v-row>
@@ -129,7 +129,7 @@ mounted() {
         this.booleanColumns.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
+              this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
             }
           });
         if (entry.side) {
@@ -139,6 +139,18 @@ mounted() {
         }
       }
     }
+  }
+},
+computed: {
+  displayGrid() {
+    return this.grid.map(row => {
+      return row.map((cell, index) => {
+        if (this.booleanColumns.includes(this.cols[index])) {
+          return cell ? 'X' : '';
+        }
+        return cell;
+      });
+    });
   }
 },
   methods: {
@@ -160,7 +172,7 @@ mounted() {
         }
 
         else if (this.booleanColumns.includes(this.cols[j])) {
-          this.grid[i][j] = value === 'True' ? true : false;
+          this.grid[i][j] = value === 'X' ? true : false;
         }
         else {
           this.grid[i][j] = value;

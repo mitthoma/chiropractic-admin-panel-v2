@@ -28,9 +28,9 @@ export default defineEventHandler(async event => {
             body[field] = false;
         } else if (typeof body[field] === 'string') {
         
-            if (body[field].toLowerCase() === 'true') {
+            if (body[field].toLowerCase() === 'x') {
                 body[field] = true;
-            } else if (body[field].toLowerCase() === 'false') {
+            } else if (body[field].toLowerCase() === '') {
                 body[field] = false;
             }
         }
