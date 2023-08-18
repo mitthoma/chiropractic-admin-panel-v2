@@ -13,8 +13,8 @@ model complaint {
   text       String
   painLevel  Int
   lastEdited DateTime @default(now()) @db.Timestamp(6)
-  noteId     String?  @db.Uuid
-  note       note?    @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_complaint_note")
+  patientId  Int?
+  patient    patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model entry {
@@ -58,8 +58,6 @@ model note {
   visitDate                DateTime? @default(now()) @db.Timestamp(6)
   createdDate              DateTime  @default(now()) @db.Timestamp(6)
   lastEdited               DateTime  @default(now()) @db.Timestamp(6)
-  heightFeet               Int?
-  heightInches             Int?
   temperature              Int?
   respiration              Int?
   systolic                 Int?
@@ -75,9 +73,7 @@ model note {
   phaseTwoRoomAssignment   String?
   phaseThreeRoomAssignment String?
   phaseFourRoomAssignment  String?
-  weight                   Int?
   entry                    entry[]
-  complaint                complaint[]
   patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
 }
 
@@ -90,9 +86,13 @@ model patient {
   email           String      @default("john@gmail.com")
   acctNo          String
   phoneNumber     String?
+  heightFeet      Int?
+  heightInches    Int?
+  weight          Int?
   nextAppointment DateTime?   @db.Timestamp(6)
   createdDate     DateTime    @default(now()) @db.Timestamp(6)
   note            note[]
+  complaint       complaint[]
 }
 
 model user {
