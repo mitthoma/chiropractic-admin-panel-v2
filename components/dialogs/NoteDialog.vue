@@ -78,8 +78,8 @@
       </v-window>
       <v-card-actions class="d-flex">
         <v-card-text class="justify-start">Patient: {{currentPatient?.firstName}} {{ currentPatient?.lastName }}</v-card-text>
-        <v-card-text class="justify-start">Height: {{ form.heightFeet }}' {{ form.heightInches }}"</v-card-text>
-        <v-card-text class="justify-start">Weight: {{ form.weight }} lbs</v-card-text>
+        <v-card-text class="justify-start">Height: {{ currentPatient?.heightFeet }}' {{ currentPatient?.heightInches }}"</v-card-text>
+        <v-card-text class="justify-start">Weight: {{ currentPatient?.weight }} lbs</v-card-text>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{ tab === 1 ? 'Back' : 'Cancel' }}</v-btn>
         <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 5 ? saveButtonText : 'Save & Next' }}</v-btn>
@@ -140,9 +140,6 @@ export default {
       form: {
         visitDate: null,
         visitDateText: null,
-        heightFeet: null,
-        heightInches: null,
-        weight: null,
         temperature: null,
         respiration: null,
         systolic: null,
@@ -260,7 +257,7 @@ export default {
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
     if (this.isUpdateMode) {
-      this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.selectedItem.id });
+      this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.currentPatient.id });
       this.form = {
         ...this.selectedItem,
       };
@@ -278,7 +275,7 @@ export default {
           ...item,
         };
         this.visitDateTime = visitDate;
-        const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
+        const complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.currentPatient.id });
         this.complaints = complaints.map(complaint => ({ id: complaint.id, text: complaint.text, painLevel: complaint.painLevel }));
 
         await this.loadSpinalGrid(item.id);
@@ -469,9 +466,6 @@ export default {
       this.form = {
         visitDate: null,
         visitDateText: null,
-        heightFeet: null,
-        heightInches: null,
-        weight: null,
         temperature: null,
         respiration: null,
         systolic: null,
@@ -505,7 +499,7 @@ export default {
         if (await res instanceof Error) {
         } else {
           const noteId = res.id;
-          await this.saveComplaints(noteId);
+          await this.saveComplaints(this.currentPatient.id);
           await this.saveSpinalEntries(noteId); 
           await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
@@ -539,8 +533,8 @@ export default {
         const complaint = this.complaints[i];
 
         const res = complaint.id
-          ? await this.complaintService.updateComplaint({ ...complaint, noteId: this.selectedItem.id}, complaint.id)
-          : await this.complaintService.addComplaint({ ...complaint }, this.selectedItem.id);
+          ? await this.complaintService.updateComplaint({ ...complaint, patientId: this.currentPatient.id}, complaint.id)
+          : await this.complaintService.addComplaint({ ...complaint }, this.currentPatient.id);
 
         if (res instanceof Error) {
           console.log(`Complaint ${i} not updated`);
@@ -622,14 +616,14 @@ export default {
     updateVisitDateTime(datetime) {
       this.form.visitDate = datetime;
     },
-    async saveComplaints(noteId) {
+    async saveComplaints(patientId) {
       // save complaints associated with the note ID
       // note: you would need to get note ID and also ensure this.complaints contains all complaints, not just new ones
       for (let complaint of this.complaints) {
         if(complaint.id) {
           await this.complaintService.updateComplaint(complaint);
         } else {
-          await this.complaintService.addComplaint(complaint, noteId);
+          await this.complaintService.addComplaint(complaint, patientId);
         }
       }
     },

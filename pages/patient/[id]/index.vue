@@ -310,17 +310,14 @@
         payload.patientFirstName = currentPatient.firstName;
         payload.patientLastName = currentPatient.lastName;
         payload.noteVisitDate = note.visitDate || note.visitDateText || "";
-        payload.height = `${note.heightFeet || ""}'${note.heightInches || ""}"` || "";
-        payload.weight = `${note.weight || ""} lbs`;
+        payload.height = `${currentPatient.heightFeet || ""}'${currentPatient.heightInches || ""}"` || "";
+        payload.weight = `${currentPatient.weight || ""} lbs`;
         payload.temperature = `${note.temperature} F` || "";
         payload.systolic = note.systolic || "";
         payload.diastoic = note.diastoic || "";
         payload.pulse = note.pulse || "";
         payload.respiration = note.respiration || "";
         payload.physiotherapyNumber = note.physiotherapy || ""
-        payload.phaseOneRoomAssignments.physio = note.physio || "";
-        payload.phaseOneRoomAssignments.tx = note.tx || "";
-        console.log('this payload is ', payload);
 
         this.payload = payload;
       },

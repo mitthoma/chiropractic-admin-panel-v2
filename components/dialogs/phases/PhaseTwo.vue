@@ -29,12 +29,12 @@
       </v-col>
   </v-row>
   <v-row>
-    <v-col cols="4">
+    <!-- <v-col cols="4">
       <v-suffix>Height</v-suffix>
     </v-col>
     <v-col cols="2">
       <v-suffix>Weight</v-suffix>
-    </v-col>
+    </v-col> -->
     <v-col cols="2">
       <v-suffix>Temperature</v-suffix>
     </v-col>
@@ -44,7 +44,7 @@
   </v-row>
   
   <v-row>
-    <v-col cols="2">
+    <!-- <v-col cols="2">
       <v-text-field
           variant="outlined"
           :value="phaseTwoForm.heightFeet"
@@ -64,8 +64,8 @@
           @input="updatePhaseTwoHeightInches"
 
       ></v-text-field>
-    </v-col>
-    <v-col cols="2">
+    </v-col> -->
+    <!-- <v-col cols="2">
       <v-text-field 
         variant="outlined"
           :value="phaseTwoForm.weight"
@@ -75,7 +75,7 @@
           @input="updatePhaseTwoWeight"
 
       ></v-text-field>
-    </v-col>
+    </v-col> -->
     <v-col cols="2">
       <v-text-field 
       variant="outlined"
@@ -183,24 +183,6 @@ export default {
 
       },
       methods: {
-        updatePhaseTwoHeightFeet(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            heightFeet: newVal.target.value
-          });
-        },
-        updatePhaseTwoHeightInches(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            heightInches: newVal.target.value
-          });
-        },
-        updatePhaseTwoWeight(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            weight: newVal.target.value
-          });
-        },
         updatePhaseTwoTemperature(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
