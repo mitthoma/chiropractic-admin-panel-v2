@@ -106,7 +106,7 @@ const user =  {
     firstName: store.user?.firstName,
     lastName: store.user?.lastName,
     email: store.user?.email,
-    initials: store.user ? store.user.firstName[0].toUpperCase() + store.user.lastName[0].toUpperCase() : '',
+    initials: store.user ? store.user?.firstName[0]?.toUpperCase() + store.user?.lastName[0]?.toUpperCase() : '',
 };
 const items =  [
         {

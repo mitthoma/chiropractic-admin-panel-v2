@@ -55,7 +55,7 @@
         const value = entry[fieldName];
         
         if (this.booleanFields.includes(fieldName)) {
-          return value ? 'True' : '';
+          return value ? 'X' : '';
         }
 
         return this.getDisplayedValue(value);

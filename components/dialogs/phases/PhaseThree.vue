@@ -2,40 +2,428 @@
   <div class="grid-container">
     <v-row class="header-row text-center">
       <v-col></v-col>
+      <v-col></v-col>
+      
       <v-col v-for="(col, j) in cols" :key="j">
         <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
       </v-col>
     </v-row>
     <div class="scrollable-content">
-      <v-row v-for="(row, i) in rows" :key="i">
-        <v-col class="text-center static-col">
-          <div class="mb-1"><strong>{{ row }}</strong></div>
+      <v-row>
+        <v-col cols="1" class="text-center static-col">
+          <div class="mb-1">Sub Occ</div>
         </v-col>
-        <v-col v-for="(col, j) in cols" :key="j">
-          <v-text-field
-            v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-            v-model="grid[i][j]" 
-            hide-details 
-            dense 
-            class="input-field" 
-            :placeholder="PHs[col]"
-            @input="updateValue(i, j, $event)" />
-          <v-select
-            v-else-if="col === 'Sides'"
-            v-model="grid[i][j]" 
-            hide-details 
-            dense 
-            class="input-field" 
-            :items="['Left', 'Right', 'Both']"
-            @update:modelValue="updateValue(i, j, $event)" />
-          <v-select
-            v-else
-            v-model="grid[i][j]" 
-            hide-details 
-            dense 
-            class="input-field" 
-            :items="['True', 'False']"
-            @update:modelValue="updateValue(i, j, $event)" />
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(0, 1)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col">
+          <div class="mb-1">Upper Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(1, 3)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Mid Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(3, 5)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Lower Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(5, 8)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Upper T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(8, 10)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Mid T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(10, 14)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Lower T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(14, 20)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Upper L</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(20, 22)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Lower L</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(22, 25)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Upper S</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(25, 27)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center static-col ">
+          <div class="mb-1">Lower S</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(27, 30)" :key="modifiedRow.index">
+            <v-col class="text-center static-col">
+              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <v-text-field
+                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
+                v-model="grid[modifiedRow.index][j]"
+                hide-details
+                dense
+                class="input-field"
+                :placeholder="PHs[col]"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                v-else-if="col === 'Sides'"
+                v-model="grid[modifiedRow.index][j]"
+                :items="['Left', 'Right', 'Both']"
+                dense
+                class="input-field"
+                @input="updateValue(modifiedRow.index, j, $event)" />
+                <v-select
+                  v-else
+                  v-model="displayGrid[modifiedRow.index][j]" 
+                  hide-details 
+                  dense 
+                  class="input-field" 
+                  :items="['X', '']"
+                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </div>
@@ -58,13 +446,15 @@ export default {
     return {
       dialog: true,
       valid: true,
-      rows: ['occ_c',
+      rows: [
+        'occ_c1',
         'c1_c2',
         'c2_c3',
         'c3_c4',
         'c4_c5',
         'c5_c6',
         'c6_c7',
+        'c7_t1',
         't1_t2',
         't2_t3',
         't3_t4',
@@ -76,20 +466,21 @@ export default {
         't9_t10',
         't10_t11',
         't11_t12',
-        't12_t13',
+        't12_l1',
         'l1_l2',
         'l2_l3',
         'l3_l4',
         'l4_l5',
-        'l5_l6',
+        'l5_s1',
         's1_s2',
         's2_s3',
         's3_s4',
         's4_s5',
-        's5_s6',],
+        's5',
+      ],
       
       cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-      grid: Array.from({length: 29}, () => Array(9).fill(null)),
+      grid: Array.from({length: 30}, () => Array(9).fill(null)),
       PHs: {
         'Sides': 'LRB',
         'Subluxation': 'SX',
@@ -129,7 +520,7 @@ mounted() {
         this.booleanColumns.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? 'True' : '';
+              this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
             }
           });
         if (entry.side) {
@@ -141,7 +532,25 @@ mounted() {
     }
   }
 },
+computed: {
+  displayGrid() {
+    return this.grid.map(row => {
+      return row.map((cell, index) => {
+        if (this.booleanColumns.includes(this.cols[index])) {
+          return cell ? 'X' : '';
+        }
+        return cell;
+      });
+    });
+  },
+  
+},
   methods: {
+    modifiedRows(slice1, slice2) {
+      return this.rows.slice(slice1, slice2).map((row, index) => {
+        return { row, index: slice1 + index };
+      });
+    },
     updateValue(i, j, value) {
         if (this.cols[j] === 'Sides') {
           switch (value) {
@@ -160,7 +569,7 @@ mounted() {
         }
 
         else if (this.booleanColumns.includes(this.cols[j])) {
-          this.grid[i][j] = value === 'True' ? true : false;
+          this.grid[i][j] = value === 'X' ? true : false;
         }
         else {
           this.grid[i][j] = value;
@@ -213,7 +622,7 @@ mounted() {
 
 .scrollable-content {
   overflow: auto;
-  max-height: 70vh;
+  max-height: 50vh;
   overflow-x: auto; /* Added overflow-x */
   padding-top: 15px;
 }
@@ -241,5 +650,14 @@ mounted() {
   /* padding-top: 15px; */
   text-align: center; /* Centers the header text */
 }
+
+
+.centered-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 
 </style>

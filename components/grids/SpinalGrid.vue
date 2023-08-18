@@ -59,7 +59,7 @@
           <div class="mb-1">Lower Cerv</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(5, 7)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(5, 8)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -75,7 +75,7 @@
           <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(7, 10)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(8, 10)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -105,7 +105,7 @@
           <div class="mb-1">Lower T</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(14, 19)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(14, 20)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -122,7 +122,7 @@
           <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(19, 22)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(20, 22)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -137,7 +137,7 @@
           <div class="mb-1">Lower L</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(22, 24)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(22, 25)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -153,7 +153,7 @@
           <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(24, 27)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(25, 27)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -168,7 +168,7 @@
           <div class="mb-1">Lower S</div>
         </v-col>
         <v-col cols="11">
-          <v-row v-for="(row, i) in rows.slice(27, 29)" :key="i">
+          <v-row v-for="(row, i) in rows.slice(27, 30)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
@@ -200,6 +200,7 @@
         'c4_c5',
         'c5_c6',
         'c6_c7',
+        'c7_t1',
         't1_t2',
         't2_t3',
         't3_t4',
@@ -211,17 +212,17 @@
         't9_t10',
         't10_t11',
         't11_t12',
-        't12_t13',
+        't12_l1',
         'l1_l2',
         'l2_l3',
         'l3_l4',
         'l4_l5',
-        'l5_l6',
+        'l5_s1',
         's1_s2',
         's2_s3',
         's3_s4',
         's4_s5',
-        's5_s6',
+        's5',
         ],
         cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
         mapColsToFields: {

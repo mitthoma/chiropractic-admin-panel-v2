@@ -7,8 +7,8 @@ export const createComplaintService = (api : AxiosInstance) => ({
         return data.data;
     },
 
-    getComplaintsForNote: async (payload : any) => {
-        const { data } = await api.post('/complaint/note-complaints', payload);
+    getComplaintsForPatient: async (payload : any) => {
+        const { data } = await api.post('/complaint/patient-complaints', payload);
         return data.data;
     },
 
@@ -17,10 +17,10 @@ export const createComplaintService = (api : AxiosInstance) => ({
         return data.data;
     },
 
-    addComplaint: async (payload : any, noteId : any) => {
+    addComplaint: async (payload : any, patientId : any) => {
         payload = {
             ...payload,
-            noteId: noteId,
+            patientId: patientId,
         }
         const { data } = await api.post('/complaint/complaint', payload);
         return data.data;
