@@ -8,7 +8,7 @@ export const addNewComplaint = async (payload: any, patientId: number) => {
     // Fetch the patient from the database
     const patient = await patientsRepository.findUnique({ where: { id: patientId } });
 
-    if (!note) {
+    if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
 
@@ -69,7 +69,6 @@ export const deleteComplaint = async (complaintId: string) => {
 
 export const getComplaintsByPatientId = async (patientId: number) => {
   try {
-    console.log('PATIENT ID IS ', patientId);
     const complaints = await prisma.complaint.findMany({ where: { patientId } });
     return complaints;
   } catch (error) {

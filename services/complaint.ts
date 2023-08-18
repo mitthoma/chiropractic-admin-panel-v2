@@ -8,7 +8,6 @@ export const createComplaintService = (api : AxiosInstance) => ({
     },
 
     getComplaintsForPatient: async (payload : any) => {
-        console.log('payload is ', payload);
         const { data } = await api.post('/complaint/patient-complaints', payload);
         return data.data;
     },

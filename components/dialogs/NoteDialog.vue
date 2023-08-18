@@ -509,7 +509,6 @@ export default {
       }
     },
     async updateNote() {
-      console.log('VISIT DATE IN UPDATE NOTE IS ', this.visitDate);
       const formData = {
         ...this.form,
         visitDate: this.visitDate ? formatISO(this.visitDate) : formatISO(this.form.visitDate),
@@ -523,7 +522,6 @@ export default {
         noteId: this.selectedItem.id,
       });
 
-      console.log('updating note');
       const updateNote = await this.noteService.updateNote({...formData, id: this.selectedItem.id});
 
       if (updateNote instanceof Error) {
@@ -616,13 +614,9 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
-      console.log('updatevisitdatetimecalled');
-      console.log('datetime is ', datetime);
       this.form.visitDate = datetime;
     },
     async saveComplaints(patientId) {
-      // save complaints associated with the note ID
-      // note: you would need to get note ID and also ensure this.complaints contains all complaints, not just new ones
       for (let complaint of this.complaints) {
         if(complaint.id) {
           await this.complaintService.updateComplaint(complaint);
