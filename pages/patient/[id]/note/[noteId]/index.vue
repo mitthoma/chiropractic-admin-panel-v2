@@ -4,72 +4,6 @@
         <v-btn class="mb-4 mr-3" @click="backToPatient()">Back to Patient Profile</v-btn>
         <v-btn class="mb-4" color="primary" @click="editNote(currentNote)">Edit Note</v-btn>
         <v-row>
-            <v-col cols="6">
-                <v-card-title>
-                    General Info / Vitals
-                </v-card-title>
-                <v-card class="pa-5">
-                    <v-row>
-                            <v-col cols="6">
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Visit Date</v-label>
-                                        <!-- <v-card-text class="pt-0">{{ formatDate(currentNote?.lastEdited, currentNote) || null }}</v-card-text> -->
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Weight</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.weight}}</v-card-text>
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Height</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.heightFeet}}' {{ currentNote?.heightInches }}"</v-card-text>
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Temperature</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.temperature}}</v-card-text>
-                                    </v-col>
-                                </div>
-                            </v-col>
-                            <v-col cols="6">
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Systolic</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.systolic}}</v-card-text>
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Diastolic</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.diastolic}}</v-card-text>
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Respiration</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.respiration}}</v-card-text>
-                                    </v-col>
-                                </div>
-                                <div class="d-flex align-center justify-space-around">
-                                    <v-col cols="12" class="text-center">
-                                        <v-label class="pb-0 mb-0">Pulse</v-label>
-                                        <v-card-text class="pt-0">{{currentNote?.pulse}}</v-card-text>
-                                    </v-col>
-                                </div>
-                            </v-col>
-                        </v-row>
-
-                </v-card>
-            </v-col>
             <v-col cols="12">
                 <v-card-title>
                     Subjective Complaints
@@ -119,6 +53,72 @@
                     <ExtremityGrid :entries="extremityEntries" />
                 </v-card>
             </v-col>
+        </v-row>
+        <v-row>
+
+            <v-col cols="12">
+                <v-card-title>
+                    General Info / Vitals
+                </v-card-title>
+                <v-card class="pa-5">
+                    <v-row>
+                        <v-col cols="6">
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Visit Date</v-label>
+                                    <!-- <v-card-text class="pt-0">{{ formatDate(currentNote?.lastEdited, currentNote) || null }}</v-card-text> -->
+
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Weight</v-label>
+                                    <v-card-text v-if="currentNote?.weight" class="pt-0">{{currentNote?.weight}}</v-card-text>
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Height</v-label>
+                                    <v-card-text v-if="currentNote?.heightFeet" class="pt-0">{{currentNote?.heightFeet}}' {{ currentNote?.heightInches }}"</v-card-text>
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Temperature</v-label>
+                                    <v-card-text v-if="currentNote?.temperature" class="pt-0">{{currentNote?.temperature}}</v-card-text>
+                                </v-col>
+                            </div>
+                        </v-col>
+                        <v-col cols="6">
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Systolic</v-label>
+                                    <v-card-text v-if="currentNote?.systolic" class="pt-0">{{currentNote?.systolic}}</v-card-text>
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Diastolic</v-label>
+                                    <v-card-text v-if="currentNote?.diastolic" class="pt-0">{{currentNote?.diastolic}}</v-card-text>
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Respiration</v-label>
+                                    <v-card-text v-if="currentNote?.respiration" class="pt-0">{{currentNote?.respiration}}</v-card-text>
+                                </v-col>
+                            </div>
+                            <div class="d-flex align-center justify-space-around">
+                                <v-col cols="12" class="text-center">
+                                    <v-label class="pb-0 mb-0">Pulse</v-label>
+                                    <v-card-text v-if="currentNote?.pulse" class="pt-0">{{currentNote?.pulse}}</v-card-text>
+                                </v-col>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-card>
+            </v-col>
+
         </v-row>
 
       </v-container>
@@ -178,7 +178,7 @@ export default {
         this.complaintService = createComplaintService(this.$api);
         await this.getCurrentNote();
         this.fetchEntries();
-        this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote.id });
+        this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote?.id });
     },
     methods: {
         async getCurrentNote() {
@@ -195,7 +195,7 @@ export default {
         async closeNoteDialog() {
             this.selectedNoteItem = null;
             this.noteDialog = false;
-            this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote.id });
+            this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.currentNote?.id });
             await this.fetchEntries();
 
         },
@@ -204,7 +204,7 @@ export default {
         },
         async fetchEntries() {
             if (this.currentNote) {
-                this.noteEntries = await this.entryService.getEntriesForNote({ noteId: this.currentNote.id });
+                this.noteEntries = await this.entryService.getEntriesForNote({ noteId: this.currentNote?.id });
                 this.spinalEntries = this.noteEntries.filter(entry => entry.category === 'spinal');
                 this.extremityEntries = this.noteEntries.filter(entry => entry.category === 'extremity');
             } else {
