@@ -1,8 +1,8 @@
 <template>
     <div>
       <v-container>
-        <v-btn class="mb-4" @click="backToDashboard">Back to Dashboard</v-btn>
-          <v-row>
+        <!-- <v-btn class="mb-4" @click="backToDashboard">Back to Dashboard</v-btn> -->
+          <!-- <v-row>
             <v-col cols="6">
               <v-card class="elevation-4">
                 <div class="d-flex pa-3">
@@ -27,7 +27,7 @@
                             <td>{{ item.text }}</td>
                             <td class="d-flex justify-end">
                               <v-icon class="ma-2 pa-3 pt-5" @click="editRoomItem(item)">mdi-pencil</v-icon>
-                              <v-icon class="ma-2 pa-3 pt-5" @click="openDeleteDialog(item)">mdi-delete</v-icon> <!-- Add delete button -->
+                              <v-icon class="ma-2 pa-3 pt-5" @click="openDeleteDialog(item)">mdi-delete</v-icon>
                             </td>
                         </tr>
                         </tbody>
@@ -84,7 +84,7 @@
             </v-col>
             <v-col cols="6"></v-col>
 
-          </v-row>
+          </v-row> -->
       </v-container>
     </div>
   </template>

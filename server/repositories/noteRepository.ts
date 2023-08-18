@@ -57,17 +57,7 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
 
 export const deleteNote = async (noteId: any) => {
   try {
-    // Fetch all complaints related to the note
-    const complaints = await prisma.complaint.findMany({
-      where: { noteId : noteId },
-    });
-
-    // Delete all complaints related to the note
-    if (complaints) {
-      for (const complaint of complaints) {
-        await deleteComplaint(complaint.id);
-      }
-    }
+    
 
     // Fetch all entries related to the note
     const entries = await prisma.entry.findMany({

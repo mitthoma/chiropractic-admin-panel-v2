@@ -1,22 +1,22 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const addNewComplaint = async (payload: any, noteId: string) => {
+export const addNewComplaint = async (payload: any, patientId: number) => {
   try {
-    const notesRepository = prisma.note;
+    const patientsRepository = prisma.patient;
 
     // Fetch the patient from the database
-    const note = await notesRepository.findUnique({ where: { id: noteId } });
+    const patient = await patientsRepository.findUnique({ where: { id: patientId } });
 
-    if (!note) {
-      throw new Error(`Patient with id ${noteId} not found`);
+    if (!patient) {
+      throw new Error(`Patient with id ${patientId} not found`);
     }
 
 
     const newComplaint = await prisma.complaint.create({
       data: {
         ...payload,
-        noteId: note.id
+        patientId: patient?.id
       },
     });
 
@@ -67,9 +67,9 @@ export const deleteComplaint = async (complaintId: string) => {
   }
 };
 
-export const getComplaintsByNoteId = async (noteId: string) => {
+export const getComplaintsByPatientId = async (patientId: number) => {
   try {
-    const complaints = await prisma.complaint.findMany({ where: { noteId } });
+    const complaints = await prisma.complaint.findMany({ where: { patientId } });
     return complaints;
   } catch (error) {
     console.log(error);

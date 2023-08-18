@@ -78,8 +78,8 @@
       </v-window>
       <v-card-actions class="d-flex">
         <v-card-text class="justify-start">Patient: {{currentPatient?.firstName}} {{ currentPatient?.lastName }}</v-card-text>
-        <v-card-text class="justify-start">Height: {{ form.heightFeet }}' {{ form.heightInches }}"</v-card-text>
-        <v-card-text class="justify-start">Weight: {{ form.weight }} lbs</v-card-text>
+        <v-card-text class="justify-start">Height: {{ currentPatient?.heightFeet }}' {{ currentPatient?.heightInches }}"</v-card-text>
+        <v-card-text class="justify-start">Weight: {{ currentPatient?.weight }} lbs</v-card-text>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{ tab === 1 ? 'Back' : 'Cancel' }}</v-btn>
         <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{ tab === 5 ? saveButtonText : 'Save & Next' }}</v-btn>
@@ -140,9 +140,6 @@ export default {
       form: {
         visitDate: null,
         visitDateText: null,
-        heightFeet: null,
-        heightInches: null,
-        weight: null,
         temperature: null,
         respiration: null,
         systolic: null,
@@ -155,13 +152,14 @@ export default {
       },
       booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
       spinalLevels: [
-        'occ_c1',
+      'occ_c1',
         'c1_c2',
         'c2_c3',
         'c3_c4',
         'c4_c5',
         'c5_c6',
         'c6_c7',
+        'c7_t1',
         't1_t2',
         't2_t3',
         't3_t4',
@@ -173,17 +171,17 @@ export default {
         't9_t10',
         't10_t11',
         't11_t12',
-        't12_t13',
+        't12_l1',
         'l1_l2',
         'l2_l3',
         'l3_l4',
         'l4_l5',
-        'l5_l6',
+        'l5_s1',
         's1_s2',
         's2_s3',
         's3_s4',
         's4_s5',
-        's5_s6',
+        's5',
       ],
       extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'],
       camelCaseColumns: {
@@ -259,7 +257,7 @@ export default {
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
     if (this.isUpdateMode) {
-      this.complaints = await this.complaintService.getComplaintsForNote({ noteId: this.selectedItem.id });
+      this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.currentPatient.id });
       this.form = {
         ...this.selectedItem,
       };
@@ -277,7 +275,7 @@ export default {
           ...item,
         };
         this.visitDateTime = visitDate;
-        const complaints = await this.complaintService.getComplaintsForNote({ noteId: item.id });
+        const complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.currentPatient.id });
         this.complaints = complaints.map(complaint => ({ id: complaint.id, text: complaint.text, painLevel: complaint.painLevel }));
 
         await this.loadSpinalGrid(item.id);
@@ -289,13 +287,15 @@ export default {
         const entries = await this.entryService.getEntriesForNote({ noteId });
 
         // Here, you can map your entries to your spinalGrid. For example:
-        const spinalLevels = ['occ_c1',
+        const spinalLevels = [
+          'occ_c1',
           'c1_c2',
           'c2_c3',
           'c3_c4',
           'c4_c5',
           'c5_c6',
           'c6_c7',
+          'c7_t1',
           't1_t2',
           't2_t3',
           't3_t4',
@@ -307,17 +307,17 @@ export default {
           't9_t10',
           't10_t11',
           't11_t12',
-          't12_t13',
+          't12_l1',
           'l1_l2',
           'l2_l3',
           'l3_l4',
           'l4_l5',
-          'l5_l6',
+          'l5_s1',
           's1_s2',
           's2_s3',
           's3_s4',
           's4_s5',
-          's5_s6',
+          's5',
         ];
 
         this.spinalGrid = spinalLevels.map(level => {
@@ -366,13 +366,15 @@ export default {
           return false;
         },
       async saveSpinalEntries(noteId) {
-        const spinalLevels = ['occ_c1',
+        const spinalLevels = [
+        'occ_c1',
         'c1_c2',
         'c2_c3',
         'c3_c4',
         'c4_c5',
         'c5_c6',
         'c6_c7',
+        'c7_t1',
         't1_t2',
         't2_t3',
         't3_t4',
@@ -384,17 +386,18 @@ export default {
         't9_t10',
         't10_t11',
         't11_t12',
-        't12_t13',
+        't12_l1',
         'l1_l2',
         'l2_l3',
         'l3_l4',
         'l4_l5',
-        'l5_l6',
+        'l5_s1',
         's1_s2',
         's2_s3',
         's3_s4',
         's4_s5',
-        's5_s6',];
+        's5',
+      ];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
 
         // get old entries 
@@ -463,9 +466,6 @@ export default {
       this.form = {
         visitDate: null,
         visitDateText: null,
-        heightFeet: null,
-        heightInches: null,
-        weight: null,
         temperature: null,
         respiration: null,
         systolic: null,
@@ -499,7 +499,7 @@ export default {
         if (await res instanceof Error) {
         } else {
           const noteId = res.id;
-          await this.saveComplaints(noteId);
+          await this.saveComplaints(this.currentPatient.id);
           await this.saveSpinalEntries(noteId); 
           await this.saveExtremityEntries(noteId);
           this.$emit('note-added');
@@ -511,7 +511,7 @@ export default {
     async updateNote() {
       const formData = {
         ...this.form,
-        visitDate: this.visitDate ? formatISO(this.visitDate) : null,
+        visitDate: this.visitDate ? formatISO(this.visitDate) : formatISO(this.form.visitDate),
       };
 
       // await this.saveComplaints(this.selectedItem.id);
@@ -533,8 +533,8 @@ export default {
         const complaint = this.complaints[i];
 
         const res = complaint.id
-          ? await this.complaintService.updateComplaint({ ...complaint, noteId: this.selectedItem.id}, complaint.id)
-          : await this.complaintService.addComplaint({ ...complaint }, this.selectedItem.id);
+          ? await this.complaintService.updateComplaint({ ...complaint, patientId: this.currentPatient.id}, complaint.id)
+          : await this.complaintService.addComplaint({ ...complaint }, this.currentPatient.id);
 
         if (res instanceof Error) {
           console.log(`Complaint ${i} not updated`);
@@ -616,14 +616,12 @@ export default {
     updateVisitDateTime(datetime) {
       this.form.visitDate = datetime;
     },
-    async saveComplaints(noteId) {
-      // save complaints associated with the note ID
-      // note: you would need to get note ID and also ensure this.complaints contains all complaints, not just new ones
+    async saveComplaints(patientId) {
       for (let complaint of this.complaints) {
         if(complaint.id) {
           await this.complaintService.updateComplaint(complaint);
         } else {
-          await this.complaintService.addComplaint(complaint, noteId);
+          await this.complaintService.addComplaint(complaint, patientId);
         }
       }
     },
