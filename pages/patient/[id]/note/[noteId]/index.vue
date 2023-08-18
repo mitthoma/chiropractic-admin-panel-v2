@@ -66,7 +66,7 @@
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Visit Date</v-label>
-                                    <!-- <v-card-text class="pt-0">{{ formatDate(currentNote?.lastEdited, currentNote) || null }}</v-card-text> -->
+                                    <v-card-text class="pt-0">{{ formatDate(currentNote?.visitDate, currentNote) || null }}</v-card-text>
 
                                 </v-col>
                             </div>

@@ -108,6 +108,25 @@
                         <v-card-text class="pt-0">{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</v-card-text>
                       </v-col>
                     </div>
+                    <div class="d-flex align-center justify-space-around">
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Height</v-label>
+                        <v-card-text class="pt-0">{{ currentPatient?.heightFeet }}' {{ currentPatient?.heightInches }}"</v-card-text>
+                      </v-col>
+                    </div>
+                    <div class="d-flex align-center justify-space-around">
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Weight</v-label>
+                        <v-card-text class="pt-0">{{ currentPatient?.weight }}</v-card-text>
+                      </v-col>
+                    </div>
+
+                    <div class="d-flex align-center justify-space-around">
+                      <v-col cols="12" class="text-center">
+                        <v-label class="pb-0 mb-0">Next Appointment</v-label>
+                        <v-card-text class="pt-0">{{ formatNextAppointment(currentPatient?.nextAppointment) }}</v-card-text>
+                      </v-col>
+                    </div>
                 </v-card>
             </v-col>
         </v-row>
@@ -354,9 +373,12 @@
         },
         formatVisitDate(date, item) {
           if (!date && !item.visitDateText) {
+            console.log('hitting here');
               return "No Date Data";
           }
           if (!date || isNaN(Date.parse(date))) {
+            console.log('hitting here2');
+
               return item.visitDateText;
           }
 
@@ -367,6 +389,20 @@
           }).format(new Date(date));
 
           return `${formattedDate}`;
+          
+        },
+        formatNextAppointment(date) {
+          if (date) {
+            const formattedDate = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+          }).format(new Date(date));
+
+          return `${formattedDate}`;
+          } else {
+            return 'No Appointment Scheduled'
+          }
           
         },
         async getCurrentPatient() {

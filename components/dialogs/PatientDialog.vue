@@ -61,8 +61,8 @@
           ></v-text-field>
           </v-col>
         </v-row>
-          <!-- <label class="form-label">Next Appointment</label>
-          <VueDatePicker v-model="form.nextAppointment" dark /> -->
+          <label class="form-label">Next Appointment</label>
+          <VueDatePicker type="date" enable-time-picker="false" v-model="form.nextAppointment" dark />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -76,13 +76,13 @@
 
 <script>
 import { createPatientService } from '~/services/patient';
-// import VueDatePicker from '@vuepic/vue-datepicker';
-// import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 export default {
   name: 'PatientDialog',
   components: {
-    // VueDatePicker
+    VueDatePicker
   },
   
   props: {

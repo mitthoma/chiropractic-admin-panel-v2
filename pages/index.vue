@@ -6,10 +6,11 @@
       <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title class="mb-3 mt-2">Patient Analytics</v-card-title>
+          <v-card-title>Welcome Pynkerton Chiropractic Notes Dashboard</v-card-title>
+          <!-- <v-card-title class="mb-3 mt-2">Patient Analytics</v-card-title>
           <v-card-text>
             <line-chart :data="chartData" :options="chartOptions" />
-          </v-card-text>
+          </v-card-text> -->
         </v-card>
       </v-col>
     </v-row>

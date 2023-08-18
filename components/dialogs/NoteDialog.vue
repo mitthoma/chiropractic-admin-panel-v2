@@ -509,9 +509,10 @@ export default {
       }
     },
     async updateNote() {
+      console.log('VISIT DATE IN UPDATE NOTE IS ', this.visitDate);
       const formData = {
         ...this.form,
-        visitDate: this.visitDate ? formatISO(this.visitDate) : null,
+        visitDate: this.visitDate ? formatISO(this.visitDate) : formatISO(this.form.visitDate),
       };
 
       // await this.saveComplaints(this.selectedItem.id);
@@ -522,6 +523,7 @@ export default {
         noteId: this.selectedItem.id,
       });
 
+      console.log('updating note');
       const updateNote = await this.noteService.updateNote({...formData, id: this.selectedItem.id});
 
       if (updateNote instanceof Error) {
@@ -614,6 +616,8 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
+      console.log('updatevisitdatetimecalled');
+      console.log('datetime is ', datetime);
       this.form.visitDate = datetime;
     },
     async saveComplaints(patientId) {

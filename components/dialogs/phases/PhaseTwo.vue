@@ -1,9 +1,6 @@
 <template>
   <v-row>
     <v-col cols="4">
-      <v-suffix>Room Assignment</v-suffix>
-    </v-col>
-    <v-col cols="4">
       <v-suffix>Date of Appointment</v-suffix>
     </v-col>
   </v-row>
@@ -11,10 +8,10 @@
       <v-col cols="4">
         <VueDatePicker
           v-model="visitDateTime"
-          placeholder="Visit Date and Time"
+          format="dd MMMM yyyy"
+          placeholder="Visit Date"
           dark
-          type="datetime"
-          :minute-interval="30"
+          type="date"
           @change="$emit('edit-visit-date-time', visitDateTime)"
         />
       </v-col>
@@ -23,60 +20,22 @@
           variant="outlined"
           :value="phaseTwoForm.visitDateText"
           placeholder="Visit Date Text Entry"
-          type="number"
+          type="text"
           @input="updatePhaseTwoVisitDateText"     
       ></v-text-field>
       </v-col>
   </v-row>
   <v-row>
-    <!-- <v-col cols="4">
-      <v-suffix>Height</v-suffix>
-    </v-col>
-    <v-col cols="2">
-      <v-suffix>Weight</v-suffix>
-    </v-col> -->
-    <v-col cols="2">
+    <v-col cols="4">
       <v-suffix>Temperature</v-suffix>
     </v-col>
     <v-col cols="4">
       <v-suffix>Blood Pressure</v-suffix>
     </v-col>
   </v-row>
-  
+
   <v-row>
-    <!-- <v-col cols="2">
-      <v-text-field
-          variant="outlined"
-          :value="phaseTwoForm.heightFeet"
-          suffix="ft."
-          type="number"
-          placeholder="Height in Feet"     
-          @input="updatePhaseTwoHeightFeet"
-      ></v-text-field>
-    </v-col>
-    <v-col cols="2">
-      <v-text-field 
-        variant="outlined"
-          :value="phaseTwoForm.heightInches"
-          suffix="in."
-          type="number"
-          placeholder="Height in Inches"     
-          @input="updatePhaseTwoHeightInches"
-
-      ></v-text-field>
-    </v-col> -->
-    <!-- <v-col cols="2">
-      <v-text-field 
-        variant="outlined"
-          :value="phaseTwoForm.weight"
-          suffix="lb."
-          type="number"
-          placeholder="Weight"     
-          @input="updatePhaseTwoWeight"
-
-      ></v-text-field>
-    </v-col> -->
-    <v-col cols="2">
+    <v-col cols="4">
       <v-text-field 
       variant="outlined"
           :value="phaseTwoForm.temperature"
@@ -87,7 +46,7 @@
 
       ></v-text-field>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="4">
       <v-text-field 
       variant="outlined"
           :value="phaseTwoForm.systolic"
@@ -98,7 +57,7 @@
 
       ></v-text-field>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="4">
       <v-text-field 
       variant="outlined"
           :value="phaseTwoForm.diastolic"
@@ -111,15 +70,15 @@
     </v-col>
   </v-row>
   <v-row>
-    <v-col cols="2">
+    <v-col cols="6">
       <v-suffix>Pulse</v-suffix>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="6">
       <v-suffix>Respiration</v-suffix>
     </v-col>
   </v-row>
   <v-row class="mb-12">
-    <v-col cols="2">
+    <v-col cols="6">
       <v-text-field 
       variant="outlined"
           :value="phaseTwoForm.pulse"
@@ -130,7 +89,7 @@
 
       ></v-text-field>
     </v-col>
-    <v-col cols="2">
+    <v-col cols="6">
       <v-text-field 
         variant="outlined"
           :value="phaseTwoForm.respiration"
@@ -164,7 +123,7 @@ export default {
       },
       async mounted() {
         this.roomService = createRoomService(this.$api);
-        await this.loadRooms();
+        // await this.loadRooms();
 
       },
       data() {
@@ -178,6 +137,7 @@ export default {
       },
       watch: {
         visitDateTime(newVal) {
+          console.log('watched!')
           this.updatePhaseTwoVisitDateTime(newVal);
         },
 
@@ -214,28 +174,30 @@ export default {
           });
         },
         updatePhaseTwoVisitDateTime(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            visitDate: newVal
-          });
+          this.$emit('edit-visit-date-time', this.visitDateTime)
+          console.log('is this called');
+          // this.$emit('update:phaseTwoForm', {
+          //   ...this.phaseTwoForm,
+          //   visitDate: newVal
+          // });
         },
         updatePhaseTwoVisitDateText(newVal) {
           this.$emit('update:phaseTwoForm', {
             ...this.phaseTwoForm,
-            respiration: newVal.target.value
+            visitDateText: newVal.target.value
           });
         },
-        async loadRooms() {
-    try {
-        const roomsData = await this.roomService.getRooms();
-        roomsData.forEach((room) => {
-          console.log('room text is ', room.text);
-            this.rooms.push(room.text);
-            });
-    } catch (error) {
-        console.error(error);
-    }
-}
+      //   async loadRooms() {
+      //     try {
+      //         const roomsData = await this.roomService.getRooms();
+      //         roomsData.forEach((room) => {
+      //           console.log('room text is ', room.text);
+      //             this.rooms.push(room.text);
+      //             });
+      //     } catch (error) {
+      //         console.error(error);
+      //     }
+      // },
       }
   }
 </script>
