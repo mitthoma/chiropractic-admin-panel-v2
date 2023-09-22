@@ -1,0 +1,14 @@
+/*
+  Warnings:
+
+  - The values [t12_t13,l5_l6,s5_s6] on the enum `entry_spinallevel_enum` will be removed. If these variants are still used in the database, this will fail.
+
+*/
+-- AlterEnum
+BEGIN;
+CREATE TYPE "entry_spinallevel_enum_new" AS ENUM ('occ_c1', 'c1_c2', 'c2_c3', 'c3_c4', 'c4_c5', 'c5_c6', 'c6_c7', 'c7_t1', 't1_t2', 't2_t3', 't3_t4', 't4_t5', 't5_t6', 't6_t7', 't7_t8', 't8_t9', 't9_t10', 't10_t11', 't11_t12', 't12_l1', 'l1_l2', 'l2_l3', 'l3_l4', 'l4_l5', 'l5_s1', 's1_s2', 's2_s3', 's3_s4', 's4_s5', 's5_');
+ALTER TABLE "entry" ALTER COLUMN "spinalLevel" TYPE "entry_spinallevel_enum_new" USING ("spinalLevel"::text::"entry_spinallevel_enum_new");
+ALTER TYPE "entry_spinallevel_enum" RENAME TO "entry_spinallevel_enum_old";
+ALTER TYPE "entry_spinallevel_enum_new" RENAME TO "entry_spinallevel_enum";
+DROP TYPE "entry_spinallevel_enum_old";
+COMMIT;

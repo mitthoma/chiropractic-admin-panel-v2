@@ -20,6 +20,7 @@ export default defineNuxtConfig({
         '~/plugins/vuetify.ts', 
         '~/plugins/reflect-metadata.ts', 
         '~/plugins/chart.ts', 
+        
         // '~/plugins/pdfmake.ts'
 ],
     runtimeConfig: {

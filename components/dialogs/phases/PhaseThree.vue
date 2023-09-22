@@ -16,7 +16,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(0, 1)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -54,7 +54,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(1, 3)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -92,7 +92,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(3, 5)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -130,7 +130,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(5, 8)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -168,7 +168,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(8, 10)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -206,7 +206,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(10, 14)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -244,7 +244,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(14, 20)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -282,7 +282,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(20, 22)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -320,7 +320,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(22, 25)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -358,7 +358,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(25, 27)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -396,7 +396,7 @@
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(27, 30)" :key="modifiedRow.index">
             <v-col class="text-center static-col">
-              <div class="mb-1"><strong>{{ modifiedRow.row }}</strong></div>
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <v-text-field
@@ -546,6 +546,9 @@ computed: {
   
 },
   methods: {
+    getRangeLabel(row, i) {
+          return row.toUpperCase().replace("_", " - ");
+      },
     modifiedRows(slice1, slice2) {
       return this.rows.slice(slice1, slice2).map((row, index) => {
         return { row, index: slice1 + index };

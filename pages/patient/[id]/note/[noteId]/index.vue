@@ -1,6 +1,6 @@
 <template>
     <div>
-      <v-container>
+      <v-container class="custom-container">
         <v-btn class="mb-4 mr-3" @click="backToPatient()">Back to Patient Profile</v-btn>
         <v-btn class="mb-4" color="primary" @click="editNote(currentNote)">Edit Note</v-btn>
         <v-row>
@@ -256,5 +256,9 @@ export default {
 <style>
     tbody tr {
         height: 50px;
+    }
+
+    .custom-container {
+        max-width: 100% !important;
     }
 </style>
