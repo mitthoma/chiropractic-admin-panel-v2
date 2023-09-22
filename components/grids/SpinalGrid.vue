@@ -1,11 +1,28 @@
 <template>
   <div class="grid-container">
     <v-row class="header-row text-center">
-      <v-col class="outer-filler"></v-col>
-      <v-col class="outer-filler"></v-col> <!-- Additional column for the extra label -->
-      <v-col class="outer-filler"></v-col> <!-- Original empty column -->
-      <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate label"><strong>{{ col }}</strong></div>
+      <v-col cols="1" class=""></v-col>
+      <v-col cols="1" style="margin-right: 7%" class=""></v-col>
+      <v-col class=" pl-5" v-for="(col, j) in cols" :key="j">
+        <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="mb-1 pt-9 rotate label"><strong>{{ col }}</strong></div>
+        <div v-else-if="col === 'L'" >
+          <div class="rotate label"><strong></strong></div>
+          <div class="mb-1 label">
+            <strong>{{ col }}</strong>
+          </div>
+        </div>
+        <div v-else-if="col === 'B'" >
+          <div class="rotate label"><strong></strong></div>
+          <div class="mb-1 label">
+            <strong>{{ col }}</strong>
+          </div>
+        </div>
+        <div v-else >
+          <div class="label rotate pt-8 pr-9"><strong>Sides</strong></div>
+          <div class="mb-1 label">
+            <strong>{{ col }}</strong>
+          </div>
+        </div>
       </v-col>
     </v-row>
     <div class="scrollable-content mt-5">
@@ -21,7 +38,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i, j) }}</div>
+              <div v-if="getValue(i, j) === 'X'"><i class="fas fa-times"></i>hello</div>
             </v-col>
           </v-row>
         </v-col>
@@ -69,7 +86,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i, j) }}</div>
+              <div v-if="getValue(i, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+            </div>
             </v-col>
           </v-row>
         </v-col>
@@ -236,11 +255,11 @@
         's4_s5',
         's5',
         ],
-        cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+        cols: ['L', 'R', 'B', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
         mapColsToFields: {
-          'Left': 'side',
-          'Right': 'side',
-          'Both': 'side',
+          'L': 'side',
+          'R': 'side',
+          'B': 'side',
           'Subluxation': 'sublux',
           'Muscle Spasm': 'muscleSpasm',
           'Trigger Points': 'triggerPoints',
@@ -273,15 +292,15 @@
         return this.getDisplayedValue(value, this.cols[j]);
       },
       getDisplayedValue(value, colName) {
-        if (colName === 'Left' && value === 'l') return 'X';
-        if (colName === 'Right' && value === 'r') return 'X';
-        if (colName === 'Both' && value === 'b') return 'X';
+        if (colName === 'L' && value === 'l') return 'X';
+        if (colName === 'R' && value === 'r') return 'X';
+        if (colName === 'B' && value === 'b') return 'X';
 
-        if ((value === 'l' && colName === 'Right') || (value === 'l' && colName === 'Both')) {
+        if ((value === 'l' && colName === 'R') || (value === 'l' && colName === 'B')) {
           return ''
-        } else if ((value === 'r' && colName === 'Left') || (value === 'r' && colName === 'Both')) {
+        } else if ((value === 'r' && colName === 'L') || (value === 'r' && colName === 'B')) {
           return ''
-        } else if ((value === 'b' && colName === 'Left') || (value === 'b' && colName === 'Right')) {
+        } else if ((value === 'b' && colName === 'L') || (value === 'b' && colName === 'R')) {
           return '';
         }
 
@@ -314,6 +333,8 @@
 }
 .grid-cell {
   border: 1px solid gray; /* Change color and thickness as desired */
+  text-align: center;
+  padding-top: 25px;
 }
 
 .grouped-cell {
@@ -327,6 +348,11 @@
   align-items: center;
   justify-content: center;
   /* min-height: calc(1.5rem * 5); Adjust height as needed */
+}
+
+#sides-label {
+  padding-top: 5%;
+  padding-bottom: 5%;
 }
 
 .alternating-bg {
@@ -349,9 +375,8 @@
 
 @media (max-width: 1920px) {
   .label {
-    font-size: 12px !important;
+    font-size: 12px ;
   }
-
 
   .rotate {
     width: 100% !important;
