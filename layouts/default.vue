@@ -102,11 +102,12 @@ const theme = useTheme();
 const drawer = ref(null);
 const themeToggler = ref(false);
 console.log('store is ', store);
+const initials = store.user?.firstName && store.user?.lastName ? store.user?.firstName[0]?.toUpperCase() + store.user?.lastName[0]?.toUpperCase() : '';
 const user =  {
     firstName: store.user?.firstName,
     lastName: store.user?.lastName,
     email: store.user?.email,
-    initials: store.user ? store.user?.firstName[0]?.toUpperCase() + store.user?.lastName[0]?.toUpperCase() : '',
+    initials: store.user ? initials : '',
 };
 const items =  [
         {

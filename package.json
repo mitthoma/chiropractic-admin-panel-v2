@@ -11,9 +11,7 @@
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,vue,ts}": [
-
-    ]
+    "*.{js,vue,ts}": []
   },
   "husky": {
     "hooks": {
