@@ -1,19 +1,21 @@
 <template>
   <div class="grid-container">
     <v-row class="header-row text-center">
+      <v-col></v-col>
       <v-col></v-col> <!-- Additional column for the extra label -->
       <v-col></v-col> <!-- Original empty column -->
       <v-col v-for="(col, j) in cols" :key="j">
         <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
       </v-col>
     </v-row>
-    <div class="scrollable-content">
-        <!-- C Levels Group -->
-        <v-row>
+    <div class="scrollable-content mt-5">
+      <!-- C Levels  -->
+      <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Sub Occ</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(0, 1)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -25,10 +27,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-mid "></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Upper Cerv</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(1, 3)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -40,10 +43,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-mid">C-Levels</v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Mid Cerv</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(3, 5)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -55,10 +59,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-low"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Lower Cerv</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(5, 8)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -71,10 +76,11 @@
       </v-row>
       <!-- T Levels Group -->
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Upper T</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(8, 10)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -86,10 +92,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-mid"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Mid T</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(10, 14)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -101,10 +108,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-low">T Levels</v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Lower T</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(14, 20)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -118,10 +126,11 @@
       
       <!-- L Levels Group -->
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Upper L</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(20, 22)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -133,10 +142,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-low">L Levels</v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Lower L</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(22, 25)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -149,10 +159,11 @@
       </v-row>
       <!-- S Levels Group -->
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Upper S</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(25, 27)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -164,10 +175,11 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col cols="1" class="text-center static-col outer-group-low">S Levels</v-col>
         <v-col cols="1" class="text-center static-col extra-info-group">
           <div class="mb-1">Lower S</div>
         </v-col>
-        <v-col cols="11">
+        <v-col cols="10">
           <v-row v-for="(row, i) in rows.slice(27, 30)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
@@ -224,9 +236,11 @@
         's4_s5',
         's5',
         ],
-        cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+        cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
         mapColsToFields: {
-          'Sides': 'side',
+          'Left': 'side',
+          'Right': 'side',
+          'Both': 'side',
           'Subluxation': 'sublux',
           'Muscle Spasm': 'muscleSpasm',
           'Trigger Points': 'triggerPoints',
@@ -251,30 +265,44 @@
 
         const fieldName = this.mapColsToFields[this.cols[j]];
         const value = entry[fieldName];
-        
+
         if (this.booleanFields.includes(fieldName)) {
           return value ? 'X' : '';
         }
 
-        return this.getDisplayedValue(value);
+        return this.getDisplayedValue(value, this.cols[j]);
       },
-      getDisplayedValue(value) {
-        switch (value) {
-          case 'l':
-            return 'Left';
-          case 'r':
-            return 'Right';
-          case 'b':
-            return 'Both';
-          default:
-            return value;
+      getDisplayedValue(value, colName) {
+        if (colName === 'Left' && value === 'l') return 'X';
+        if (colName === 'Right' && value === 'r') return 'X';
+        if (colName === 'Both' && value === 'b') return 'X';
+
+        if ((value === 'l' && colName === 'Right') || (value === 'l' && colName === 'Both')) {
+          return ''
+        } else if ((value === 'r' && colName === 'Left') || (value === 'r' && colName === 'Both')) {
+          return ''
+        } else if ((value === 'b' && colName === 'Left') || (value === 'b' && colName === 'Right')) {
+          return '';
         }
+        
+        return value;
       },
     }
   }
   </script>
 
 <style scoped>
+
+.rotate {
+  transform: rotate(90deg);
+  white-space: normal; 
+  line-height: 1.2;
+  height: 80px;   
+  width: 100px;  
+  overflow: hidden;
+  /* padding-top: 15px; */
+  text-align: center; /* Centers the header text */
+}
 .grid-cell {
   border: 1px solid gray; /* Change color and thickness as desired */
 }
@@ -290,5 +318,19 @@
   align-items: center;
   justify-content: center;
   /* min-height: calc(1.5rem * 5); Adjust height as needed */
+}
+
+.outer-group-top {
+  border-top: 1px solid gray;
+  border-left: 1px solid gray;
+}
+
+.outer-group-mid {
+  border-left: 1px solid gray;
+}
+
+.outer-group-low {
+  border-left: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 </style>
