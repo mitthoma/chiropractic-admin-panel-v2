@@ -1,11 +1,11 @@
 <template>
   <div class="grid-container">
     <v-row class="header-row text-center">
-      <v-col></v-col>
-      <v-col></v-col> <!-- Additional column for the extra label -->
-      <v-col></v-col> <!-- Original empty column -->
+      <v-col class="outer-filler"></v-col>
+      <v-col class="outer-filler"></v-col> <!-- Additional column for the extra label -->
+      <v-col class="outer-filler"></v-col> <!-- Original empty column -->
       <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
+        <div class="mb-1 rotate label"><strong>{{ col }}</strong></div>
       </v-col>
     </v-row>
     <div class="scrollable-content mt-5">
@@ -20,7 +20,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i, j) }}</div>
             </v-col>
           </v-row>
@@ -36,7 +36,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i, j) }}</div>
             </v-col>
           </v-row>
@@ -52,7 +52,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i, j) }}</div>
             </v-col>
           </v-row>
@@ -68,7 +68,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i, j) }}</div>
             </v-col>
           </v-row>
@@ -85,7 +85,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 7, j) }}</div>
             </v-col>
           </v-row>
@@ -101,7 +101,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 7, j) }}</div>
             </v-col>
           </v-row>
@@ -117,7 +117,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 7, j) }}</div>
             </v-col>
           </v-row>
@@ -135,7 +135,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 19, j) }}</div>
             </v-col>
           </v-row>
@@ -151,7 +151,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 19, j) }}</div>
             </v-col>
           </v-row>
@@ -168,7 +168,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 24, j) }}</div>
             </v-col>
           </v-row>
@@ -184,7 +184,7 @@
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
-            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell">
+            <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div>{{ getValue(i + 24, j) }}</div>
             </v-col>
           </v-row>
@@ -284,7 +284,7 @@
         } else if ((value === 'b' && colName === 'Left') || (value === 'b' && colName === 'Right')) {
           return '';
         }
-        
+
         return value;
       },
     }
@@ -292,6 +292,15 @@
   </script>
 
 <style scoped>
+
+.v-container {
+  max-width: 100% !important;
+}
+
+.grid-container {
+  padding: 0 !important;
+  margin: 0 !important;
+}
 
 .rotate {
   transform: rotate(90deg);
@@ -320,6 +329,10 @@
   /* min-height: calc(1.5rem * 5); Adjust height as needed */
 }
 
+.alternating-bg {
+  background-color: #474747;
+}
+
 .outer-group-top {
   border-top: 1px solid gray;
   border-left: 1px solid gray;
@@ -332,5 +345,16 @@
 .outer-group-low {
   border-left: 1px solid gray;
   border-bottom: 1px solid gray;
+}
+
+@media (max-width: 1920px) {
+  .label {
+    font-size: 12px !important;
+  }
+
+
+  .rotate {
+    width: 100% !important;
+  }
 }
 </style>
