@@ -47,7 +47,7 @@
         <v-row>
             <v-col cols="12">
                 <v-card-title>
-                    Objective Findings - Extremity
+                    Objective Findings - Extremeties
                 </v-card-title>
                 <v-card class="pa-5">
                     <ExtremityGrid :entries="extremityEntries" />
