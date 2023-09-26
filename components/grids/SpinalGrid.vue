@@ -38,7 +38,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div v-if="getValue(i, j) === 'X'"><i class="fas fa-times"></i>hello</div>
+              <div v-if="getValue(i, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -54,7 +56,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i, j) }}</div>
+              <div v-if="getValue(i, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -70,7 +74,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i, j) }}</div>
+              <div v-if="getValue(i, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -88,7 +94,7 @@
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
               <div v-if="getValue(i, j) === 'X'">
                 <SvgRender :width="20" :height="20" icon="x" />
-            </div>
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -105,7 +111,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 7, j) }}</div>
+              <div v-if="getValue(i + 7, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -121,7 +129,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 7, j) }}</div>
+              <div v-if="getValue(i + 7, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -137,7 +147,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 7, j) }}</div>
+              <div v-if="getValue(i + 7, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -155,7 +167,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 19, j) }}</div>
+              <div v-if="getValue(i + 19, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -171,7 +185,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 19, j) }}</div>
+              <div v-if="getValue(i + 19, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -188,7 +204,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 24, j) }}</div>
+              <div v-if="getValue(i + 24, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -204,7 +222,9 @@
               <div class="mb-1"><strong>{{ getRangeLabel(row, i) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" class="grid-cell" :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]">
-              <div>{{ getValue(i + 24, j) }}</div>
+              <div v-if="getValue(i + 24, j) === 'X'">
+                <SvgRender :width="20" :height="20" icon="x" />
+              </div>
             </v-col>
           </v-row>
         </v-col>
