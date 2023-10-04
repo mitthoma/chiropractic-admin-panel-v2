@@ -1,53 +1,12 @@
 <template>
   <div class="grid-container">
-    <!-- <v-row class="header-row text-center">
-      <v-col cols="1"></v-col>
-
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      <v-col cols="1">
-        hi
-      </v-col>
-      
-
-      
-    </v-row> -->
-
     <v-row>
-        <v-col cols="1" class="text-center static-col"></v-col>
-        <v-col cols="1" class="text-center static-col"></v-col>
+        <v-col cols="1" class="text-center "></v-col>
+        <v-col cols="1" class="text-center "></v-col>
 
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(30, 31)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j" >
@@ -58,15 +17,15 @@
       </v-row>
     <div class="scrollable-content">
       <v-row>
-        <v-col cols="1" class="text-center static-col">
-          <div class="mb-1">Sub Occ</div>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">C-Levels</div>
         </v-col>
-        <v-col cols="1" class="text-center static-col">
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Sub Occ</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(0, 1)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -94,12 +53,14 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col">
+        <v-col cols="1" class="text-center"></v-col>
+       
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(1, 3)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -127,12 +88,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Mid Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(3, 5)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -160,12 +122,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(5, 8)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -193,12 +156,15 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">T-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(8, 10)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -226,12 +192,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Mid T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(10, 14)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -259,12 +226,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(14, 20)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -292,12 +260,15 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">L-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(20, 22)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -325,12 +296,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower L</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(22, 25)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -358,12 +330,15 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">S-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(25, 27)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -391,12 +366,13 @@
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower S</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(27, 30)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -472,7 +448,7 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
         '',
       ],
       
@@ -561,6 +537,7 @@ computed: {
       }
     },
     updateValue(i, j, value) {
+        console.log('cols j ', this.cols[j]);
         if (this.cols[j] === 'Sides') {
           switch (value) {
             case 'Left':
@@ -583,6 +560,8 @@ computed: {
         else {
           this.grid[i][j] = value;
         }
+
+        console.log("this grid is", this.grid);
 
         this.$emit('update:phaseTwoForm', this.grid); // emit the changes
         this.$emit('update:spinalGrid', this.grid);
@@ -619,10 +598,11 @@ computed: {
   position: sticky;
   top: 0;
   z-index: 1;
+  overflow-y: auto;
   /* padding-bottom: 50px;  */
 }
 
-/* .static-col {
+/* . {
   position: sticky;
   left: 0;
   z-index: 1;
@@ -632,7 +612,7 @@ computed: {
   /* overflow: auto; */
   max-height: 50vh;
   overflow-y: auto;
-  /* overflow-x: visible; */
+  /* overflow-x: hidden; */
   padding-top: 15px;
 }
 .v-text-field {
@@ -678,8 +658,12 @@ computed: {
   border-radius: 4px;
 }
 
-.alternating-bg {
-  background-color: #474747;
+.upper-level {
+  font-weight: 700;
+  font-size: 20px;
+  /* transform: rotate(270deg); */
+  border-top: 1px solid white;
+
 }
 
 

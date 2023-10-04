@@ -409,6 +409,7 @@ export default {
             spinalLevel: spinalLevels[i]
           };
 
+          
           if (this.spinalGrid[i] && this.spinalGrid[i]?.length) {
             for(let j = 0; j < this.spinalGrid[i].length; j++) {
               if (this.spinalGrid[i][j]) {
@@ -509,9 +510,16 @@ export default {
       }
     },
     async updateNote() {
+
+      try {
+        formattedDate = parseISO(this.form.visitDate);
+      } catch (error) {
+        console.error("Invalid Date:", this.form.visitDate);
+      }
+
       const formData = {
         ...this.form,
-        visitDate: this.visitDate ? formatISO(this.visitDate) : formatISO(this.form.visitDate),
+        visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
 
       // await this.saveComplaints(this.selectedItem.id);
