@@ -34,14 +34,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -72,14 +67,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -110,14 +100,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -148,14 +133,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -186,14 +166,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -224,14 +199,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -262,14 +232,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -300,14 +265,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -338,14 +298,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -376,14 +331,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -414,14 +364,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -479,8 +424,8 @@ export default {
         's5',
       ],
       
-      cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-      grid: Array.from({length: 30}, () => Array(9).fill(null)),
+      cols: ['L', 'R', 'B', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      grid: Array.from({length: 30}, () => Array(11).fill(null)),
       PHs: {
         'Sides': 'LRB',
         'Subluxation': 'SX',
@@ -493,14 +438,16 @@ export default {
         'Reduced Motion': 'RM'
       },
       changes: [],
-      booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      booleanColumns: ['L', 'R', 'B', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
       sidesOptions: [
           { text: 'Left', value: 'l' },
           { text: 'Right', value: 'r' },
           { text: 'Both', value: 'b' },
         ],
       camelCaseColumns: {
-        'Sides': 'sides',
+        'L': 'l',
+        'R': 'r',
+        'B': 'b',
         'Subluxation': 'subluxation',
         'Muscle Spasm': 'muscleSpasm',
         'Trigger Points': 'triggerPoints',
@@ -546,6 +493,15 @@ computed: {
   
 },
   methods: {
+    toggleX(i, j) {
+      if (this.grid[i][j]) {
+        this.grid[i][j] = false;
+        this.updateValue(i, j, '');
+      } else {
+        this.grid[i][j] = true;
+        this.updateValue(i, j, 'X');
+      }
+    },
     getRangeLabel(row, i) {
           return row.toUpperCase().replace("_", " - ");
       },
@@ -626,7 +582,7 @@ computed: {
 .scrollable-content {
   overflow: auto;
   max-height: 50vh;
-  overflow-x: auto; /* Added overflow-x */
+  overflow-x: visible;
   padding-top: 15px;
 }
 .v-text-field {
@@ -637,9 +593,9 @@ computed: {
 }
 
 .v-col {
-  padding: 0;
+  padding: 0 !important;
   flex: 1;
-  margin: 10px;
+  /* margin: 10px; */
 }
 
 .rotate {
@@ -659,6 +615,17 @@ computed: {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.x-toggle {
+  width: 100%;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 
