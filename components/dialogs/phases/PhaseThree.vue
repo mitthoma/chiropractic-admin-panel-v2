@@ -1,21 +1,31 @@
 <template>
   <div class="grid-container">
-    <v-row class="header-row text-center">
-      <v-col></v-col>
-      <v-col></v-col>
-      
-      <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
-      </v-col>
-    </v-row>
+    <v-row>
+        <v-col cols="1" class="text-center "></v-col>
+        <v-col cols="1" class="text-center "></v-col>
+
+        <v-col cols="11">
+          <v-row v-for="modifiedRow in modifiedRows(30, 31)" :key="modifiedRow.index">
+            <v-col class="text-center ">
+              <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j" >
+              <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     <div class="scrollable-content">
       <v-row>
-        <v-col cols="1" class="text-center static-col">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">C-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Sub Occ</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(0, 1)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -34,26 +44,23 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col">
+        <v-col cols="1" class="text-center"></v-col>
+       
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(1, 3)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -72,26 +79,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Mid Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(3, 5)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -110,26 +113,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower Cerv</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(5, 8)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -148,26 +147,24 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">T-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(8, 10)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -186,26 +183,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Mid T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(10, 14)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -224,26 +217,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower T</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(14, 20)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -262,26 +251,24 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">L-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(20, 22)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -300,26 +287,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower L</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(22, 25)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -338,26 +321,24 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">S-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(25, 27)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -376,26 +357,22 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="1" class="text-center static-col ">
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
           <div class="mb-1">Lower S</div>
         </v-col>
         <v-col cols="11">
           <v-row v-for="modifiedRow in modifiedRows(27, 30)" :key="modifiedRow.index">
-            <v-col class="text-center static-col">
+            <v-col class="text-center ">
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
@@ -414,14 +391,9 @@
                 dense
                 class="input-field"
                 @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                  v-else
-                  v-model="displayGrid[modifiedRow.index][j]" 
-                  hide-details 
-                  dense 
-                  class="input-field" 
-                  :items="['X', '']"
-                  @update:modelValue="updateValue(modifiedRow.index, j, $event)" />
+                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                  <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
+                </div>
             </v-col>
           </v-row>
         </v-col>
@@ -476,7 +448,8 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
+        '',
       ],
       
       cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
@@ -554,7 +527,17 @@ computed: {
         return { row, index: slice1 + index };
       });
     },
+    toggleX(i, j) {
+      if (this.grid[i][j]) {
+        this.grid[i][j] = false;
+        this.updateValue(i, j, '');
+      } else {
+        this.grid[i][j] = true;
+        this.updateValue(i, j, 'X');
+      }
+    },
     updateValue(i, j, value) {
+        console.log('cols j ', this.cols[j]);
         if (this.cols[j] === 'Sides') {
           switch (value) {
             case 'Left':
@@ -577,6 +560,8 @@ computed: {
         else {
           this.grid[i][j] = value;
         }
+
+        console.log("this grid is", this.grid);
 
         this.$emit('update:phaseTwoForm', this.grid); // emit the changes
         this.$emit('update:spinalGrid', this.grid);
@@ -613,20 +598,21 @@ computed: {
   position: sticky;
   top: 0;
   z-index: 1;
-  padding-bottom: 50px; /* Added padding */
+  overflow-y: auto;
+  /* padding-bottom: 50px;  */
 }
 
-.static-col {
+/* . {
   position: sticky;
   left: 0;
   z-index: 1;
-  padding-right: 50px;
-}
+} */
 
 .scrollable-content {
-  overflow: auto;
+  /* overflow: auto; */
   max-height: 50vh;
-  overflow-x: auto; /* Added overflow-x */
+  overflow-y: auto;
+  /* overflow-x: hidden; */
   padding-top: 15px;
 }
 .v-text-field {
@@ -644,11 +630,11 @@ computed: {
 
 .rotate {
   transform: rotate(90deg);
-  margin-bottom: 10px;
+  margin-bottom: 40px !important;
   white-space: normal; 
-  line-height: 1.2;
-  height: 80px;   
-  width: 100px;  
+  /* line-height: 1.2; */
+  /* height: 80px;    */
+  /* width: 100px;   */
   overflow: hidden;
   /* padding-top: 15px; */
   text-align: center; /* Centers the header text */
@@ -659,6 +645,25 @@ computed: {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.x-toggle {
+  width: 100%;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.upper-level {
+  font-weight: 700;
+  font-size: 20px;
+  /* transform: rotate(270deg); */
+  border-top: 1px solid white;
+
 }
 
 
