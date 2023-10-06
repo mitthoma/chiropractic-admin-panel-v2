@@ -79,8 +79,8 @@
         if (this.booleanFields.includes(fieldName)) {
           return value ? 'X' : '';
         }
-
-        return this.getDisplayedValue(value);
+        
+        return this.getDisplayedValue(value, this.cols[j]);
       },
       getDisplayedValue(value, colName) {
         if (colName === 'L' && value === 'l') return 'X';
