@@ -17,7 +17,7 @@
       </v-row>
     <div class="scrollable-content">
       <v-row>
-        <v-col cols="1" class="text-center upper-level">
+        <v-col cols="1" class="text-center upper-level ">
           <div class="mb-1">C-Levels</div>
         </v-col>
         <v-col cols="1" class="text-center upper-level">
@@ -486,7 +486,8 @@ computed: {
 
 .x-toggle {
   width: 100%;
-  height: 80%;
+  padding: 10px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
