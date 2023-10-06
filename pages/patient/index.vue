@@ -43,7 +43,7 @@
               <td>{{ item.firstName }}</td>
               <td>{{ item.lastName }}</td>
               <td>{{ item.email }}</td>
-              <td>{{ item.phoneNumber }}</td>
+              <td>{{ formatPhoneNumber(item.phoneNumber) }}</td>
               <td>{{ formatDateTime(item.lastUpdated) }}</td>
               <td class="d-flex justify-end">
                 <v-icon class="ma-2 pa-3 pt-5" @click="editPatientItem(item)">mdi-pencil</v-icon>
@@ -162,6 +162,14 @@ export default {
 
         return `${formattedDate}`;
       },
+      formatPhoneNumber(phoneNumber) {
+        const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+            return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+        }
+        return null;
+    },
     },
   }
 </script>

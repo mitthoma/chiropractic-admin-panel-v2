@@ -17,7 +17,7 @@
       </v-row>
     <div class="scrollable-content">
       <v-row>
-        <v-col cols="1" class="text-center upper-level">
+        <v-col cols="1" class="text-center upper-level ">
           <div class="mb-1">C-Levels</div>
         </v-col>
         <v-col cols="1" class="text-center upper-level">
@@ -29,22 +29,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+                <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -64,22 +49,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -98,22 +68,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -132,22 +87,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -168,22 +108,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -202,22 +127,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -236,22 +146,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -272,22 +167,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -306,22 +186,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -342,22 +207,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -376,22 +226,7 @@
               <div class="mb-1"><strong>{{ getRangeLabel(modifiedRow.row) }}</strong></div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
-              <v-text-field
-                v-if="col !== 'Sides' && !booleanColumns.includes(col)"
-                v-model="grid[modifiedRow.index][j]"
-                hide-details
-                dense
-                class="input-field"
-                :placeholder="PHs[col]"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <v-select
-                v-else-if="col === 'Sides'"
-                v-model="grid[modifiedRow.index][j]"
-                :items="['Left', 'Right', 'Both']"
-                dense
-                class="input-field"
-                @input="updateValue(modifiedRow.index, j, $event)" />
-                <div v-else @click="toggleX(modifiedRow.index, j)" class="x-toggle">
+              <div @click="toggleX(modifiedRow.index, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
                   <SvgRender v-if="displayGrid[modifiedRow.index][j] === 'X'" :width="20" :height="20" icon="x" />
                 </div>
             </v-col>
@@ -452,8 +287,9 @@ export default {
         '',
       ],
       
-      cols: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-      grid: Array.from({length: 30}, () => Array(9).fill(null)),
+      cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      grid: Array.from({length: 30}, () => Array(11).fill(null)),
+      answerGrid: Array.from({length: 30}, () => Array(9).fill(null)),
       PHs: {
         'Sides': 'LRB',
         'Subluxation': 'SX',
@@ -466,7 +302,8 @@ export default {
         'Reduced Motion': 'RM'
       },
       changes: [],
-      booleanColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      booleanColumns: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
+      answerGridColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
       sidesOptions: [
           { text: 'Left', value: 'l' },
           { text: 'Right', value: 'r' },
@@ -490,6 +327,26 @@ mounted() {
     for (let entry of this.existingData) {
       if (entry) {
         let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
+        this.answerGridColumns.forEach((col, colIndex) => {
+            if (col === 'Sides') {
+              const key = 'side';
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? entry[key] : '';
+              }
+
+
+            } else {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+              }
+            }
+          });
+        }
+    }
+    for (let entry of this.existingData) {
+      if (entry) {
+        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
         this.booleanColumns.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
@@ -497,13 +354,17 @@ mounted() {
             }
           });
         if (entry.side) {
-          let colIndex = this.cols.findIndex(col => col === 'Sides');
-          let sideOption = this.sidesOptions.find(option => option.value === entry.side);
-          this.grid[rowIndex][colIndex] = sideOption.text;
+          const colLabel = entry.side === 'l' ? 'Left' : entry.side === 'r' ? 'Right' : entry.side === 'b' ? 'Both' : null;
+          if (colLabel) {
+            let colIndex = this.cols.findIndex(col => col === colLabel);
+            this.grid[rowIndex][colIndex] = 'X';
+          }
         }
       }
     }
   }
+
+
 },
 computed: {
   displayGrid() {
@@ -527,60 +388,36 @@ computed: {
         return { row, index: slice1 + index };
       });
     },
-    toggleX(i, j) {
-      if (this.grid[i][j]) {
-        this.grid[i][j] = false;
-        this.updateValue(i, j, '');
-      } else {
+    toggleX(i, j, sideOption = null) {
+      if (sideOption) {
+        if (this.grid[i][j] && !(this.grid[i][(j + 1) % 3] || this.grid[i][(j + 2) % 3])) {
+          alert('Side must not be left empty');
+          return;
+        }
+
+        this.grid[i][0] = false;
+        this.grid[i][1] = false;
+        this.grid[i][2] = false;
+
         this.grid[i][j] = true;
-        this.updateValue(i, j, 'X');
+        this.answerGrid[i][0] = sideOption;
+      } else {
+        if (this.grid[i][j]) {
+          this.grid[i][j] = false;
+          this.answerGrid[i][j - 2] = false;
+        } else {
+          this.grid[i][j] = true;
+          this.answerGrid[i][j - 2] = true;
+        }
       }
+      this.$emit('update:phaseTwoForm', this.answerGrid);
+      this.$emit('update:spinalGrid', this.answerGrid);
     },
-    updateValue(i, j, value) {
-        console.log('cols j ', this.cols[j]);
-        if (this.cols[j] === 'Sides') {
-          switch (value) {
-            case 'Left':
-              this.grid[i][j] = 'l';
-              break;
-            case 'Right':
-              this.grid[i][j] = 'r';
-              break;
-            case 'Both':
-              this.grid[i][j] = 'b';
-              break;
-            default:
-              this.grid[i][j] = null;
-          }
-        }
-
-        else if (this.booleanColumns.includes(this.cols[j])) {
-          this.grid[i][j] = value === 'X' ? true : false;
-        }
-        else {
-          this.grid[i][j] = value;
-        }
-
-        console.log("this grid is", this.grid);
-
-        this.$emit('update:phaseTwoForm', this.grid); // emit the changes
-        this.$emit('update:spinalGrid', this.grid);
-      }
   }
 }
 </script>
 
 <style scoped>
-/* .v-text-field {
-  max-width: 50px;
-  margin: 0;
-} */
-
-/* .rotate {
-  transform: rotate(90deg);
-  margin-bottom: 10px;
-} */
-
 .input-field {
   text-transform: capitalize;
 }
@@ -649,7 +486,8 @@ computed: {
 
 .x-toggle {
   width: 100%;
-  height: 80%;
+  padding: 10px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
