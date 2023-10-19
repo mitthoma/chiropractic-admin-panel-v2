@@ -40,7 +40,7 @@ export default {
     rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'],
     cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
     grid: Array.from({length: 13}, () => Array(11).fill(null)),
-    answerGrid: Array.from({length: 30}, () => Array(9).fill(null)),
+    answerGrid: Array.from({length: 13}, () => Array(9).fill(null)),
     PHs: {
       'Sides': 'LRB',
       'Subluxation': 'SX',
@@ -78,14 +78,13 @@ mounted() {
   if (this.existingData) {
     for (let entry of this.existingData) {
       if (entry) {
-        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.spinalLevel);
+        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.extremityLevel);
         this.answerGridColumns.forEach((col, colIndex) => {
             if (col === 'Sides') {
               const key = 'side';
               if (entry[key] !== undefined) {
                 this.answerGrid[rowIndex][colIndex] = entry[key] ? entry[key] : '';
               }
-
 
             } else {
               const key = this.camelCaseColumns[col];
@@ -106,9 +105,11 @@ mounted() {
             }
           });
         if (entry.side) {
-          let colIndex = this.cols.findIndex(col => col === 'Sides');
-          let sideOption = this.sidesOptions.find(option => option.value === entry.side);
-          this.grid[rowIndex][colIndex] = sideOption.text;
+          const colLabel = entry.side === 'l' ? 'Left' : entry.side === 'r' ? 'Right' : entry.side === 'b' ? 'Both' : null;
+          if (colLabel) {
+            let colIndex = this.cols.findIndex(col => col === colLabel);
+            this.grid[rowIndex][colIndex] = 'X';
+          }
         }
       }
     }
