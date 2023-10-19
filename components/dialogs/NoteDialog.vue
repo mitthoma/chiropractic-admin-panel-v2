@@ -256,8 +256,8 @@ export default {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
+    this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
     if (this.isUpdateMode) {
-      this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.currentPatient.id });
       this.form = {
         ...this.selectedItem,
       };
@@ -622,7 +622,6 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
-      console.log('date time passed is ', datetime);
       const z = n => ('0' + n).slice(-2);
       const YYYY = datetime.getUTCFullYear();
       const MM = z(datetime.getUTCMonth() + 1);
@@ -631,7 +630,6 @@ export default {
       const mm = z(datetime.getUTCMinutes());
       const ss = z(datetime.getUTCSeconds());
       this.form.visitDate = `${YYYY}-${MM}-${DD} ${HH}:${mm}:${ss}`;
-      console.log("this form visit date is ", this.form.visitDate);
     },
     async saveComplaints(patientId) {
       for (let complaint of this.complaints) {

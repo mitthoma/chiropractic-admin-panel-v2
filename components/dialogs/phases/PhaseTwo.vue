@@ -136,7 +136,6 @@ export default {
       },
       watch: {
         visitDateTime(newVal) {
-          console.log('watched!')
           this.updatePhaseTwoVisitDateTime(newVal);
         },
 
@@ -174,11 +173,6 @@ export default {
         },
         updatePhaseTwoVisitDateTime(newVal) {
           this.$emit('edit-visit-date-time', this.visitDateTime)
-          console.log('is this called');
-          // this.$emit('update:phaseTwoForm', {
-          //   ...this.phaseTwoForm,
-          //   visitDate: newVal
-          // });
         },
         updatePhaseTwoVisitDateText(newVal) {
           this.$emit('update:phaseTwoForm', {
