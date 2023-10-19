@@ -622,7 +622,16 @@ export default {
       }
     },
     updateVisitDateTime(datetime) {
-      this.form.visitDate = datetime;
+      console.log('date time passed is ', datetime);
+      const z = n => ('0' + n).slice(-2);
+      const YYYY = datetime.getUTCFullYear();
+      const MM = z(datetime.getUTCMonth() + 1);
+      const DD = z(datetime.getUTCDate());
+      const HH = z(datetime.getUTCHours());
+      const mm = z(datetime.getUTCMinutes());
+      const ss = z(datetime.getUTCSeconds());
+      this.form.visitDate = `${YYYY}-${MM}-${DD} ${HH}:${mm}:${ss}`;
+      console.log("this form visit date is ", this.form.visitDate);
     },
     async saveComplaints(patientId) {
       for (let complaint of this.complaints) {

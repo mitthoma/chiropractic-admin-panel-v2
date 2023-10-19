@@ -106,7 +106,6 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { createRoomService } from '~~/services/room';
 
 export default {
       components: {
@@ -122,16 +121,16 @@ export default {
         },
       },
       async mounted() {
-        this.roomService = createRoomService(this.$api);
-        // await this.loadRooms();
+
+        if (this.selectedItem && this.selectedItem.visitDate) {
+            this.visitDateTime = new Date(this.selectedItem.visitDate);
+        }
 
       },
       data() {
         return {
           visitDateTime: null,
           visitDate: null,
-          rooms: [],
-          roomService: null,
           
         };
       },
@@ -187,17 +186,6 @@ export default {
             visitDateText: newVal.target.value
           });
         },
-      //   async loadRooms() {
-      //     try {
-      //         const roomsData = await this.roomService.getRooms();
-      //         roomsData.forEach((room) => {
-      //           console.log('room text is ', room.text);
-      //             this.rooms.push(room.text);
-      //             });
-      //     } catch (error) {
-      //         console.error(error);
-      //     }
-      // },
       }
   }
 </script>
