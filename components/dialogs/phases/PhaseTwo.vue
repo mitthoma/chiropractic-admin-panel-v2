@@ -106,7 +106,6 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import { createRoomService } from '~~/services/room';
 
 export default {
       components: {
@@ -122,22 +121,21 @@ export default {
         },
       },
       async mounted() {
-        this.roomService = createRoomService(this.$api);
-        // await this.loadRooms();
+
+        if (this.selectedItem && this.selectedItem.visitDate) {
+            this.visitDateTime = new Date(this.selectedItem.visitDate);
+        }
 
       },
       data() {
         return {
           visitDateTime: null,
           visitDate: null,
-          rooms: [],
-          roomService: null,
           
         };
       },
       watch: {
         visitDateTime(newVal) {
-          console.log('watched!')
           this.updatePhaseTwoVisitDateTime(newVal);
         },
 
@@ -175,11 +173,6 @@ export default {
         },
         updatePhaseTwoVisitDateTime(newVal) {
           this.$emit('edit-visit-date-time', this.visitDateTime)
-          console.log('is this called');
-          // this.$emit('update:phaseTwoForm', {
-          //   ...this.phaseTwoForm,
-          //   visitDate: newVal
-          // });
         },
         updatePhaseTwoVisitDateText(newVal) {
           this.$emit('update:phaseTwoForm', {
@@ -187,17 +180,6 @@ export default {
             visitDateText: newVal.target.value
           });
         },
-      //   async loadRooms() {
-      //     try {
-      //         const roomsData = await this.roomService.getRooms();
-      //         roomsData.forEach((room) => {
-      //           console.log('room text is ', room.text);
-      //             this.rooms.push(room.text);
-      //             });
-      //     } catch (error) {
-      //         console.error(error);
-      //     }
-      // },
       }
   }
 </script>

@@ -12,7 +12,7 @@
                 <v-spacer></v-spacer>
                 <v-row class="mx-2 pa-2" justify="end">
                     <v-btn color="primary" @click="dialog = true">Add New Note</v-btn>
-                    <NoteDialog v-model="dialog"  :patient="currentPatient" @note-added="refreshNotes" @close-dialog="closeNoteDialog" />
+                    <NoteDialog v-model="dialog" :patient="currentPatient" @note-added="refreshNotes" @close-dialog="closeNoteDialog" />
                 </v-row>
               </div>
               <v-table>
@@ -283,7 +283,6 @@
         });
 
         // 2. construct the payload
-        console.log('entries are ', entries);
         let payload = entries.reduce((acc, entry) => {
           const key = entry.spinalLevel || entry.extremityLevel;
           if (!acc[key]) {
@@ -294,9 +293,6 @@
               treatment: {},
             };
           }
-
-          console.log('key is ', key)
-          console.log('acc is ', acc);
 
           acc[key].sides[entry.side] = true;
           acc[key].of.sublux = entry.sublux
@@ -316,7 +312,6 @@
           acc[key].treatment.positioning = entry.treatmentPositioning;
           acc[key].treatment.technique = entry.technique;
           acc[key].treatment.manipulation = entry.manipulation;
-          console.log('done with ', key);
 
           return acc;
         }, {});
@@ -373,12 +368,9 @@
         },
         formatVisitDate(date, item) {
           if (!date && !item.visitDateText) {
-            console.log('hitting here');
               return "No Date Data";
           }
           if (!date || isNaN(Date.parse(date))) {
-            console.log('hitting here2');
-
               return item.visitDateText;
           }
 

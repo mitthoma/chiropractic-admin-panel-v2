@@ -185,7 +185,6 @@ export default {
         this.currentPatient = await this.patientService.getPatient({ id: patientId });
         await this.getCurrentNote();
         this.fetchEntries();
-        console.log('THIS CURRENT PATIENT ID IS ', patientId);
         this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: patientId });
     },
     methods: {

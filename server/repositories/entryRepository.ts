@@ -31,7 +31,6 @@ interface EntryPayload {
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
-    console.log('received on repo and received payload is ', payload);
     const defaultPayload = {
       createdDate: new Date(),
       category: 'spinal', // Replace with a valid default category
