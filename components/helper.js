@@ -69,8 +69,8 @@ export const extremityLevels = [
         value: 'knee'
     },
     {
-        title: 'Scap',
-        value: 'scap'
+        title: 'Calf',
+        value: 'calf'
     },
     {
         title: 'Ankle',

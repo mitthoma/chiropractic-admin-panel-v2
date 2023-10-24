@@ -183,7 +183,7 @@ export default {
         's4_s5',
         's5',
       ],
-      extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'],
+      extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'],
       camelCaseColumns: {
         'Sides': 'sides',
         'Subluxation': 'subluxation',
@@ -334,7 +334,7 @@ export default {
         const entries = await this.entryService.getEntriesForNote({ noteId });
 
         // Here, you can map your entries to your spinalGrid. For example:
-        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'];
+        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
 
         this.extremityGrid = extremityLevels.map(level => {
           const entry = entries.find(entry => entry.extremityLevel === level);
@@ -432,7 +432,7 @@ export default {
       },
       
       async saveExtremityEntries(noteId) {
-        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'ankle', 'foot'];
+        const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
         let noteEntries = await this.entryService.getEntriesForNote({ noteId });
 

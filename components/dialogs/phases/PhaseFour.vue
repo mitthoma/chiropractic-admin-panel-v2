@@ -37,10 +37,10 @@ export default {
   return {
     dialog: true,
     valid: true,
-    rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'],
+    rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Calf', 'Ankle', 'Foot'],
     cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 13}, () => Array(11).fill(null)),
-    answerGrid: Array.from({length: 13}, () => Array(9).fill(null)),
+    grid: Array.from({length: 14}, () => Array(11).fill(null)),
+    answerGrid: Array.from({length: 14}, () => Array(9).fill(null)),
     PHs: {
       'Sides': 'LRB',
       'Subluxation': 'SX',
