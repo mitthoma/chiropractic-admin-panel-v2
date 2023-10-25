@@ -3,7 +3,7 @@
     <v-row class="header-row text-center">
       <v-col></v-col>
       <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
+        <div class="mb-1 rotate pt-3"><strong>{{ col }}</strong></div>
       </v-col>
     </v-row>
     <div class="scrollable-content">
@@ -224,9 +224,10 @@ computed: {
 }
 
 .scrollable-content {
-  overflow: auto;
-  max-height: 70vh;
+  /* overflow: auto; */
+  max-height: 45vh;
   overflow-x: auto; /* Added overflow-x */
+  overflow-y: auto;
   padding-top: 15px;
 }
 .v-text-field {
