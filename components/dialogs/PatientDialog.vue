@@ -61,8 +61,10 @@
           ></v-text-field>
           </v-col>
         </v-row>
+        <div v-if="isUpdateMode">
           <label class="form-label">Next Appointment</label>
-          <VueDatePicker type="date" enable-time-picker="false" v-model="form.nextAppointment" dark />
+          <VueDatePicker type="date" teleport-center :enable-time-picker="false" v-model="form.nextAppointment" dark />
+        </div>
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -187,3 +189,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+.dp__button {
+  display: none !Important;
+}
+</style>

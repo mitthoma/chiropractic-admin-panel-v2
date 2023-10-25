@@ -1,5 +1,8 @@
 <template>
   <v-row>
+    <!-- <v-col cols="12">
+      <v-card-title>Testing</v-card-title>
+    </v-col> -->
     <v-col cols="4">
       <v-suffix>Date of Appointment</v-suffix>
     </v-col>
@@ -8,6 +11,8 @@
       <v-col cols="4">
         <VueDatePicker
           v-model="visitDateTime"
+          teleport-center 
+          :enable-time-picker="false"
           format="dd MMMM yyyy"
           placeholder="Visit Date"
           dark

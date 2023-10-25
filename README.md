@@ -47,5 +47,7 @@ WHEN USING PRISMA:
 
 AFTER CHANGES TO SCHEMA:
 
-1. RUN PRISMA GENERATE COMMAND
-2. PUSH IT TO THE DB
+1. npx prisma migrate dev --name name_of_migration
+Replace name_of_migration with a descriptive name for your migration.
+
+2. npx prisma migrate deploy

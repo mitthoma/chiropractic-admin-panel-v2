@@ -3,7 +3,7 @@
     <v-row class="header-row text-center">
       <v-col></v-col>
       <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate"><strong>{{ col }}</strong></div>
+        <div class="mb-1 rotate pt-3"><strong>{{ col }}</strong></div>
       </v-col>
     </v-row>
     <div class="scrollable-content">
@@ -37,10 +37,10 @@ export default {
   return {
     dialog: true,
     valid: true,
-    rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Ankle', 'Foot'],
+    rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Calf', 'Ankle', 'Foot'],
     cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 13}, () => Array(11).fill(null)),
-    answerGrid: Array.from({length: 13}, () => Array(9).fill(null)),
+    grid: Array.from({length: 14}, () => Array(11).fill(null)),
+    answerGrid: Array.from({length: 14}, () => Array(9).fill(null)),
     PHs: {
       'Sides': 'LRB',
       'Subluxation': 'SX',
@@ -224,9 +224,10 @@ computed: {
 }
 
 .scrollable-content {
-  overflow: auto;
-  max-height: 70vh;
+  /* overflow: auto; */
+  max-height: 45vh;
   overflow-x: auto; /* Added overflow-x */
+  overflow-y: auto;
   padding-top: 15px;
 }
 .v-text-field {
