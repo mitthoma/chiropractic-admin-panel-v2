@@ -11,9 +11,9 @@
         align-tabs="center"
       >
         <v-tab :value="tab === 0" :disabled="tab < 0" @click="switchTab(0)">Subj. Complaints</v-tab>
-        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Obj. Findings 1</v-tab>
-        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Obj. Findings 2</v-tab>
-        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Obj. Findings 3</v-tab>
+        <v-tab :value="tab === 1" :disabled="tab < 1" @click="switchTab(1)">Vital Statistics</v-tab>
+        <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)">Spinal Levels</v-tab>
+        <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)">Extremity Levels</v-tab>
         <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)">Assessment</v-tab>
         <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)">Treatment & Plan</v-tab>
 

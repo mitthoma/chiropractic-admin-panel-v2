@@ -61,8 +61,10 @@
           ></v-text-field>
           </v-col>
         </v-row>
+        <div v-if="isUpdateMode">
           <label class="form-label">Next Appointment</label>
           <VueDatePicker type="date" enable-time-picker="false" v-model="form.nextAppointment" dark />
+        </div>
         </v-form>
       </v-card-text>
       <v-card-actions>
