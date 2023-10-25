@@ -491,10 +491,11 @@ export default {
     },
     async submitNoteForm() {
       const patientId = this.$route.params.id;
+      const visitDateTime = new Date(this.form.visitDate);
       if (this.isFormValid) {
         const formData = {
           ...this.form,
-          visitDate: this.form.visitDate ? formatISO(this.form.visitDate) : null,
+          visitDate: visitDateTime ? formatISO(visitDateTime) : null,
         };
         const res = await this.noteService.addNote(formData, patientId);
         if (await res instanceof Error) {

@@ -11,6 +11,8 @@
       <v-col cols="4">
         <VueDatePicker
           v-model="visitDateTime"
+          teleport-center 
+          :enable-time-picker="false"
           format="dd MMMM yyyy"
           placeholder="Visit Date"
           dark
