@@ -39,7 +39,7 @@
                 <v-card-title>
                     Objective Findings - Spinal
                 </v-card-title>
-                <v-card class="pa-5">
+                <v-card class="pa-5 text-center">
                     <SpinalGrid :entries="spinalEntries" />
                 </v-card>
             </v-col>

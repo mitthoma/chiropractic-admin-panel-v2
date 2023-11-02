@@ -1,27 +1,18 @@
 <template>
     <div class="grid-container">
-      <v-row class="header-row text-center">
-        <v-col></v-col>
-        <v-col class=" pl-5" v-for="(col, j) in cols" :key="j">
-          <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="mb-1 pt-9 rotate label"><strong>{{ col }}</strong></div>
-          <div v-else-if="col === 'L'" >
-            <div class="rotate label"><strong></strong></div>
-            <div class="mb-1 label">
-              <strong>{{ col }}</strong>
-            </div>
-          </div>
-          <div v-else-if="col === 'B'" >
-            <div class="rotate label"><strong></strong></div>
-            <div class="mb-1 label">
-              <strong>{{ col }}</strong>
-            </div>
-          </div>
-          <div v-else >
-            <div class="label rotate pt-8 pr-9"><strong>Sides</strong></div>
-            <div class="mb-1 label">
-              <strong>{{ col }}</strong>
-            </div>
-          </div>
+      <v-row>
+        <v-col ></v-col>
+        <v-col cols="12" class="mb-8">
+          <v-row v-for="(row, i) in rows.slice(0, 1)" :key="i">
+            <v-col class=" grid-cell grid-cell-heading">
+            </v-col>
+            <v-col class="grid-cell grid-cell-heading " v-for="(col, j) in cols" :key="j">
+              <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="rotate set-min-width"><strong>{{ col }}</strong></div>
+              <div v-else-if="col === 'R'" class="text-center rotate set-min-width"><strong>Right</strong></div>
+              <div v-else-if="col === 'L'" class="text-center rotate set-min-width"><strong>Left</strong></div>
+              <div v-else-if="col === 'B'" class="text-center rotate set-min-width"><strong>Both</strong></div>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
       <div class="scrollable-content">
@@ -108,18 +99,21 @@
 
 .rotate {
   transform: rotate(90deg);
-  white-space: normal; 
-  line-height: 1.2;
-  height: 80px;   
-  width: 100px;  
-  overflow: hidden;
-  /* padding-top: 15px; */
-  text-align: center; /* Centers the header text */
+  white-space: nowrap; 
+  overflow-x: visible;
+  /* text-wrap: nowrap; */
+  /* text-align: center; */
 }
 .grid-cell {
-  border: 1px solid gray; /* Change color and thickness as desired */
+  border: 1px solid gray;
+  padding-top: 20px;
   text-align: center;
-  padding-top: 25px;
+  min-width: 20px !important;
+}
+
+.grid-cell-heading {
+  min-height: 120px !important;
+  border: none !important;
 }
 
 .grouped-cell {
@@ -157,6 +151,10 @@
   border-left: 1px solid gray;
   border-bottom: 1px solid gray;
 }
+
+/* .set-min-width {
+  min-height: 40px !important;
+} */
 
 @media (max-width: 1920px) {
   .label {
