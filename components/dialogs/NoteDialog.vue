@@ -495,6 +495,7 @@ export default {
       if (this.isFormValid) {
         const formData = {
           ...this.form,
+          temperature: parseFloat(this.form.temperature),
           visitDate: visitDateTime ? formatISO(visitDateTime) : null,
         };
         const res = await this.noteService.addNote(formData, patientId);
@@ -520,6 +521,7 @@ export default {
 
       const formData = {
         ...this.form,
+        temperature: parseFloat(this.form.temperature),
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
 
@@ -650,7 +652,7 @@ export default {
             this.submitNoteForm();
           }
         } else {
-          this.tab++;
+            this.tab++;
         }
       }
     },

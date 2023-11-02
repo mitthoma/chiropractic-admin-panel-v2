@@ -63,10 +63,12 @@
                 <v-card class="pa-5">
                     <v-row>
                         <v-col cols="6">
+                            {{ currentNote?.temperature }}
+                            {{ activeNote?.temperature }}
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Visit Date</v-label>
-                                    <v-card-text class="pt-0">{{ formatDate(currentNote?.visitDate, currentNote) || null }}</v-card-text>
+                                    <v-card-text class="pt-0">{{ formatDate(activeNote?.visitDate, activeNote) || null }}</v-card-text>
 
                                 </v-col>
                             </div>
@@ -85,7 +87,7 @@
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Temperature</v-label>
-                                    <v-card-text v-if="currentNote?.temperature" class="pt-0">{{currentNote?.temperature}}</v-card-text>
+                                    <v-card-text v-if="activeNote?.temperature" class="pt-0">{{activeNote?.temperature}}</v-card-text>
                                 </v-col>
                             </div>
                         </v-col>
@@ -93,25 +95,25 @@
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Systolic</v-label>
-                                    <v-card-text v-if="currentNote?.systolic" class="pt-0">{{currentNote?.systolic}}</v-card-text>
+                                    <v-card-text v-if="activeNote?.systolic" class="pt-0">{{activeNote?.systolic}}</v-card-text>
                                 </v-col>
                             </div>
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Diastolic</v-label>
-                                    <v-card-text v-if="currentNote?.diastolic" class="pt-0">{{currentNote?.diastolic}}</v-card-text>
+                                    <v-card-text v-if="activeNote?.diastolic" class="pt-0">{{activeNote?.diastolic}}</v-card-text>
                                 </v-col>
                             </div>
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Respiration</v-label>
-                                    <v-card-text v-if="currentNote?.respiration" class="pt-0">{{currentNote?.respiration}}</v-card-text>
+                                    <v-card-text v-if="activeNote?.respiration" class="pt-0">{{activeNote?.respiration}}</v-card-text>
                                 </v-col>
                             </div>
                             <div class="d-flex align-center justify-space-around">
                                 <v-col cols="12" class="text-center">
                                     <v-label class="pb-0 mb-0">Pulse</v-label>
-                                    <v-card-text v-if="currentNote?.pulse" class="pt-0">{{currentNote?.pulse}}</v-card-text>
+                                    <v-card-text v-if="activeNote?.pulse" class="pt-0">{{activeNote?.pulse}}</v-card-text>
                                 </v-col>
                             </div>
                         </v-col>
@@ -122,7 +124,7 @@
         </v-row>
 
       </v-container>
-    <NoteDialog v-model="noteDialog" :selected-item="selectedNoteItem" :patient="currentPatient" @note-added="getCurrentNote" @close-dialog="closeNoteDialog" />
+    <NoteDialog v-model="noteDialog" :selected-item="selectedNoteItem" :patient="currentPatient" @note-added="getCurrentNote" @note-updated="getCurrentNote" @close-dialog="closeNoteDialog" />
 </div>  
 </template>
   
@@ -169,9 +171,9 @@ export default {
         }
     },
     computed: {
-        // currentPatient() {
-        //     return this.patientStore?.getCurrentPatient;
-        // }
+        activeNote() {
+            return this.currentNote;
+        }
     },
     async mounted() {
         this.noteStore = noteStore();
@@ -189,11 +191,12 @@ export default {
     },
     methods: {
         async getCurrentNote() {
-            if (this.noteStore?.getCurrentNote) {
-                this.currentNote = this.noteStore.getCurrentNote;
-            } else {
+            // if (this.noteStore?.getCurrentNote) {
+            //     this.currentNote = this.noteStore.getCurrentNote;
+            // } else {
                 this.currentNote = await this.noteService?.getNote({ id: this.$route.params.noteId });
-            }
+                console.log('this current note is ', this.currentNote?.temperature);
+            // }
         },
         editNote(item) {
             this.selectedNoteItem = item;

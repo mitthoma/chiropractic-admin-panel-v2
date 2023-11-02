@@ -7,10 +7,10 @@
             <v-col class=" grid-cell grid-cell-heading">
             </v-col>
             <v-col class="grid-cell grid-cell-heading " v-for="(col, j) in cols" :key="j">
-              <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="rotate set-min-width"><strong>{{ col }}</strong></div>
-              <div v-else-if="col === 'R'" class="text-center rotate set-min-width"><strong>Right</strong></div>
-              <div v-else-if="col === 'L'" class="text-center rotate set-min-width"><strong>Left</strong></div>
-              <div v-else-if="col === 'B'" class="text-center rotate set-min-width"><strong>Both</strong></div>
+              <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="rotate"><strong>{{ col }}</strong></div>
+              <div v-else-if="col === 'R'" class="text-center rotate"><strong>Right</strong></div>
+              <div v-else-if="col === 'L'" class="text-center rotate"><strong>Left</strong></div>
+              <div v-else-if="col === 'B'" class="text-center rotate"><strong>Both</strong></div>
             </v-col>
           </v-row>
         </v-col>
@@ -101,8 +101,6 @@
   transform: rotate(90deg);
   white-space: nowrap; 
   overflow-x: visible;
-  /* text-wrap: nowrap; */
-  /* text-align: center; */
 }
 .grid-cell {
   border: 1px solid gray;
@@ -117,7 +115,6 @@
 }
 
 .grouped-cell {
-  /* Add styling specific to the grouped cell */
   border-bottom: 1px solid gray;
 }
 
@@ -126,7 +123,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* min-height: calc(1.5rem * 5); Adjust height as needed */
 }
 
 #sides-label {
@@ -151,10 +147,6 @@
   border-left: 1px solid gray;
   border-bottom: 1px solid gray;
 }
-
-/* .set-min-width {
-  min-height: 40px !important;
-} */
 
 @media (max-width: 1920px) {
   .label {

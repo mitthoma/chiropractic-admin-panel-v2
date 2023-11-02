@@ -2,18 +2,10 @@ import { addNewNote } from "~/server/repositories/noteRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);
-    // const formattedRoomAssignment2 = body.phaseTwoRoomAssignment;
-    // const formattedRoomAssignment1 = body.phaseOneRoomAssignment;
-    // const formattedRoomAssignment3 = body.phaseThreeRoomAssignment;
-    // const formattedRoomAssignment4 = body.phaseFourRoomAssignment;
 
     const formattedBody = {
         ...body,
-        // phaseOneRoomAssignment: formattedRoomAssignment1 || null,
-        // phaseTwoRoomAssignment:  formattedRoomAssignment2 || null,
-        // phaseThreeRoomAssignment: formattedRoomAssignment3 || null,
-        // phaseFourRoomAssignment: formattedRoomAssignment4 || null,
-        temperature: parseInt(body.temperature) || null,
+        temperature: parseFloat(body.temperature) || null,
         systolic: parseInt(body.systolic) || null,
         diastolic: parseInt(body.diastolic) || null,
         tx: parseInt(body.tx) || null,

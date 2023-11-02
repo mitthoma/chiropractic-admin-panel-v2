@@ -58,7 +58,7 @@ model note {
   visitDate                DateTime? @default(now()) @db.Timestamp(6)
   createdDate              DateTime  @default(now()) @db.Timestamp(6)
   lastEdited               DateTime  @default(now()) @db.Timestamp(6)
-  temperature              Int?
+  temperature              Decimal?  @db.Decimal(4,1)
   respiration              Int?
   systolic                 Int?
   diastolic                Int?

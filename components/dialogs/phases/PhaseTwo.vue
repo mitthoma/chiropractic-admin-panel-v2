@@ -1,8 +1,5 @@
 <template>
   <v-row>
-    <!-- <v-col cols="12">
-      <v-card-title>Testing</v-card-title>
-    </v-col> -->
     <v-col cols="4">
       <v-suffix>Date of Appointment</v-suffix>
     </v-col>
@@ -42,34 +39,37 @@
   <v-row>
     <v-col cols="4">
       <v-text-field 
-      variant="outlined"
+          variant="outlined"
           :value="phaseTwoForm.temperature"
           suffix="F"
-          type="number"
+          type="text"
           placeholder="Temperature"     
           @input="updatePhaseTwoTemperature"
+          :rules="[rules.temperature]"
 
       ></v-text-field>
     </v-col>
     <v-col cols="4">
       <v-text-field 
-      variant="outlined"
+          variant="outlined"
           :value="phaseTwoForm.systolic"
           suffix="Sys"
           type="number"
           placeholder="Systolic"    
           @input="updatePhaseTwoSystolic"
+          :rules="[rules.systolic]"
 
       ></v-text-field>
     </v-col>
     <v-col cols="4">
       <v-text-field 
-      variant="outlined"
+          variant="outlined"
           :value="phaseTwoForm.diastolic"
           suffix="Dia"
           type="number"
           placeholder="Diastolic"  
           @input="updatePhaseTwoDiastolic"
+          :rules="[rules.diastolic]"
 
       ></v-text-field>
     </v-col>
@@ -85,23 +85,25 @@
   <v-row class="mb-12">
     <v-col cols="6">
       <v-text-field 
-      variant="outlined"
+          variant="outlined"
           :value="phaseTwoForm.pulse"
           suffix="ppm"
           type="number"
           placeholder="Pulse"    
           @input="updatePhaseTwoPulse"
+          :rules="[rules.pulse]"
 
       ></v-text-field>
     </v-col>
     <v-col cols="6">
       <v-text-field 
-        variant="outlined"
+            variant="outlined"
           :value="phaseTwoForm.respiration"
           suffix="bpm"
           type="number"
           placeholder="Respiration"     
           @input="updatePhaseTwoRespiration"
+          :rules="[rules.respiration]"
 
       ></v-text-field>
     </v-col>
@@ -136,6 +138,56 @@ export default {
         return {
           visitDateTime: null,
           visitDate: null,
+          rules: {
+            required: value => !!value || 'This field is required.',
+            temperature: value => {
+              if (value === '' || value === null || value === undefined) {
+                return true;
+              }
+
+              const pattern = /^\d+(\.\d{0,1})?$/;
+              if (!pattern.test(value)) {
+                return 'Temperature must be a number with at most one decimal place.';
+              } else {
+                const floatValue = parseFloat(value);
+                if (isNaN(floatValue)) {
+                  return true;
+                }
+                return (
+                  floatValue >= 97 &&
+                  floatValue <= 103
+                ) || 'Temperature must be between 97°F and 103°F.';
+              }
+            },
+            systolic: value => {
+              if (value === '' || value === null || value === undefined) {
+                return true;
+              } else {
+                return (value >= 80 && value <= 240) || 'Systolic must be between 80 and 240.'
+              }
+            },
+            diastolic: value => {
+              if (value === '' || value === null || value === undefined) {
+                return true;
+              } else {
+                return (value >= 50 && value <= 130) || 'Diastolic must be between 50 and 130.'
+              }
+            },
+            pulse: value => {
+              if (value === '' || value === null || value === undefined) {
+                return true;
+              } else {
+                return (value >= 40 && value <= 150) || 'Pulse must be between 40 and 150.'
+              }
+            },
+            respiration: value => {
+              if (value === '' || value === null || value === undefined) {
+                return true;
+              } else {
+                return (value >= 10 && value <= 30) || 'Respiration must be between 10 and 30.'
+              }
+            },
+          },
           
         };
       },
@@ -146,35 +198,50 @@ export default {
 
       },
       methods: {
-        updatePhaseTwoTemperature(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            temperature: newVal.target.value
-          });
+        updatePhaseTwoTemperature(event) {
+          const value = event.target.value;
+          if (this.rules.temperature(value)) {
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              temperature: value,
+            });
+          }
         },
-        updatePhaseTwoSystolic(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            systolic: newVal.target.value
-          });
+        updatePhaseTwoSystolic(event) {
+          const value = event.target.value;
+          if (this.rules.systolic(value)) {
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              systolic: value
+            });
+          }
         },
-        updatePhaseTwoDiastolic(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            diastolic: newVal.target.value
-          });
+        updatePhaseTwoDiastolic(event) {
+          const value = event.target.value;
+          if (this.rules.diastolic(value)) {
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              diastolic: value
+            });
+          }
         },
-        updatePhaseTwoPulse(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            pulse: newVal.target.value
-          });
+        updatePhaseTwoPulse(event) {
+          const value = event.target.value;
+          if (this.rules.pulse(value)) {
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              pulse: value
+            });
+          }
         },
-        updatePhaseTwoRespiration(newVal) {
-          this.$emit('update:phaseTwoForm', {
-            ...this.phaseTwoForm,
-            respiration: newVal.target.value
-          });
+        updatePhaseTwoRespiration(event) {
+          const value = event.target.value;
+          if (this.rules.respiration(value)) {
+            this.$emit('update:phaseTwoForm', {
+              ...this.phaseTwoForm,
+              respiration: value
+            });
+          }
         },
         updatePhaseTwoVisitDateTime(newVal) {
           this.$emit('edit-visit-date-time', this.visitDateTime)
