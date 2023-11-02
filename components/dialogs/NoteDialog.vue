@@ -181,7 +181,7 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
       ],
       extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'],
       camelCaseColumns: {
@@ -317,7 +317,7 @@ export default {
           's2_s3',
           's3_s4',
           's4_s5',
-          's5',
+          's5_',
         ];
 
         this.spinalGrid = spinalLevels.map(level => {
@@ -396,7 +396,7 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
       ];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
 
@@ -495,6 +495,7 @@ export default {
       if (this.isFormValid) {
         const formData = {
           ...this.form,
+          temperature: parseFloat(this.form.temperature),
           visitDate: visitDateTime ? formatISO(visitDateTime) : null,
         };
         const res = await this.noteService.addNote(formData, patientId);
@@ -520,6 +521,7 @@ export default {
 
       const formData = {
         ...this.form,
+        temperature: parseFloat(this.form.temperature),
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
 
@@ -650,7 +652,7 @@ export default {
             this.submitNoteForm();
           }
         } else {
-          this.tab++;
+            this.tab++;
         }
       }
     },

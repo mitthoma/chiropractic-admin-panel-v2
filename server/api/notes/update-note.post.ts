@@ -2,10 +2,9 @@ import { updateNote } from "~/server/repositories/noteRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);
-    console.log('BODY BEFORE NOTE IS PASSED IS ', body);
     
     const noteToPass = {
-        temperature: body.temperature ? parseInt(body.temperature) : null,
+        temperature: body.temperature ? parseFloat(body.temperature) : null,
         respiration: body.respiration ? parseInt(body.respiration) : null,
         systolic: body.systolic ? parseInt(body.systolic) : null,
         diastolic: body.diastolic ? parseInt(body.diastolic) : null,

@@ -1,30 +1,23 @@
 <template>
   <div class="grid-container">
-    <v-row class="header-row text-center">
-      <v-col cols="1" class=""></v-col>
-      <v-col cols="1" style="margin-right: 7%" class=""></v-col>
-      <v-col class=" pl-5" v-for="(col, j) in cols" :key="j">
-        <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="mb-1 pt-9 rotate label"><strong>{{ col }}</strong></div>
-        <div v-else-if="col === 'L'" >
-          <div class="rotate label"><strong></strong></div>
-          <div class="mb-1 label">
-            <strong>{{ col }}</strong>
-          </div>
-        </div>
-        <div v-else-if="col === 'B'" >
-          <div class="rotate label"><strong></strong></div>
-          <div class="mb-1 label">
-            <strong>{{ col }}</strong>
-          </div>
-        </div>
-        <div v-else >
-          <div class="label rotate pt-8 pr-9"><strong>Sides</strong></div>
-          <div class="mb-1 label">
-            <strong>{{ col }}</strong>
-          </div>
-        </div>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="1" class="text-center static-col pb-8"></v-col>
+        <v-col cols="1" class="text-center static-col">
+        </v-col>
+        <v-col cols="10">
+          <v-row class="mb-12" v-for="(row, i) in rows.slice(0, 1)" :key="i">
+            <v-col class="text-center grid-cell grid-cell-heading">
+            </v-col>
+            <v-col class="grid-cell grid-cell-heading text-center" v-for="(col, j) in cols" :key="j">
+              <div v-if="!(col === 'R' || col === 'L' || col === 'B')" class="rotate pl-8 text-center"><strong>{{ col }}</strong></div>
+              <div v-else-if="col === 'R'" class="text-center rotate pl-8"><strong>Right</strong></div>
+              <div v-else-if="col === 'L'" class="text-center rotate pl-8"><strong>Left</strong></div>
+              <div v-else-if="col === 'B'" class="text-center rotate pl-8"><strong>Both</strong></div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
     <div class="scrollable-content mt-5">
       <!-- C Levels  -->
       <v-row>
@@ -344,22 +337,23 @@
 
 .rotate {
   transform: rotate(90deg);
-  white-space: normal; 
-  line-height: 1.2;
-  height: 80px;   
-  width: 100px;  
-  overflow: hidden;
-  /* padding-top: 15px; */
-  text-align: center; /* Centers the header text */
+  white-space: nowrap; 
+  overflow-x: visible;
+  text-align: center;
 }
 .grid-cell {
-  border: 1px solid gray; /* Change color and thickness as desired */
+  border: 1px solid gray;
+  padding-top: 20px;
   text-align: center;
-  padding-top: 25px;
+  min-width: 20px !important;
+}
+
+.grid-cell-heading {
+  min-height: 120px !important;
+  border: none !important;
 }
 
 .grouped-cell {
-  /* Add styling specific to the grouped cell */
   border-bottom: 1px solid gray;
 }
 
@@ -368,7 +362,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* min-height: calc(1.5rem * 5); Adjust height as needed */
 }
 
 #sides-label {
