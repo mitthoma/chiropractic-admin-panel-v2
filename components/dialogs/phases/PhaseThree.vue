@@ -311,7 +311,7 @@ export default {
         ],
       camelCaseColumns: {
         'Sides': 'sides',
-        'Subluxation': 'subluxation',
+        'Subluxation': 'sublux',
         'Muscle Spasm': 'muscleSpasm',
         'Trigger Points': 'triggerPoints',
         'Tenderness': 'tenderness',
@@ -363,8 +363,6 @@ mounted() {
       }
     }
   }
-
-
 },
 computed: {
   displayGrid() {
@@ -389,10 +387,35 @@ computed: {
       });
     },
     toggleX(i, j, sideOption = null) {
-      if (sideOption) {
-        if (this.grid[i][j] && !(this.grid[i][(j + 1) % 3] || this.grid[i][(j + 2) % 3])) {
-          alert('Side must not be left empty');
+      // Check if the column clicked is 'left', 'right', or 'both'
+      console.log('j is ', j);
+      if (j >= 0 && j <= 2) {
+        // Check if there's already an 'X' in the clicked cell
+        console.log('grid i j is ', this.grid[i][j])
+        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
+          console.log('HITTING AN X FOR SIDES');
+          // Clear the row values and return
+          for (let col = 0; col < this.grid[i].length; col++) {
+            this.grid[i][col] = false;
+            this.answerGrid[i][col] = false;
+          }
+          this.$emit('update:phaseTwoForm', this.answerGrid);
+          this.$emit('update:spinalGrid', this.answerGrid);
           return;
+        }
+      }
+
+      // Previous logic for setting the selected side
+      if (sideOption) {
+
+        let side;
+
+        if (j === 0) {
+          side = 'l';
+        } else if (j === 1) {
+          side = 'r';
+        } else if (j === 2) {
+          side = 'b';
         }
 
         this.grid[i][0] = false;
@@ -400,7 +423,7 @@ computed: {
         this.grid[i][2] = false;
 
         this.grid[i][j] = true;
-        this.answerGrid[i][0] = sideOption;
+        this.answerGrid[i][0] = side;
       } else {
         if (this.grid[i][j]) {
           this.grid[i][j] = false;
@@ -410,6 +433,7 @@ computed: {
           this.answerGrid[i][j - 2] = true;
         }
       }
+
       this.$emit('update:phaseTwoForm', this.answerGrid);
       this.$emit('update:spinalGrid', this.answerGrid);
     },
@@ -436,25 +460,14 @@ computed: {
   top: 0;
   z-index: 1;
   overflow-y: auto;
-  /* padding-bottom: 50px;  */
 }
-
-/* . {
-  position: sticky;
-  left: 0;
-  z-index: 1;
-} */
-
 .scrollable-content {
-  /* overflow: auto; */
   max-height: 50vh;
   overflow-y: auto;
-  /* overflow-x: hidden; */
   padding-top: 15px;
 }
 .v-text-field {
   width: 100%;
-  /* margin: 0 auto; */
   margin-left: 5px;
   margin-right: 5px;
 }

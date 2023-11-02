@@ -181,7 +181,7 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
       ],
       extremityLevels: ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'],
       camelCaseColumns: {
@@ -317,7 +317,7 @@ export default {
           's2_s3',
           's3_s4',
           's4_s5',
-          's5',
+          's5_',
         ];
 
         this.spinalGrid = spinalLevels.map(level => {
@@ -396,7 +396,7 @@ export default {
         's2_s3',
         's3_s4',
         's4_s5',
-        's5',
+        's5_',
       ];
         const entryFields = ['side', 'sublux', 'muscleSpasm', 'triggerPoints', 'tenderness', 'numbness', 'edema', 'swelling', 'reducedMotion'];
 

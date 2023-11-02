@@ -1,4 +1,4 @@
-import { updateEntry } from "~/server/repositories/entryRepository";
+import { updateEntry, deleteEntry } from "~/server/repositories/entryRepository";
 
 export default defineEventHandler(async event => {
     const body = await readBody(event);
@@ -10,6 +10,12 @@ export default defineEventHandler(async event => {
         body.side = 'r';
     } else if (body.side === 'Both') {
         body.side = 'b';
+    } else if (!body.side) {
+        const res = await deleteEntry(body.id);
+        if (res) {
+            console.log('body successfully deleted');
+        }
+        return res;
     }
 
     const booleanFields = [

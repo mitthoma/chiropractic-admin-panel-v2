@@ -63,7 +63,7 @@ export default {
       ],
     camelCaseColumns: {
       'Sides': 'sides',
-      'Subluxation': 'subluxation',
+      'Subluxation': 'sublux',
       'Muscle Spasm': 'muscleSpasm',
       'Trigger Points': 'triggerPoints',
       'Tenderness': 'tenderness',
@@ -129,10 +129,35 @@ computed: {
 },
   methods: {
     toggleX(i, j, sideOption = null) {
-      if (sideOption) {
-        if (this.grid[i][j] && !(this.grid[i][(j + 1) % 3] || this.grid[i][(j + 2) % 3])) {
-          alert('Side must not be left empty');
+      // Check if the column clicked is 'left', 'right', or 'both'
+      console.log('j is ', j);
+      if (j >= 0 && j <= 2) {
+        // Check if there's already an 'X' in the clicked cell
+        console.log('grid i j is ', this.grid[i][j])
+        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
+          console.log('HITTING AN X FOR SIDES');
+          // Clear the row values and return
+          for (let col = 0; col < this.grid[i].length; col++) {
+            this.grid[i][col] = false;
+            this.answerGrid[i][col] = false;
+          }
+          this.$emit('update:phaseTwoForm', this.answerGrid);
+          this.$emit('update:extremityGrid', this.answerGrid);
           return;
+        }
+      }
+
+      // Previous logic for setting the selected side
+      if (sideOption) {
+
+        let side;
+
+        if (j === 0) {
+          side = 'l';
+        } else if (j === 1) {
+          side = 'r';
+        } else if (j === 2) {
+          side = 'b';
         }
 
         this.grid[i][0] = false;
@@ -140,7 +165,7 @@ computed: {
         this.grid[i][2] = false;
 
         this.grid[i][j] = true;
-        this.answerGrid[i][0] = sideOption;
+        this.answerGrid[i][0] = side;
       } else {
         if (this.grid[i][j]) {
           this.grid[i][j] = false;
@@ -150,51 +175,15 @@ computed: {
           this.answerGrid[i][j - 2] = true;
         }
       }
+
       this.$emit('update:phaseTwoForm', this.answerGrid);
       this.$emit('update:extremityGrid', this.answerGrid);
     },
-    // updateValue(i, j, value) {
-    //     if (this.cols[j] === 'Sides') {
-    //       switch (value) {
-    //         case 'Left':
-    //           this.grid[i][j] = 'l';
-    //           break;
-    //         case 'Right':
-    //           this.grid[i][j] = 'r';
-    //           break;
-    //         case 'Both':
-    //           this.grid[i][j] = 'b';
-    //           break;
-    //         default:
-    //           this.grid[i][j] = null;
-    //       }
-    //     }
-
-    //     else if (this.booleanColumns.includes(this.cols[j])) {
-    //       this.grid[i][j] = value === 'X' ? true : false;
-    //     }
-    //     else {
-    //       this.grid[i][j] = value;
-    //     }
-
-    //     this.$emit('update:phaseTwoForm', this.grid); // emit the changes
-    //     this.$emit('update:extremityGrid', this.grid);
-    //   }
   }
 }
 </script>
 
 <style scoped>
-/* .v-text-field {
-  max-width: 50px;
-  margin: 0;
-} */
-
-/* .rotate {
-  transform: rotate(90deg);
-  margin-bottom: 10px;
-} */
-
 .input-field {
   text-transform: capitalize;
 }
