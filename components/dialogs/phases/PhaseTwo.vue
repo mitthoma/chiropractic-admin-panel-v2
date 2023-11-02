@@ -156,35 +156,35 @@ export default {
                 return (
                   floatValue >= 97 &&
                   floatValue <= 103
-                ) || 'Temperature must be between 97°F and 103°F.';
+                ) || 'You would be dead by then! Temperature must be between 97°F and 103°F.';
               }
             },
             systolic: value => {
               if (value === '' || value === null || value === undefined) {
                 return true;
               } else {
-                return (value >= 80 && value <= 240) || 'Systolic must be between 80 and 240.'
+                return (value >= 80 && value <= 240) || 'You would be dead by then! Systolic must be between 80 and 240.'
               }
             },
             diastolic: value => {
               if (value === '' || value === null || value === undefined) {
                 return true;
               } else {
-                return (value >= 50 && value <= 130) || 'Diastolic must be between 50 and 130.'
+                return (value >= 50 && value <= 130) || 'You would be dead by then! Diastolic must be between 50 and 130.'
               }
             },
             pulse: value => {
               if (value === '' || value === null || value === undefined) {
                 return true;
               } else {
-                return (value >= 40 && value <= 150) || 'Pulse must be between 40 and 150.'
+                return (value >= 40 && value <= 150) || 'You would be dead by then! Pulse must be between 40 and 150.'
               }
             },
             respiration: value => {
               if (value === '' || value === null || value === undefined) {
                 return true;
               } else {
-                return (value >= 10 && value <= 30) || 'Respiration must be between 10 and 30.'
+                return (value >= 10 && value <= 30) || 'You would be dead by then! Respiration must be between 10 and 30.'
               }
             },
           },
