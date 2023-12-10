@@ -22,7 +22,7 @@
         <v-window-item :value="0">
           <v-container fluid>
             <v-form ref="form0">
-              <PhaseOne 
+              <ComplaintPhase
                 :complaints="complaints" 
                 :add-complaint="addComplaint"
                 @update-complaint-text="updateComplaintText"
@@ -34,14 +34,14 @@
         <v-window-item :value="1">
           <v-container class="" fluid>
             <v-form ref="form1" @input="validateForm(1)">
-              <PhaseTwo :phase-two-form="form" :selected-item="selectedItem" @update:phaseTwoForm="form = $event" @edit-visit-date-time="updateVisitDateTime" />
+              <VitalsPhase :phase-two-form="form" :selected-item="selectedItem" @update:phaseTwoForm="form = $event" @edit-visit-date-time="updateVisitDateTime" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="2">
           <v-container class="" fluid>
             <v-form ref="form2" @input="validateForm(2)">
-              <PhaseThree 
+              <SpinalFindings 
                 :phase-three-form="entries" 
                 :existing-data="spinalGrid" 
                 @update:phaseThreeForm="entries = $event" 
@@ -53,7 +53,7 @@
         <v-window-item :value="3">
           <v-container fluid>
             <v-form ref="form3" @input="validateForm(3)">
-              <PhaseFour 
+              <ExtremityFindings 
               :phase-four-form="entries" 
               :existing-data="extremityGrid"
               @update:phaseFourForm="entries = $event" 
@@ -64,14 +64,14 @@
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
-              <PhaseFive :phase-five-form="form" @update:phaseFiveForm="form = $event" />
+              <SpinalTreatment :phase-five-form="form" @update:phaseFiveForm="form = $event" />
             </v-form>
           </v-container>
         </v-window-item>
         <v-window-item :value="5">
           <v-container fluid>
             <v-form ref="form5" @input="validateForm(5)">
-              <PhaseSix :phase-six-form="form" @update:phaseSixForm="form = $event"/>
+              <ExtremityTreatment :phase-six-form="form" @update:phaseSixForm="form = $event"/>
             </v-form>
           </v-container>
         </v-window-item>
@@ -105,22 +105,22 @@ import { createNoteService } from '~/services/note';
 import { createComplaintService } from '~/services/complaint';
 import { createEntryService } from '~~/services/entry';
 import { formatISO, parseISO } from 'date-fns';
-import PhaseOne from './phases/PhaseOne.vue';
-import PhaseTwo from './phases/PhaseTwo.vue';
-import PhaseThree from './phases/PhaseThree.vue';
-import PhaseFour from './phases/PhaseFour.vue';
-import PhaseFive from './phases/PhaseFive.vue';
-import PhaseSix from './phases/PhaseSix.vue';
+import ComplaintPhase from './phases/ComplaintPhase.vue';
+import VitalsPhase from './phases/VitalsPhase.vue';
+import SpinalFindings from './phases/SpinalFindings.vue';
+import ExtremityFindings from './phases/ExtremityFindings.vue';
+import SpinalTreatment from './phases/SpinalTreatment.vue';
+import ExtremityTreatment from './phases/ExtremityTreatment.vue';
 
 export default {
   name: 'NoteDialog',
   components: {
-    PhaseOne,
-    PhaseTwo,
-    PhaseThree,
-    PhaseFour,
-    PhaseFive,
-    PhaseSix
+    ComplaintPhase,
+    VitalsPhase,
+    SpinalFindings,
+    ExtremityFindings,
+    SpinalTreatment,
+    ExtremityTreatment
   },
   props: {
     value: {

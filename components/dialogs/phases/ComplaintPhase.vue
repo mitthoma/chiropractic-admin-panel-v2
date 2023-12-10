@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'PhaseOne',
+  name: 'ComplaintPhase',
   props: ['complaints', 'addComplaint'],
   methods: {
     updateComplaintText(index, newText) {
