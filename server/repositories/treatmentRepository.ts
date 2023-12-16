@@ -1,4 +1,11 @@
-import { PrismaClient, entry_category_enum, entry_region_enum, entry_extremitylevel_enum, entry_side_enum, entry_spinallevel_enum } from '@prisma/client';
+import {
+  PrismaClient,
+  entry_category_enum,
+  entry_region_enum,
+  entry_extremitylevel_enum,
+  entry_side_enum,
+  entry_spinallevel_enum,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -23,7 +30,7 @@ interface TreatmentPayload {
 export const addTreatment = async (payload: TreatmentPayload) => {
   try {
     const newTreatment = await prisma.treatment.create({
-      data: payload
+      data: payload,
     });
     return newTreatment;
   } catch (error) {
@@ -34,7 +41,9 @@ export const addTreatment = async (payload: TreatmentPayload) => {
 
 export const deleteTreatment = async (treatmentId: string) => {
   try {
-    const result = await prisma.treatment.delete({ where: { id: treatmentId } });
+    const result = await prisma.treatment.delete({
+      where: { id: treatmentId },
+    });
     return true;
   } catch (error) {
     console.log(error);
@@ -42,11 +51,14 @@ export const deleteTreatment = async (treatmentId: string) => {
   }
 };
 
-export const updateTreatment = async (treatmentId: string, payload: Partial<TreatmentPayload>) => {
+export const updateTreatment = async (
+  treatmentId: string,
+  payload: Partial<TreatmentPayload>
+) => {
   try {
     const updatedTreatment = await prisma.treatment.update({
       where: { id: treatmentId },
-      data: payload
+      data: payload,
     });
     return updatedTreatment;
   } catch (error) {

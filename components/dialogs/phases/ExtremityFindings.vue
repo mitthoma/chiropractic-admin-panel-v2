@@ -3,17 +3,35 @@
     <v-row class="header-row text-center">
       <v-col></v-col>
       <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate pt-3"><strong>{{ col }}</strong></div>
+        <div class="mb-1 rotate pt-3">
+          <strong>{{ col }}</strong>
+        </div>
       </v-col>
     </v-row>
     <div class="scrollable-content">
       <v-row v-for="(row, i) in rows" :key="i">
         <v-col class="text-center static-col">
-          <div class="mb-1"><strong>{{ row }}</strong></div>
+          <div class="mb-1">
+            <strong>{{ row }}</strong>
+          </div>
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
-          <div @click="toggleX(i, j, j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null)" class="x-toggle">
-            <SvgRender v-if="displayGrid[i][j] === 'X'" :width="20" :height="20" icon="x" />
+          <div
+            @click="
+              toggleX(
+                i,
+                j,
+                j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+              )
+            "
+            class="x-toggle"
+          >
+            <SvgRender
+              v-if="displayGrid[i][j] === 'X'"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
           </div>
         </v-col>
       </v-row>
@@ -26,138 +44,198 @@ export default {
   props: {
     phaseFourForm: {
       type: Object,
-      required: true
+      required: true,
     },
     existingData: {
       type: Object,
-      required: false
-    }
+      required: false,
+    },
   },
   data() {
-  return {
-    dialog: true,
-    valid: true,
-    rows: ['Shoulder', 'Arm', 'Bicep', 'Tricep', 'Elbow', 'Wrist', 'Hand', 'Hip', 'Thigh', 'Leg', 'Knee', 'Calf', 'Ankle', 'Foot'],
-    cols: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    grid: Array.from({length: 14}, () => Array(11).fill(null)),
-    answerGrid: Array.from({length: 14}, () => Array(9).fill(null)),
-    PHs: {
-      'Sides': 'LRB',
-      'Subluxation': 'SX',
-      'Muscle Spasm': 'MS',
-      'Trigger Points': 'TP',
-      'Tenderness': 'TN',
-      'Numbness': 'NB',
-      'Edema': 'ED',
-      'Swelling': 'SW',
-      'Reduced Motion': 'RM'
-    },
-    changes: [],
-    booleanColumns: ['Left', 'Right', 'Both', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-    answerGridColumns: ['Sides', 'Subluxation', 'Muscle Spasm', 'Trigger Points', 'Tenderness', 'Numbness', 'Edema', 'Swelling', 'Reduced Motion'],
-
-    sidesOptions: [
-        { text: 'Left', value: 'l' },
-        { text: 'Right', value: 'r' },
-        { text: 'Both', value: 'b' },
+    return {
+      dialog: true,
+      valid: true,
+      rows: [
+        "Shoulder",
+        "Arm",
+        "Bicep",
+        "Tricep",
+        "Elbow",
+        "Wrist",
+        "Hand",
+        "Hip",
+        "Thigh",
+        "Leg",
+        "Knee",
+        "Calf",
+        "Ankle",
+        "Foot",
       ],
-    camelCaseColumns: {
-      'Sides': 'sides',
-      'Subluxation': 'sublux',
-      'Muscle Spasm': 'muscleSpasm',
-      'Trigger Points': 'triggerPoints',
-      'Tenderness': 'tenderness',
-      'Numbness': 'numbness',
-      'Edema': 'edema',
-      'Swelling': 'swelling',
-      'Reduced Motion': 'reducedMotion'
-    },
-  };
-},
-mounted() {
-  if (this.existingData) {
-    for (let entry of this.existingData) {
-      if (entry) {
-        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.extremityLevel);
-        this.answerGridColumns.forEach((col, colIndex) => {
-            if (col === 'Sides') {
-              const key = 'side';
-              if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key] ? entry[key] : '';
-              }
+      cols: [
+        "Left",
+        "Right",
+        "Both",
+        "Subluxation",
+        "Muscle Spasm",
+        "Trigger Points",
+        "Tenderness",
+        "Numbness",
+        "Edema",
+        "Swelling",
+        "Reduced Motion",
+      ],
+      grid: Array.from({ length: 14 }, () => Array(11).fill(null)),
+      answerGrid: Array.from({ length: 14 }, () => Array(9).fill(null)),
+      PHs: {
+        Sides: "LRB",
+        Subluxation: "SX",
+        "Muscle Spasm": "MS",
+        "Trigger Points": "TP",
+        Tenderness: "TN",
+        Numbness: "NB",
+        Edema: "ED",
+        Swelling: "SW",
+        "Reduced Motion": "RM",
+      },
+      changes: [],
+      booleanColumns: [
+        "Left",
+        "Right",
+        "Both",
+        "Subluxation",
+        "Muscle Spasm",
+        "Trigger Points",
+        "Tenderness",
+        "Numbness",
+        "Edema",
+        "Swelling",
+        "Reduced Motion",
+      ],
+      answerGridColumns: [
+        "Sides",
+        "Subluxation",
+        "Muscle Spasm",
+        "Trigger Points",
+        "Tenderness",
+        "Numbness",
+        "Edema",
+        "Swelling",
+        "Reduced Motion",
+      ],
 
+      sidesOptions: [
+        { text: "Left", value: "l" },
+        { text: "Right", value: "r" },
+        { text: "Both", value: "b" },
+      ],
+      camelCaseColumns: {
+        Sides: "sides",
+        Subluxation: "sublux",
+        "Muscle Spasm": "muscleSpasm",
+        "Trigger Points": "triggerPoints",
+        Tenderness: "tenderness",
+        Numbness: "numbness",
+        Edema: "edema",
+        Swelling: "swelling",
+        "Reduced Motion": "reducedMotion",
+      },
+    };
+  },
+  mounted() {
+    if (this.existingData) {
+      for (let entry of this.existingData) {
+        if (entry) {
+          let rowIndex = this.rows.findIndex(
+            (row) => row.toLowerCase() === entry.extremityLevel
+          );
+          this.answerGridColumns.forEach((col, colIndex) => {
+            if (col === "Sides") {
+              const key = "side";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
             } else {
               const key = this.camelCaseColumns[col];
               if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? "X" : "";
               }
             }
           });
         }
-    }
-    for (let entry of this.existingData) {
-      if (entry) {
-        let rowIndex = this.rows.findIndex(row => row.toLowerCase() === entry.extremityLevel);
-        this.booleanColumns.forEach((col, colIndex) => {
+      }
+      for (let entry of this.existingData) {
+        if (entry) {
+          let rowIndex = this.rows.findIndex(
+            (row) => row.toLowerCase() === entry.extremityLevel
+          );
+          this.booleanColumns.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+              this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
             }
           });
-        if (entry.side) {
-          const colLabel = entry.side === 'l' ? 'Left' : entry.side === 'r' ? 'Right' : entry.side === 'b' ? 'Both' : null;
-          if (colLabel) {
-            let colIndex = this.cols.findIndex(col => col === colLabel);
-            this.grid[rowIndex][colIndex] = 'X';
+          if (entry.side) {
+            const colLabel =
+              entry.side === "l"
+                ? "Left"
+                : entry.side === "r"
+                ? "Right"
+                : entry.side === "b"
+                ? "Both"
+                : null;
+            if (colLabel) {
+              let colIndex = this.cols.findIndex((col) => col === colLabel);
+              this.grid[rowIndex][colIndex] = "X";
+            }
           }
         }
       }
     }
-  }
-},
-computed: {
-  displayGrid() {
-    return this.grid.map(row => {
-      return row.map((cell, index) => {
-        if (this.booleanColumns.includes(this.cols[index])) {
-          return cell ? 'X' : '';
-        }
-        return cell;
+  },
+  computed: {
+    displayGrid() {
+      return this.grid.map((row) => {
+        return row.map((cell, index) => {
+          if (this.booleanColumns.includes(this.cols[index])) {
+            return cell ? "X" : "";
+          }
+          return cell;
+        });
       });
-    });
-  }
-},
+    },
+  },
   methods: {
     toggleX(i, j, sideOption = null) {
       // Check if the column clicked is 'left', 'right', or 'both'
-      console.log('j is ', j);
+      console.log("j is ", j);
       if (j >= 0 && j <= 2) {
         // Check if there's already an 'X' in the clicked cell
-        console.log('grid i j is ', this.grid[i][j])
-        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
-          console.log('HITTING AN X FOR SIDES');
+        console.log("grid i j is ", this.grid[i][j]);
+        if (this.grid[i][j] === "X" || this.grid[i][j]) {
+          console.log("HITTING AN X FOR SIDES");
           // Clear the row values and return
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;
           }
-          this.$emit('update:phaseTwoForm', this.answerGrid);
-          this.$emit('update:extremityGrid', this.answerGrid);
+          this.$emit("update:phaseTwoForm", this.answerGrid);
+          this.$emit("update:extremityGrid", this.answerGrid);
           return;
         }
       }
 
       // Previous logic for setting the selected side
       if (sideOption) {
-
         let side;
 
         if (j === 0) {
-          side = 'l';
+          side = "l";
         } else if (j === 1) {
-          side = 'r';
+          side = "r";
         } else if (j === 2) {
-          side = 'b';
+          side = "b";
         }
 
         this.grid[i][0] = false;
@@ -176,18 +254,17 @@ computed: {
         }
       }
 
-      this.$emit('update:phaseTwoForm', this.answerGrid);
-      this.$emit('update:extremityGrid', this.answerGrid);
+      this.$emit("update:phaseTwoForm", this.answerGrid);
+      this.$emit("update:extremityGrid", this.answerGrid);
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
 .input-field {
   text-transform: capitalize;
 }
-
 
 .grid-container {
   max-height: 70vh;
@@ -235,15 +312,14 @@ computed: {
 .rotate {
   transform: rotate(90deg);
   margin-bottom: 10px;
-  white-space: normal; 
+  white-space: normal;
   line-height: 1.2;
-  height: 80px;   
-  width: 100px;  
+  height: 80px;
+  width: 100px;
   overflow: hidden;
   /* padding-top: 15px; */
   text-align: center; /* Centers the header text */
 }
-
 
 .x-toggle {
   width: 100%;
@@ -256,5 +332,4 @@ computed: {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 </style>

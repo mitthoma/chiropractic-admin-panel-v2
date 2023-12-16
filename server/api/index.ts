@@ -1,9 +1,10 @@
-import 'reflect-metadata';
-import { initDataSource } from '~/server/typeorm/database';
+import "reflect-metadata";
+import { initDataSource } from "~/server/typeorm/database";
 
-const AppDataSource = initDataSource()
+const AppDataSource = initDataSource();
 
-AppDataSource.initialize().then(async () => {
-    const config = useRuntimeConfig()
-
-}).catch(error => console.log(error))
+AppDataSource.initialize()
+  .then(async () => {
+    const config = useRuntimeConfig();
+  })
+  .catch((error) => console.log(error));

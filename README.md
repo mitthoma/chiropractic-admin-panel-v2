@@ -41,13 +41,11 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-
-
 WHEN USING PRISMA:
 
 AFTER CHANGES TO SCHEMA:
 
 1. npx prisma migrate dev --name name_of_migration
-Replace name_of_migration with a descriptive name for your migration.
+   Replace name_of_migration with a descriptive name for your migration.
 
 2. npx prisma migrate deploy

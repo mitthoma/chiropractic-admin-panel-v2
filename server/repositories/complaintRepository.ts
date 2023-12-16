@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const addNewComplaint = async (payload: any, patientId: number) => {
@@ -6,17 +6,18 @@ export const addNewComplaint = async (payload: any, patientId: number) => {
     const patientsRepository = prisma.patient;
 
     // Fetch the patient from the database
-    const patient = await patientsRepository.findUnique({ where: { id: patientId } });
+    const patient = await patientsRepository.findUnique({
+      where: { id: patientId },
+    });
 
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
 
-
     const newComplaint = await prisma.complaint.create({
       data: {
         ...payload,
-        patientId: patient?.id
+        patientId: patient?.id,
       },
     });
 
@@ -38,16 +39,21 @@ export const getAllComplaints = async () => {
   }
 };
 
-export const updateComplaint = async (complaintId: string, payload: Partial<any>) => {
+export const updateComplaint = async (
+  complaintId: string,
+  payload: Partial<any>
+) => {
   try {
-    const complaint = await prisma.complaint.findUnique({ where: { id: complaintId } });
+    const complaint = await prisma.complaint.findUnique({
+      where: { id: complaintId },
+    });
     if (!complaint) {
       throw new Error(`Complaint with id ${complaintId} not found`);
     }
 
     const updatedComplaint = await prisma.complaint.update({
       where: { id: complaintId },
-      data: payload // Here, we're using payload directly instead of payload.complaint
+      data: payload, // Here, we're using payload directly instead of payload.complaint
     });
 
     return updatedComplaint;
@@ -59,7 +65,9 @@ export const updateComplaint = async (complaintId: string, payload: Partial<any>
 
 export const deleteComplaint = async (complaintId: string) => {
   try {
-    const result = await prisma.complaint.delete({ where: { id: complaintId } });
+    const result = await prisma.complaint.delete({
+      where: { id: complaintId },
+    });
     return true;
   } catch (error) {
     console.log(error);
@@ -69,7 +77,9 @@ export const deleteComplaint = async (complaintId: string) => {
 
 export const getComplaintsByPatientId = async (patientId: number) => {
   try {
-    const complaints = await prisma.complaint.findMany({ where: { patientId } });
+    const complaints = await prisma.complaint.findMany({
+      where: { patientId },
+    });
     return complaints;
   } catch (error) {
     console.log(error);
@@ -79,7 +89,6 @@ export const getComplaintsByPatientId = async (patientId: number) => {
 
 export const getComplaintById = async (complaintId: string) => {
   try {
-
     const complaint = await prisma.complaint.findUnique({
       where: { id: complaintId },
     });

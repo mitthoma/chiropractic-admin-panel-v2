@@ -1,16 +1,17 @@
-
-import { PrismaClient, Prisma, patient, complaint } from '@prisma/client';
-import { deleteNote } from './noteRepository';
-import { deleteComplaint } from './complaintRepository';
+import { PrismaClient, Prisma, patient, complaint } from "@prisma/client";
+import { deleteNote } from "./noteRepository";
+import { deleteComplaint } from "./complaintRepository";
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
   payload: Prisma.patientCreateInput
 ): Promise<{ success: boolean; patient?: patient; error?: string }> => {
   try {
-    const existingPatient = await prisma.patient.findFirst({ where: { email: payload.email } });
+    const existingPatient = await prisma.patient.findFirst({
+      where: { email: payload.email },
+    });
     if (existingPatient) {
-      throw new Error('User with this email already exists');
+      throw new Error("User with this email already exists");
     }
 
     const savedPatient = await prisma.patient.create({ data: payload });
@@ -39,10 +40,9 @@ export const updatePatient = async (
 
 export const deletePatient = async (id: number): Promise<boolean> => {
   try {
-
     // Fetch all complaints related to the patient
     const complaints = await prisma.complaint.findMany({
-      where: { patientId : id },
+      where: { patientId: id },
     });
 
     // Delete all complaints related to the patient
@@ -53,7 +53,7 @@ export const deletePatient = async (id: number): Promise<boolean> => {
     }
     // Fetch all notes related to the patient
     const notes = await prisma.note.findMany({
-      where: { patientId : id },
+      where: { patientId: id },
     });
 
     // Delete all notes related to the patient
@@ -62,7 +62,7 @@ export const deletePatient = async (id: number): Promise<boolean> => {
         await deleteNote(note.id);
       }
     }
-    
+
     const result = await prisma.patient.delete({ where: { id } });
     return !!result;
   } catch (error) {

@@ -1,8 +1,8 @@
 <template>
-    <div>
-      <v-container>
-        <!-- <v-btn class="mb-4" @click="backToDashboard">Back to Dashboard</v-btn> -->
-          <!-- <v-row>
+  <div>
+    <v-container>
+      <!-- <v-btn class="mb-4" @click="backToDashboard">Back to Dashboard</v-btn> -->
+      <!-- <v-row>
             <v-col cols="6">
               <v-card class="elevation-4">
                 <div class="d-flex pa-3">
@@ -85,32 +85,31 @@
             <v-col cols="6"></v-col>
 
           </v-row> -->
-      </v-container>
-    </div>
-  </template>
-  
-  <script>
-import { createRoomService } from '~~/services/room';
-  
-  export default {
-    name: 'SettingsPage',
-    components: {
-    },
-    data () {
-      return {
-        roomService: null,
-        rooms: [],
-        newRoom: {
-          text: '',
-        },
-        editedRoom: null,
-        showAddRoomDialog: false,
-        showEditRoomDialog: false,
-        showDeleteRoomDialog: false,
-        roomToDelete: null,
-      }
-    },
-    async mounted() {
+    </v-container>
+  </div>
+</template>
+
+<script>
+import { createRoomService } from "~~/services/room";
+
+export default {
+  name: "SettingsPage",
+  components: {},
+  data() {
+    return {
+      roomService: null,
+      rooms: [],
+      newRoom: {
+        text: "",
+      },
+      editedRoom: null,
+      showAddRoomDialog: false,
+      showEditRoomDialog: false,
+      showDeleteRoomDialog: false,
+      roomToDelete: null,
+    };
+  },
+  async mounted() {
     this.roomService = createRoomService(this.$api);
     await this.loadRooms();
   },
@@ -126,7 +125,7 @@ import { createRoomService } from '~~/services/room';
       try {
         await this.roomService.addRoom(this.newRoom);
         this.showAddRoomDialog = false;
-        this.newRoom.text = '';
+        this.newRoom.text = "";
         await this.loadRooms();
       } catch (error) {
         console.error(error);

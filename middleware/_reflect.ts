@@ -1,5 +1,5 @@
-import 'reflect-metadata';
+import "reflect-metadata";
 
 export default () => {
-//   throw new Error('This is hack for correct working reflect metadata on server');
+  //   throw new Error('This is hack for correct working reflect metadata on server');
 };

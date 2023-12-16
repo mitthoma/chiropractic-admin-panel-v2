@@ -1,10 +1,18 @@
-import { PrismaClient, Prisma, entry_spinallevel_enum, entry_category_enum, entry_region_enum, entry_extremitylevel_enum, entry_side_enum } from '@prisma/client';
+import {
+  PrismaClient,
+  Prisma,
+  entry_spinallevel_enum,
+  entry_category_enum,
+  entry_region_enum,
+  entry_extremitylevel_enum,
+  entry_side_enum,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 interface EntryPayload {
   createdDate?: Date; // Optional because Prisma provides a default value
-  category: entry_category_enum; 
+  category: entry_category_enum;
   region?: entry_region_enum; // Optional because it's optional in the schema
   spinalLevel?: entry_spinallevel_enum; // Optional because it's optional in the schema
   extremityLevel?: entry_extremitylevel_enum; // Optional because it's optional in the schema
@@ -33,11 +41,11 @@ export const addEntry = async (payload: EntryPayload) => {
   try {
     const defaultPayload = {
       createdDate: new Date(),
-      category: 'spinal', // Replace with a valid default category
+      category: "spinal", // Replace with a valid default category
       region: null,
       spinalLevel: null,
       extremityLevel: null,
-      side: 'l', // Replace with a valid default side
+      side: "l", // Replace with a valid default side
       sublux: false,
       muscleSpasm: false,
       triggerPoints: false,
@@ -51,15 +59,15 @@ export const addEntry = async (payload: EntryPayload) => {
       electStim: false,
       traction: false,
       massage: false,
-      technique: '',
+      technique: "",
       manipulation: false,
-      physioPositioning: '',
-      treatmentPositioning: ''
+      physioPositioning: "",
+      treatmentPositioning: "",
     };
 
     const completePayload = {
       ...defaultPayload,
-      ...payload
+      ...payload,
     };
 
     const { noteId, ...dataWithoutNoteId } = completePayload;
@@ -102,7 +110,7 @@ export const updateEntry = async (entryId: string, payload: Partial<any>) => {
   try {
     const updatedEntry = await prisma.entry.update({
       where: { id: entryId },
-      data: payload
+      data: payload,
     });
     return updatedEntry;
   } catch (error) {
