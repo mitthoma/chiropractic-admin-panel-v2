@@ -64,7 +64,7 @@
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
-              <SpinalTreatment :phase-five-form="form" @update:phaseFiveForm="form = $event" />
+              <SpinalTreatment :phase-five-form="form" :existing-data="spinalTreatmentGrid" @update:spinalTreatmentGrid="spinalTreatmentGrid = $event"/>
             </v-form>
           </v-container>
         </v-window-item>
@@ -103,7 +103,8 @@
 <script>
 import { createNoteService } from '~/services/note';
 import { createComplaintService } from '~/services/complaint';
-import { createEntryService } from '~~/services/entry';
+import { createEntryService } from '~/services/entry';
+import { createTreatmentService } from '~/services/treatment'
 import { formatISO, parseISO } from 'date-fns';
 import ComplaintPhase from './phases/ComplaintPhase.vue';
 import VitalsPhase from './phases/VitalsPhase.vue';
@@ -197,7 +198,8 @@ export default {
       },
       spinalGrid: [],
       extremityGrid: [],
-      existingEntriesForUpdate: [],
+      spinalTreatmentGrid: [],
+      extremityTreatmentGrid: [],
       complaints: [
         {
           text: '',
@@ -256,6 +258,7 @@ export default {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
+    this.treatmentService = createTreatmentService(this.$api);
     this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
     if (this.isUpdateMode) {
       this.form = {
@@ -285,6 +288,7 @@ export default {
       async loadSpinalGrid(noteId) {
         // Get the data from your service
         const entries = await this.entryService.getEntriesForNote({ noteId });
+        const treatments = await this.treatmentService.getTreatmentsForNote({ noteId })
 
         // Here, you can map your entries to your spinalGrid. For example:
         const spinalLevels = [
@@ -328,16 +332,35 @@ export default {
             return null;
           }
         });
+
+        this.spinalTreatmentGrid = spinalLevels.map(level => {
+          const entry = treatments.find(entry => entry.spinalLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
       },
       async loadExtremityGrid(noteId) {
         // Get the data from your service
         const entries = await this.entryService.getEntriesForNote({ noteId });
+        const treatments = await this.treatmentService.getTreatmentsForNote({ noteId });
 
         // Here, you can map your entries to your spinalGrid. For example:
         const extremityLevels = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
 
         this.extremityGrid = extremityLevels.map(level => {
           const entry = entries.find(entry => entry.extremityLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
+
+        this.extremityTreatmentGrid = extremityLevels.map(level => {
+          const entry = treatments.find(entry => entry.extremityLevel === level);
           if (entry) {
             return entry;
           } else {
@@ -429,6 +452,37 @@ export default {
             }
           }
         }
+
+        const treatmentFields = ['side', 'physioPositioning', 'coldPack', 'hotPack', 'electStim', 'traction', 'massage', 'treatmentPositioning', 'treatmentTechnique', 'treatmentManipulation'];
+        let noteTreatments = await this.treatmentService.getTreatmentsForNote({ noteId });
+
+        for(let i = 0; i < this.spinalTreatmentGrid.length; i++) {
+          let treatmentData = {
+            noteId: noteId,
+            spinalLevel: spinalLevels[i]
+          };
+          
+          if (this.spinalTreatmentGrid[i] && this.spinalTreatmentGrid[i]?.length) {
+            for(let j = 0; j < this.spinalTreatmentGrid[i].length; j++) {
+              if (this.spinalTreatmentGrid[i][j]) {
+                treatmentData[treatmentFields[j]] = this.spinalTreatmentGrid[i][j];
+              }
+            }
+          }
+          
+
+          if (this.hasAnyField(treatmentData, treatmentFields)) {
+            let existingTreatment = noteTreatments.find(treatment => treatment.spinalLevel === spinalLevels[i]);
+
+            if(existingTreatment) {
+              await this.treatmentService.updateTreatment({ ...existingTreatment, ...treatmentData });
+            } else {
+              await this.treatmentService.addTreatment(treatmentData, noteId);
+            }
+          }
+
+
+        }
       },
       
       async saveExtremityEntries(noteId) {
@@ -482,6 +536,8 @@ export default {
       this.exitConfirmDialog = false;
       this.spinalGrid = [];
       this.extremityGrid = [];
+      this.spinalTreatmentGrid = [];
+      this.extremityTreatmentGrid = [];
       this.complaints = [
         {
           text: '',

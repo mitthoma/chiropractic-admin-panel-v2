@@ -240,10 +240,6 @@
 <script>
 export default {
   props: {
-    phaseTwoForm: {
-      type: Object,
-      required: true
-    },
     existingData: {
       type: Object,
       required: false
@@ -399,7 +395,6 @@ computed: {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;
           }
-          this.$emit('update:phaseTwoForm', this.answerGrid);
           this.$emit('update:spinalGrid', this.answerGrid);
           return;
         }
@@ -434,7 +429,6 @@ computed: {
         }
       }
 
-      this.$emit('update:phaseTwoForm', this.answerGrid);
       this.$emit('update:spinalGrid', this.answerGrid);
     },
   }

@@ -17,6 +17,28 @@ model complaint {
   patient    patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model treatment {
+  id                  String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  category            entry_category_enum
+  region              entry_region_enum?      
+  spinalLevel         entry_spinallevel_enum? 
+  extremityLevel      entry_extremitylevel_enum?
+  side                entry_side_enum
+  physioPositioning   Int?                    
+  coldPack            Boolean?                
+  hotPack             Boolean?                
+  electStim           Boolean?                
+  traction            Boolean?                
+  massage             Boolean?                
+  treatmentPositioning Int?                   
+  treatmentTechnique  String?                 
+  treatmentManipulation Boolean?              
+  noteId              String                  @db.Uuid
+  note                note                    @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("treatments")
+}
+
 model entry {
   id                   String                     @id(map: "PK_a58c675c4c129a8e0f63d3676d6") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   createdDate          DateTime                   @default(now()) @db.Timestamp(6)
@@ -74,6 +96,7 @@ model note {
   phaseThreeRoomAssignment String?
   phaseFourRoomAssignment  String?
   entry                    entry[]
+  treatments               treatment[]
   patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
 }
 
