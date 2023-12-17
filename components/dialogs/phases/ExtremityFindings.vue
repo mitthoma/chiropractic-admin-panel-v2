@@ -193,6 +193,7 @@ export default {
         }
       }
     }
+    this.$emit("update:extremityGrid", this.answerGrid);
   },
   computed: {
     displayGrid() {
@@ -254,7 +255,6 @@ export default {
         }
       }
 
-      this.$emit("update:phaseTwoForm", this.answerGrid);
       this.$emit("update:extremityGrid", this.answerGrid);
     },
   },

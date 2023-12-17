@@ -39,6 +39,7 @@ const booleanFields = [
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+  console.log('body for add entry is ', body);
   body.side = "l";
   requiredFields.forEach((field) => {
     if (!body.hasOwnProperty(field)) {

@@ -70,6 +70,8 @@ export const addEntry = async (payload: EntryPayload) => {
       ...payload,
     };
 
+    console.log('payload is ', payload);
+
     const { noteId, ...dataWithoutNoteId } = completePayload;
 
     const note = await prisma.note.findUnique({ where: { id: noteId } });

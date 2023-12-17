@@ -4,6 +4,8 @@
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="1" class="text-center"></v-col>
 
+      answer grid is {{ answerGrid }}
+
       <v-col cols="11">
         <v-row
           v-for="modifiedRow in modifiedRows(30, 31)"
@@ -620,6 +622,8 @@ export default {
         }
       }
     }
+    this.$emit("update:spinalGrid", this.answerGrid);
+
   },
   computed: {
     displayGrid() {

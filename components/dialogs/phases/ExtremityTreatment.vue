@@ -194,6 +194,7 @@ export default {
         }
       }
     }
+    this.$emit("update:extremityTreatmentGrid", this.answerGrid);
   },
   computed: {
     displayGrid() {

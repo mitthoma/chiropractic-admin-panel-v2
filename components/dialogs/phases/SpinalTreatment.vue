@@ -610,6 +610,7 @@ export default {
         }
       }
     }
+    this.$emit("update:spinalTreatmentGrid", this.answerGrid);
   },
   computed: {
     displayGrid() {
