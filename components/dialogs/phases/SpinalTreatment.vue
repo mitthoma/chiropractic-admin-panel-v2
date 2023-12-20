@@ -41,7 +41,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -454,6 +461,8 @@
 </template>
 
 <script>
+import { treatmentOptions } from '../helpers/noteArrays';
+
 export default {
   props: {
     existingData: {
@@ -498,7 +507,7 @@ export default {
         "s5_",
         "",
       ],
-
+      positioningOptions: [],
       cols: [
         "Left",
         "Right",
@@ -516,6 +525,11 @@ export default {
       grid: Array.from({ length: 30 }, () => Array(12).fill(null)),
       answerGrid: Array.from({ length: 30 }, () => Array(10).fill(null)),
       changes: [],
+      options: {
+        a: null,
+        b: null,
+        c: null,
+      },
       booleanColumns: [
         "Left",
         "Right",
@@ -558,7 +572,8 @@ export default {
       },
     };
   },
-  mounted() {
+  async mounted() {
+    this.positioningOptions = treatmentOptions;
     if (this.existingData) {
       for (let entry of this.existingData) {
         if (entry) {
@@ -624,7 +639,19 @@ export default {
       });
     },
   },
+  watch: {
+    answerGrid: {
+      handler(newGrid, oldGrid) {
+        console.log('Grid changed:', newGrid);
+        this.$emit("update:spinalTreatmentGrid", this.answerGrid);
+      },
+      deep: true,
+    }
+  },
   methods: {
+    vSelectChange() {
+      console.log('changing');
+    },
     getRangeLabel(row, i) {
       return row.toUpperCase().replace("_", " - ");
     },
@@ -634,9 +661,7 @@ export default {
       });
     },
     toggleX(i, j, sideOption = null) {
-      console.log("j is ", j);
       if (j >= 0 && j <= 2) {
-        console.log("grid i j is ", this.grid[i][j]);
         if (this.grid[i][j] === "X" || this.grid[i][j]) {
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;

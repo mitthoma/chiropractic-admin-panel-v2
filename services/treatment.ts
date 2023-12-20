@@ -1,6 +1,5 @@
 import { AxiosInstance } from "axios";
 
-// TODO: give payload typings
 export const createTreatmentService = (api: AxiosInstance) => ({
   getTreatmentsForNote: async (payload: any) => {
     const { data } = await api.post("/treatment/note-treatments", payload);
@@ -17,7 +16,9 @@ export const createTreatmentService = (api: AxiosInstance) => ({
       ...payload,
       noteId,
     };
+    console.log('sending endpoint for treatment/treatment');
     const { data } = await api.post("/treatment/treatment", payload);
+    console.log('data returned from treatment/treatment is ', data);
     return data.data;
   },
 

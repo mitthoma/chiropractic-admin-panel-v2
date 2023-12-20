@@ -5,6 +5,7 @@ import {
   entry_extremitylevel_enum,
   entry_side_enum,
   entry_spinallevel_enum,
+  positioning_technique_enum, 
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -15,14 +16,14 @@ interface TreatmentPayload {
   spinalLevel?: entry_spinallevel_enum;
   extremityLevel?: entry_extremitylevel_enum;
   side: entry_side_enum;
-  physioPositioning?: number;
+  physioPositioning?: positioning_technique_enum;
   coldPack?: boolean;
   hotPack?: boolean;
   electStim?: boolean;
   traction?: boolean;
   massage?: boolean;
-  treatmentPositioning?: number;
-  treatmentTechnique?: string;
+  treatmentPositioning?: positioning_technique_enum;
+  treatmentTechnique?: positioning_technique_enum;
   treatmentManipulation?: boolean;
   noteId: string;
 }

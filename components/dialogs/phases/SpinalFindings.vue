@@ -638,6 +638,13 @@ export default {
     },
   },
   methods: {
+    handleSelectChange(rowIndex, colIndex, value) {
+    // Update the value in the grid
+    this.$set(this.grid[rowIndex], colIndex, value === '' ? null : value);
+
+    // Emit the updated grid to the parent component
+    this.$emit("update:spinalTreatmentGrid", this.grid);
+  },
     getRangeLabel(row, i) {
       return row.toUpperCase().replace("_", " - ");
     },
@@ -647,14 +654,8 @@ export default {
       });
     },
     toggleX(i, j, sideOption = null) {
-      // Check if the column clicked is 'left', 'right', or 'both'
-      console.log("j is ", j);
       if (j >= 0 && j <= 2) {
-        // Check if there's already an 'X' in the clicked cell
-        console.log("grid i j is ", this.grid[i][j]);
         if (this.grid[i][j] === "X" || this.grid[i][j]) {
-          console.log("HITTING AN X FOR SIDES");
-          // Clear the row values and return
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;

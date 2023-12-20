@@ -37,8 +37,6 @@ export function generateCSV(payload) {
   // Populate the cells based on the cell mappings
   for (const [ref, value] of Object.entries(cellMappings)) {
     const { row, col } = cellReferenceToIndex(ref);
-    console.log("row is ", row, " and col is ", col);
-    console.log("cells are ", cells);
     try {
       if (typeof value === "function") {
         cells[row][col] = value(payload);
@@ -120,7 +118,6 @@ export function generateXLSX(payload, exportAsPDF = false, getPdfMakeInstance) {
 
 //   async function generatePDF(xlsxData, pdfMakeInstance) {
 //     // const pdfFonts = await import('pdfmake/build/vfs_fonts');
-//     // console.log('pdf fonts is ', pdfFonts);
 //     // pdfMakeInstance.vfs = pdfFonts.pdfMake.vfs;
 
 //     const cols = 29; // Define the number of columns (A to AC)

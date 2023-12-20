@@ -213,14 +213,9 @@ export default {
   },
   methods: {
     async getCurrentNote() {
-      // if (this.noteStore?.getCurrentNote) {
-      //     this.currentNote = this.noteStore.getCurrentNote;
-      // } else {
       this.currentNote = await this.noteService?.getNote({
         id: this.$route.params.noteId,
       });
-      console.log("this current note is ", this.currentNote?.temperature);
-      // }
     },
     editNote(item) {
       this.selectedNoteItem = item;

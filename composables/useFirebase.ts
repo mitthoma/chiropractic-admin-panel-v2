@@ -39,7 +39,7 @@ export const signInUser = async (email: string, password: string) => {
     if (credentials) {
       const res = await authService.signInUserWithAPI(credentials.user.uid);
       if (res instanceof Error) {
-        console.log(res.message);
+        // console.log(res.message);
         return { success: false, error: res.message };
       } else if (res) {
         store.setUser(res);

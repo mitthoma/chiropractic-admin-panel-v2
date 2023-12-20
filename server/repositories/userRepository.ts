@@ -89,26 +89,18 @@ export const getUserByFirebaseUid = async (
   firebaseUid: string
 ): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
   try {
-    console.log(
-      "in GETUSERBYFIREBASEUID in the repository function and the firebaseUid is ",
-      firebaseUid
-    );
     if (!firebaseUid) {
       throw new Error("Invalid firebaseUid");
     }
 
-    console.log("fetching the user from the database from that id");
-    const user = await prisma.user.findUnique({ where: { firebaseUid } });
-    console.log("the user is ", user);
 
-    if (!user) {
-      throw new Error("User not found");
+    const user = await prisma.user.findUnique({ where: { firebaseUid } });
+
+    if (!user) {      throw new Error("User not found");
     }
-    console.log("VALIDATED USER BY FIREBASE UID");
-    console.log("returning the user");
-    return user;
-  } catch (error) {
-    console.error(error);
+
+
+    return user;  } catch (error) {    console.error(error);
     throw error;
   }
 };

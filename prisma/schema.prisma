@@ -24,14 +24,14 @@ model treatment {
   spinalLevel         entry_spinallevel_enum? 
   extremityLevel      entry_extremitylevel_enum?
   side                entry_side_enum
-  physioPositioning   Int?                    
+  physioPositioning   positioning_technique_enum?                     
   coldPack            Boolean?                
   hotPack             Boolean?                
   electStim           Boolean?                
   traction            Boolean?                
   massage             Boolean?                
-  treatmentPositioning Int?                   
-  treatmentTechnique  String?                 
+  treatmentPositioning positioning_technique_enum?                    
+  treatmentTechnique  positioning_technique_enum?                 
   treatmentManipulation Boolean?              
   noteId              String                  @db.Uuid
   note                note                    @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -63,8 +63,8 @@ model entry {
   technique            String
   manipulation         Boolean
   noteId               String?                    @db.Uuid
-  physioPositioning    String
-  treatmentPositioning String
+  physioPositioning    positioning_technique_enum?  
+  treatmentPositioning positioning_technique_enum?  
   note                 note?                      @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_df491c2c902d007610301eff36d")
 }
 
@@ -130,6 +130,19 @@ model user {
 enum entry_category_enum {
   spinal
   extremity
+}
+
+enum positioning_technique_enum {
+  a
+  b
+  c
+  d
+  e
+  f
+  g
+  h
+  i
+  j
 }
 
 enum entry_extremitylevel_enum {

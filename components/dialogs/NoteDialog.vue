@@ -402,11 +402,23 @@ export default {
         noteId,
       });
 
+      console.log('SPINAL TREATMENT GRID PASSED IS ', this.spinalTreatmentGrid);
+
       for (let i = 0; i < this.spinalTreatmentGrid.length; i++) {
         let treatmentData = {
           noteId: noteId,
           spinalLevel: spinalLevels[i],
         };
+
+        // Update treatmentFields processing
+        for (let j = 0; j < this.spinalTreatmentGrid[i].length; j++) {
+          const fieldValue = this.spinalTreatmentGrid[i][j];
+          if (fieldValue !== null && fieldValue !== '') {
+            treatmentData[treatmentFields[j]] = fieldValue;
+          } else {
+            treatmentData[treatmentFields[j]] = null;
+          }
+        }
 
         if (
           this.spinalTreatmentGrid[i] &&
@@ -431,6 +443,7 @@ export default {
               ...treatmentData,
             });
           } else {
+            console.log('calling add treatment from note dialog');
             await this.treatmentService.addTreatment(treatmentData, noteId);
           }
         }
@@ -503,6 +516,8 @@ export default {
               ...treatmentData,
             });
           } else {
+            console.log('calling add treatment from note dialog 2');
+
             await this.treatmentService.addTreatment(treatmentData, noteId);
           }
         }
@@ -669,6 +684,7 @@ export default {
       }
 
       // // Update Spinal Treatments
+      console.log('updating note and spinal treatment grid');
       await this.updateTreatments(this.spinalTreatmentGrid, 'spinal');
 
       // // Update Extremity Treatments
@@ -686,12 +702,16 @@ export default {
         noteId: this.selectedItem.id,
       });
 
+      console.log('IN UPDATETREATMENTS and the treatmentGrid is ', treatmentGrid);
+
       for (let i = 0; i < treatmentGrid.length; i++) {
         let treatmentData = {
           noteId: this.selectedItem.id,
           level: levels[i],
           type: type,
         };
+
+        console.log('treatment data for level ', levels[i], ' is ', treatmentData);
 
         treatmentFields.forEach((field, index) => {
           if (treatmentGrid[i] && treatmentGrid[i][index] != null) {
@@ -711,6 +731,8 @@ export default {
               ...treatmentData,
             });
           } else {
+            console.log('calling add treatment from note dialog 3');
+
             await this.treatmentService.addTreatment(treatmentData);
           }
         }

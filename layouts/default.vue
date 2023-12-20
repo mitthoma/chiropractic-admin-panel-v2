@@ -86,7 +86,6 @@ const store = userStore();
 const theme = useTheme();
 const drawer = ref(null);
 const themeToggler = ref(false);
-console.log("store is ", store);
 const initials =
   store.user?.firstName && store.user?.lastName
     ? store.user?.firstName[0]?.toUpperCase() +
