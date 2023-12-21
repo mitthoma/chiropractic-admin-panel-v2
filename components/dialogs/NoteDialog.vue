@@ -374,14 +374,12 @@ export default {
 
     async saveEntriesAndTreatments(noteId, oldEntries, grid, levels, type, isTreatment = false) {
       for (let i = 0; i < grid.length; i++) {
-        
         let data = {
           noteId: noteId,
           level: levels[i],
           type: type,
         };
-        console.log('data.noteId is ', data.noteId);
-        // Populate data object
+
         for (let j = 0; j < grid[i].length; j++) {
           if (grid[i][j]) {
             data[isTreatment ? treatmentFields[j] : entryFields[j]] = grid[i][j];
@@ -389,9 +387,16 @@ export default {
         }
 
         if (this.hasAnyField(data, isTreatment ? treatmentFields : entryFields)) {
-          let existing = oldEntries.find(
-            (entry) => entry.level === levels[i] && entry.type === type
-          );
+          let existing = null;
+          if (type === 'spinal') {
+            existing = oldEntries.find(
+              (entry) => entry.spinalLevel === levels[i] && entry.category === type
+            );
+          } else if (type === 'extremity') {
+            existing = oldEntries.find(
+              (entry) => entry.extremityLevelLevel === levels[i] && entry.category === type
+            );
+          }
 
           if (existing) {
             await (isTreatment ? this.treatmentService.updateTreatment : this.entryService.updateEntry)({
@@ -406,7 +411,6 @@ export default {
     },
 
     async processSaveOperations(noteId, oldEntries, patientId) {
-      console.log('old entries are ', this.oldEntries);
       // Handle complaints
       await this.handleComplaints(patientId, this.complaints);
 
@@ -503,6 +507,7 @@ export default {
       this.$emit("note-updated");
       this.closeDialog();
     },
+
     async updateAllGridEntries(spinalGrid, extremityGrid, spinalTreatmentGrid, extremityTreatmentGrid, spinalLevels, extremityLevels, entries) {
       // Combining entries and treatments for both spinal and extremity into a single array
       const combinedGrids = [

@@ -32,61 +32,58 @@ interface EntryPayload {
   massage: boolean;
   technique?: string;
   manipulation: boolean;
-  noteId?: string; // Optional because it's optional in the schema
+  note?: string; // Optional because it's optional in the schema
   physioPositioning?: string;
   treatmentPositioning?: string;
 }
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
-    const defaultPayload = {
-      createdDate: new Date(),
-      category: "spinal", // Replace with a valid default category
-      region: null,
-      spinalLevel: null,
-      extremityLevel: null,
-      side: "l", // Replace with a valid default side
-      sublux: false,
-      muscleSpasm: false,
-      triggerPoints: false,
-      tenderness: false,
-      numbness: false,
-      edema: false,
-      swelling: false,
-      reducedMotion: false,
-      coldPack: false,
-      hotPack: false,
-      electStim: false,
-      traction: false,
-      massage: false,
-      manipulation: false,
-    };
+    // const defaultPayload = {
+    //   createdDate: new Date(),
+    //   category: "spinal", // Replace with a valid default category
+    //   region: null,
+    //   spinalLevel: null,
+    //   extremityLevel: null,
+    //   side: "l", // Replace with a valid default side
+    //   sublux: false,
+    //   muscleSpasm: false,
+    //   triggerPoints: false,
+    //   tenderness: false,
+    //   numbness: false,
+    //   edema: false,
+    //   swelling: false,
+    //   reducedMotion: false,
+    //   coldPack: false,
+    //   hotPack: false,
+    //   electStim: false,
+    //   traction: false,
+    //   massage: false,
+    //   manipulation: false,
+    // };
 
-    const completePayload = {
-      ...defaultPayload,
-      ...payload,
-      physioPositioning: null,
-      treatmentPositioning: null,
-      technique: null,
+    // const completePayload = {
+    //   ...defaultPayload,
+    //   ...payload,
+    //   physioPositioning: null,
+    //   treatmentPositioning: null,
+    //   technique: null,
 
-    };
+    // };
 
     console.log('payload is ', payload);
+    const noteId = payload.note;
 
-    const { noteId, ...dataWithoutNoteId } = completePayload;
 
-    console.log('complete payload is ', completePayload);
 
     const note = await prisma.note.findUnique({ where: { id: noteId } });
-
-    console.log('note is ', note);
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);
     }
 
     const newEntry = await prisma.entry.create({
       data: {
-        ...dataWithoutNoteId,
+        ...payload,
         note: {
           connect: {
             id: noteId,

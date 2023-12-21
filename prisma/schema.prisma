@@ -60,7 +60,7 @@ model entry {
   electStim            Boolean
   traction             Boolean
   massage              Boolean
-  technique            String
+  technique            positioning_technique_enum?
   manipulation         Boolean
   noteId               String?                    @db.Uuid
   physioPositioning    positioning_technique_enum?  

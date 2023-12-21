@@ -5,6 +5,7 @@ import {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+  console.log('CALLING UPDATE ENTRY');
 
   if (body.side === "Left") {
     body.side = "l";
