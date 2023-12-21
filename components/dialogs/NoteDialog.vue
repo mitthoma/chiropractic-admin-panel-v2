@@ -241,8 +241,7 @@ export default {
     currentNote(newItem, oldItem) {
       if (newItem && newItem !== oldItem) {
         this.populateFormData(newItem);
-        this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
-        this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
+        this.loadGrids(this.oldEntries, this.oldTreatments);
       }
     },
   },
@@ -266,9 +265,6 @@ export default {
         this.form = {
           ...this.currentNote,
         };
-        await this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
-        await this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
-      
         //retrieve the old entries for this selected note
         const entries = await this.entryService.getEntriesForNote({
           noteId: this.currentNote.id,
@@ -282,6 +278,7 @@ export default {
         if (treatments) {
           this.oldTreatments = treatments;
         }
+        await this.loadGrids(this.oldEntries, this.oldTreatments);
       }
     }
   },
@@ -289,7 +286,6 @@ export default {
     this.resetForm();
   },
   methods: {
-    
     //COMPLAINT METHODS
     updateComplaintText(index, newText) {
       this.complaints[index].text = newText;
@@ -328,37 +324,47 @@ export default {
         painLevel: complaint.painLevel,
       }));
 
-      await this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
-      await this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
+      await this.loadGrids(this.oldEntries, this.oldTreatments);
     },
 
-    async loadGrid(levels, gridType, entries, treatments) {
-      // Create a combined grid with both entries and treatments
-      const combinedGrid = levels.map((level) => {
-        let entry = null;
-        let treatment = null;
-        if (entries) {
-          entry = entries.find(e => e.level === level && e.type === gridType && !e.isTreatment);
+    async loadGrids(entries, treatments) {
+      this.spinalGrid = spinalLevels.map((level) => {
+        const entry = entries.find((entry) => entry.spinalLevel === level);
+        if (entry) {
+          return entry;
+        } else {
+          return null;
         }
-
-        if (treatments) {
-          treatment = treatments.find(t => t.level === level && t.type === gridType && t.isTreatment);
-        }
-
-        return {
-          entry,
-          treatment
-        };
       });
 
-      // Assign to appropriate data properties based on grid type
-      if (gridType === 'spinal') {
-        this.spinalGrid = combinedGrid.map(g => g.entry);
-        this.spinalTreatmentGrid = combinedGrid.map(g => g.treatment);
-      } else if (gridType === 'extremity') {
-        this.extremityGrid = combinedGrid.map(g => g.entry);
-        this.extremityTreatmentGrid = combinedGrid.map(g => g.treatment);
-      }
+      this.spinalTreatmentGrid = spinalLevels.map((level) => {
+        const entry = treatments.find((entry) => entry.spinalLevel === level);
+        if (entry) {
+          return entry;
+        } else {
+          return null;
+        }
+      });
+
+      this.extremityGrid = extremityLevels.map((level) => {
+        const entry = entries.find((entry) => entry.extremityLevel === level);
+        if (entry) {
+          return entry;
+        } else {
+          return null;
+        }
+      });
+
+      this.extremityTreatmentGrid = extremityLevels.map((level) => {
+        const entry = treatments.find(
+          (entry) => entry.extremityLevel === level
+        );
+        if (entry) {
+          return entry;
+        } else {
+          return null;
+        }
+      });
     },
 
     async saveEntriesAndTreatments(noteId, oldEntries, grid, levels, type, isTreatment = false) {
