@@ -70,14 +70,14 @@ export const booleanColumns = [
   ];
   export const treatmentFields = [
     "side",
-    "physioPositioning",
+    "physioPositioning", // this will be one of treatmentOptions, so if it does not have a value it will be null, otherwise this field will have a value that is one of treatmentOptions
     "coldPack",
     "hotPack",
     "electStim",
     "traction",
     "massage",
-    "treatmentPositioning",
-    "treatmentTechnique",
+    "treatmentPositioning", // this will be one of treatmentOptions, so if it does not have a value it will be null, otherwise this field will have a value that is one of treatmentOptions
+    "treatmentTechnique", // this will be one of treatmentOptions, so if it does not have a value it will be null, otherwise this field will have a value that is one of treatmentOptions
     "treatmentManipulation",
   ];
   export const camelCaseColumns = {

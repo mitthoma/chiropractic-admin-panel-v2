@@ -44,7 +44,7 @@
             <v-form ref="form1" @input="validateForm(1)">
               <VitalsPhase
                 :phase-two-form="form"
-                :selected-item="selectedItem"
+                :selected-item="currentNote"
                 @update:phaseTwoForm="form = $event"
                 @edit-visit-date-time="updateVisitDateTime"
               />
@@ -138,6 +138,7 @@ import { createNoteService } from "~/services/note";
 import { createComplaintService } from "~/services/complaint";
 import { createEntryService } from "~/services/entry";
 import { createTreatmentService } from "~/services/treatment";
+import { createPatientService } from "~~/services/patient";
 import { formatISO, parseISO } from "date-fns";
 import ComplaintPhase from "./phases/ComplaintPhase.vue";
 import VitalsPhase from "./phases/VitalsPhase.vue";
@@ -162,17 +163,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    selectedItem: {
-      type: Object,
-    },
-    patient: {
-      type: Object,
-      default: null,
-    },
   },
   data() {
     return {
-      spinalGridChanged: false,
+      oldEntries: null,
+      oldTreatments: null,
+      currentNote: null,
+      patient: null,
       form: {
         visitDate: null,
         visitDateText: null,
@@ -220,7 +217,7 @@ export default {
       },
     },
     isUpdateMode() {
-      return !!this.selectedItem;
+      return !!this.currentNote;
     },
     title() {
       return this.isUpdateMode ? "Update Note" : "Add Note";
@@ -241,11 +238,11 @@ export default {
     },
   },
   watch: {
-    selectedItem(newItem, oldItem) {
+    currentNote(newItem, oldItem) {
       if (newItem && newItem !== oldItem) {
         this.populateFormData(newItem);
-        this.loadSpinalGrid(newItem.id);
-        this.loadExtremityGrid(newItem.id);
+        this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
+        this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
       }
     },
   },
@@ -254,15 +251,38 @@ export default {
     this.complaintService = createComplaintService(this.$api);
     this.entryService = createEntryService(this.$api);
     this.treatmentService = createTreatmentService(this.$api);
+    this.patientService = createPatientService(this.$api);
     this.complaints = await this.complaintService.getComplaintsForPatient({
       patientId: this.$route.params.id,
     });
-    if (this.isUpdateMode) {
-      this.form = {
-        ...this.selectedItem,
-      };
-      this.loadSpinalGrid(this.selectedItem.id);
-      this.loadExtremityGrid(this.selectedItem.id);
+
+    if (this.$route.params.id) {
+      this.patient = await this.patientService.getPatient({id: this.$route.params.id})
+    }
+
+    if (this.$route.params.noteId) {
+      this.currentNote = await this.noteService.getNote({id: this.$route.params.noteId})
+      if (this.isUpdateMode) {
+        this.form = {
+          ...this.currentNote,
+        };
+        await this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
+        await this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
+      
+        //retrieve the old entries for this selected note
+        const entries = await this.entryService.getEntriesForNote({
+          noteId: this.currentNote.id,
+        });
+        if (entries) {
+          this.oldEntries = entries;
+        }
+        const treatments = await this.treatmentService.getTreatmentsForNote({
+          noteId: this.currentNote.id,
+        })
+        if (treatments) {
+          this.oldTreatments = treatments;
+        }
+      }
     }
   },
   beforeUnmount() {
@@ -308,220 +328,83 @@ export default {
         painLevel: complaint.painLevel,
       }));
 
-      await this.loadSpinalGrid(item.id);
-      await this.loadExtremityGrid(item.id);
+      await this.loadGrid(spinalLevels, 'spinal', this.oldEntries, this.oldTreatments);
+      await this.loadGrid(extremityLevels, 'extremity', this.oldEntries, this.oldTreatments);
     },
 
-
-    async loadSpinalGrid(noteId) {
-      const entries = await this.entryService.getEntriesForNote({ noteId });
-      const treatments = await this.treatmentService.getTreatmentsForNote({
-        noteId,
-      });
-      
-      this.spinalGrid = spinalLevels.map((level) => {
-        const entry = entries.find((entry) => entry.spinalLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
+    async loadGrid(levels, gridType, entries, treatments) {
+      // Create a combined grid with both entries and treatments
+      const combinedGrid = levels.map((level) => {
+        let entry = null;
+        let treatment = null;
+        if (entries) {
+          entry = entries.find(e => e.level === level && e.type === gridType && !e.isTreatment);
         }
-      });
 
-      this.spinalTreatmentGrid = spinalLevels.map((level) => {
-        const entry = treatments.find((entry) => entry.spinalLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
+        if (treatments) {
+          treatment = treatments.find(t => t.level === level && t.type === gridType && t.isTreatment);
         }
-      });
-    },
-    async loadExtremityGrid(noteId) {
-      const entries = await this.entryService.getEntriesForNote({ noteId });
-      const treatments = await this.treatmentService.getTreatmentsForNote({
-        noteId,
-      });
 
-      this.extremityGrid = extremityLevels.map((level) => {
-        const entry = entries.find((entry) => entry.extremityLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
-
-      this.extremityTreatmentGrid = extremityLevels.map((level) => {
-        const entry = treatments.find(
-          (entry) => entry.extremityLevel === level
-        );
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
-    },
-
-
-    async saveSpinalEntries(noteId) {
-
-      let noteEntries = await this.entryService.getEntriesForNote({ noteId });
-
-      for (let i = 0; i < this.spinalGrid.length; i++) {
-        let entryData = {
-          noteId: noteId,
-          spinalLevel: spinalLevels[i],
+        return {
+          entry,
+          treatment
         };
+      });
 
-        if (this.spinalGrid[i] && this.spinalGrid[i]?.length) {
-          for (let j = 0; j < this.spinalGrid[i].length; j++) {
-            if (this.spinalGrid[i][j]) {
-              entryData[entryFields[j]] = this.spinalGrid[i][j];
-            }
-          }
-        }
-
-        if (this.hasAnyField(entryData, entryFields)) {
-          let existingEntry = noteEntries.find(
-            (entry) => entry.spinalLevel === spinalLevels[i]
-          );
-
-          if (existingEntry) {
-            await this.entryService.updateEntry({
-              ...existingEntry,
-              ...entryData,
-            });
-          } else {
-            await this.entryService.addEntry(entryData, noteId);
-          }
-        }
+      // Assign to appropriate data properties based on grid type
+      if (gridType === 'spinal') {
+        this.spinalGrid = combinedGrid.map(g => g.entry);
+        this.spinalTreatmentGrid = combinedGrid.map(g => g.treatment);
+      } else if (gridType === 'extremity') {
+        this.extremityGrid = combinedGrid.map(g => g.entry);
+        this.extremityTreatmentGrid = combinedGrid.map(g => g.treatment);
       }
-      let noteTreatments = await this.treatmentService.getTreatmentsForNote({
-        noteId,
-      });
+    },
 
-      console.log('SPINAL TREATMENT GRID PASSED IS ', this.spinalTreatmentGrid);
-
-      for (let i = 0; i < this.spinalTreatmentGrid.length; i++) {
-        let treatmentData = {
+    async saveEntriesAndTreatments(noteId, oldEntries, grid, levels, type, isTreatment = false) {
+      for (let i = 0; i < grid.length; i++) {
+        let data = {
           noteId: noteId,
-          spinalLevel: spinalLevels[i],
+          level: levels[i],
+          type: type,
         };
-
-        // Update treatmentFields processing
-        for (let j = 0; j < this.spinalTreatmentGrid[i].length; j++) {
-          const fieldValue = this.spinalTreatmentGrid[i][j];
-          if (fieldValue !== null && fieldValue !== '') {
-            treatmentData[treatmentFields[j]] = fieldValue;
-          } else {
-            treatmentData[treatmentFields[j]] = null;
+        console.log('data.noteId is ', data.noteId);
+        // Populate data object
+        for (let j = 0; j < grid[i].length; j++) {
+          if (grid[i][j]) {
+            data[isTreatment ? treatmentFields[j] : entryFields[j]] = grid[i][j];
           }
         }
 
-        if (
-          this.spinalTreatmentGrid[i] &&
-          this.spinalTreatmentGrid[i]?.length
-        ) {
-          for (let j = 0; j < this.spinalTreatmentGrid[i].length; j++) {
-            if (this.spinalTreatmentGrid[i][j]) {
-              treatmentData[treatmentFields[j]] =
-                this.spinalTreatmentGrid[i][j];
-            }
-          }
-        }
-
-        if (this.hasAnyField(treatmentData, treatmentFields)) {
-          let existingTreatment = noteTreatments.find(
-            (treatment) => treatment.spinalLevel === spinalLevels[i]
+        if (this.hasAnyField(data, isTreatment ? treatmentFields : entryFields)) {
+          let existing = oldEntries.find(
+            (entry) => entry.level === levels[i] && entry.type === type
           );
 
-          if (existingTreatment) {
-            await this.treatmentService.updateTreatment({
-              ...existingTreatment,
-              ...treatmentData,
+          if (existing) {
+            await (isTreatment ? this.treatmentService.updateTreatment : this.entryService.updateEntry)({
+              ...existing,
+              ...data,
             });
           } else {
-            console.log('calling add treatment from note dialog');
-            await this.treatmentService.addTreatment(treatmentData, noteId);
+            await (isTreatment ? this.treatmentService.addTreatment : this.entryService.addEntry)(data);
           }
         }
       }
     },
 
-    async saveExtremityEntries(noteId) {
-    
-      let noteEntries = await this.entryService.getEntriesForNote({ noteId });
+    async processSaveOperations(noteId, oldEntries, patientId) {
+      console.log('old entries are ', this.oldEntries);
+      // Handle complaints
+      await this.handleComplaints(patientId, this.complaints);
 
-      for (let i = 0; i < this.extremityGrid.length; i++) {
-        let entryData = {
-          noteId: noteId,
-          extremityLevel: extremityLevels[i],
-        };
+      // Save or update spinal entries and treatments
+      await this.saveEntriesAndTreatments(noteId, oldEntries, this.spinalGrid, spinalLevels, "spinal");
+      await this.saveEntriesAndTreatments(noteId, oldEntries, this.spinalTreatmentGrid, spinalLevels, "spinal", true);
 
-        if (this.extremityGrid[i] && this.extremityGrid[i]?.length) {
-          for (let j = 0; j < this.extremityGrid[i].length; j++) {
-            if (this.extremityGrid[i][j]) {
-              entryData[entryFields[j]] = this.extremityGrid[i][j];
-            }
-          }
-        }
-
-        if (this.hasAnyField(entryData, entryFields)) {
-          let existingEntry = noteEntries.find(
-            (entry) => entry.extremityLevel === extremityLevels[i]
-          );
-
-          if (existingEntry) {
-            await this.entryService.updateEntry({
-              ...existingEntry,
-              ...entryData,
-            });
-          } else {
-            await this.entryService.addEntry(entryData, noteId);
-          }
-        }
-      }
-      let noteTreatments = await this.treatmentService.getTreatmentsForNote({
-        noteId,
-      });
-
-      for (let i = 0; i < this.extremityTreatmentGrid.length; i++) {
-        let treatmentData = {
-          noteId: noteId,
-          extremityLevel: extremityLevels[i],
-        };
-
-        if (
-          this.extremityTreatmentGrid[i] &&
-          this.extremityTreatmentGrid[i]?.length
-        ) {
-          for (let j = 0; j < this.extremityTreatmentGrid[i].length; j++) {
-            if (this.extremityTreatmentGrid[i][j]) {
-              treatmentData[treatmentFields[j]] =
-                this.extremityTreatmentGrid[i][j];
-            }
-          }
-        }
-
-        if (this.hasAnyField(treatmentData, treatmentFields)) {
-          let existingTreatment = noteTreatments.find(
-            (treatment) => treatment.extremityLevel === extremityLevels[i]
-          );
-
-          if (existingTreatment) {
-            await this.treatmentService.updateTreatment({
-              ...existingTreatment,
-              ...treatmentData,
-            });
-          } else {
-            console.log('calling add treatment from note dialog 2');
-
-            await this.treatmentService.addTreatment(treatmentData, noteId);
-          }
-        }
-      }
+      // Save or update extremity entries and treatments
+      await this.saveEntriesAndTreatments(noteId, oldEntries, this.extremityGrid, extremityLevels, "extremity");
+      await this.saveEntriesAndTreatments(noteId, oldEntries, this.extremityTreatmentGrid, extremityLevels, "extremity", true);
     },
     resetForm() {
       this.tab = 0;
@@ -565,9 +448,7 @@ export default {
         if ((await res) instanceof Error) {
         } else {
           const noteId = res.id;
-          await this.saveComplaints(this.currentPatient.id);
-          await this.saveSpinalEntries(noteId);
-          await this.saveExtremityEntries(noteId);
+          await this.processSaveOperations(noteId, this.oldEntries, this.currentPatient.id);
           this.$emit("note-added");
           this.closeDialog();
         }
@@ -575,168 +456,78 @@ export default {
       }
     },
     async updateNote() {
-
+      //format the date
       try {
         formattedDate = parseISO(this.form.visitDate);
       } catch (error) {
         console.error("Invalid Date:", this.form.visitDate);
       }
 
+      //update your form data based on the format
       const formData = {
         ...this.form,
         temperature: parseFloat(this.form.temperature),
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
 
-      await this.saveSpinalEntries(this.selectedItem.id);
-      await this.saveExtremityEntries(this.selectedItem.id);
+      // save the spinal and extremity entries -- SELECTED ITEM IS YOUR NOTE associated
+      // I believe each of these functions populates the extremityGrid and spinalGrid as needed
+      await this.processSaveOperations(this.currentNote.id, this.oldEntries, this.currentPatient.id);
 
-      const entries = await this.entryService.getEntriesForNote({
-        noteId: this.selectedItem.id,
-      });
-
+      //update the note itself through the service -- this would apply to vitals
       const updateNote = await this.noteService.updateNote({
         ...formData,
-        id: this.selectedItem.id,
+        id: this.currentNote.id,
       });
 
+      //validation check to see if it updated
       if (updateNote instanceof Error) {
         console.log("Note not updated");
         return;
       }
 
-      for (let i = 0; i < this.complaints.length; i++) {
-        const complaint = this.complaints[i];
-
-        const res = complaint.id
-          ? await this.complaintService.updateComplaint(
-              { ...complaint, patientId: this.currentPatient.id },
-              complaint.id
-            )
-          : await this.complaintService.addComplaint(
-              { ...complaint },
-              this.currentPatient.id
-            );
-
-        if (res instanceof Error) {
-          console.log(`Complaint ${i} not updated`);
-        }
-      }
-
-      for (let i = 0; i < this.spinalGrid.length; i++) {
-        for (let j = 0; j < entries.length; j++) {
-          const updatedEntry = this.spinalGrid[i];
-          const pastEntry = entries[j];
-          if (updatedEntry) {
-            const updateObject = {
-              side: updatedEntry[0] === "" ? false : updatedEntry[0],
-              sublux: updatedEntry[1] === "" ? false : updatedEntry[1],
-              muscleSpasm: updatedEntry[2] === "" ? false : updatedEntry[2],
-              triggerPoints: updatedEntry[3] === "" ? false : updatedEntry[3],
-              tenderness: updatedEntry[4] === "" ? false : updatedEntry[4],
-              numbness: updatedEntry[5] === "" ? false : updatedEntry[5],
-              edema: updatedEntry[6] === "" ? false : updatedEntry[6],
-              swelling: updatedEntry[7] === "" ? false : updatedEntry[7],
-              reducedMotion: updatedEntry[8] === "" ? false : updatedEntry[8],
-              spinalLevel: spinalLevels[i],
-            };
-            if (updateObject.spinalLevel === pastEntry.spinalLevel) {
-              const updatedEntry = await this.entryService.updateEntry({
-                ...pastEntry,
-                ...updateObject,
-              });
-              if (updatedEntry instanceof Error) {
-                console.log("Entry not updated");
-              }
-            }
-          }
-        }
-      }
-
-      for (let i = 0; i < this.extremityGrid.length; i++) {
-        for (let j = 0; j < entries.length; j++) {
-          const updatedEntry = this.extremityGrid[i];
-          const pastEntry = entries[j];
-          if (updatedEntry) {
-            const updateObject = {
-              side: updatedEntry[0] === "" ? false : updatedEntry[0],
-              sublux: updatedEntry[1] === "" ? false : updatedEntry[1],
-              muscleSpasm: updatedEntry[2] === "" ? false : updatedEntry[2],
-              triggerPoints: updatedEntry[3] === "" ? false : updatedEntry[3],
-              tenderness: updatedEntry[4] === "" ? false : updatedEntry[4],
-              numbness: updatedEntry[5] === "" ? false : updatedEntry[5],
-              edema: updatedEntry[6] === "" ? false : updatedEntry[6],
-              swelling: updatedEntry[7] === "" ? false : updatedEntry[7],
-              reducedMotion: updatedEntry[8] === "" ? false : updatedEntry[8],
-              extremityLevel: extremityLevels[i],
-            };
-            if (updateObject.extremityLevel === pastEntry.extremityLevel) {
-              const updatedEntry = await this.entryService.updateEntry({
-                ...pastEntry,
-                ...updateObject,
-              });
-              if (updatedEntry instanceof Error) {
-                console.log("Entry not updated");
-              }
-            }
-          }
-        }
-      }
-
-      // // Update Spinal Treatments
-      console.log('updating note and spinal treatment grid');
-      await this.updateTreatments(this.spinalTreatmentGrid, 'spinal');
-
-      // // Update Extremity Treatments
-      await this.updateTreatments(this.extremityTreatmentGrid, 'extremity');
+      await this.updateAllGridEntries(this.spinalGrid, this.extremityGrid, this.spinalTreatmentGrid, this.extremityTreatmentGrid, spinalLevels, extremityLevels, this.oldEntries);
 
       this.$emit("note-updated");
       this.closeDialog();
     },
-    // New method to update treatments
-    async updateTreatments(treatmentGrid, type) {
-      const levels =
-        type === "spinal" ? spinalLevels : extremityLevels;
+    async updateAllGridEntries(spinalGrid, extremityGrid, spinalTreatmentGrid, extremityTreatmentGrid, spinalLevels, extremityLevels, entries) {
+      // Combining entries and treatments for both spinal and extremity into a single array
+      const combinedGrids = [
+        { grid: spinalGrid, levels: spinalLevels, type: 'spinal', isTreatment: false },
+        { grid: extremityGrid, levels: extremityLevels, type: 'extremity', isTreatment: false },
+        { grid: spinalTreatmentGrid, levels: spinalLevels, type: 'spinal', isTreatment: true },
+        { grid: extremityTreatmentGrid, levels: extremityLevels, type: 'extremity', isTreatment: true }
+      ];
 
-      let noteTreatments = await this.treatmentService.getTreatmentsForNote({
-        noteId: this.selectedItem.id,
-      });
-
-      console.log('IN UPDATETREATMENTS and the treatmentGrid is ', treatmentGrid);
-
-      for (let i = 0; i < treatmentGrid.length; i++) {
-        let treatmentData = {
-          noteId: this.selectedItem.id,
-          level: levels[i],
-          type: type,
-        };
-
-        console.log('treatment data for level ', levels[i], ' is ', treatmentData);
-
-        treatmentFields.forEach((field, index) => {
-          if (treatmentGrid[i] && treatmentGrid[i][index] != null) {
-            treatmentData[field] = treatmentGrid[i][index];
-          }
-        });
-
-        if (this.hasAnyField(treatmentData, treatmentFields)) {
-          let existingTreatment = noteTreatments.find(
-            (treatment) =>
-              treatment.level === levels[i] && treatment.type === type
-          );
-
-          if (existingTreatment) {
-            await this.treatmentService.updateTreatment({
-              ...existingTreatment,
-              ...treatmentData,
-            });
-          } else {
-            console.log('calling add treatment from note dialog 3');
-
-            await this.treatmentService.addTreatment(treatmentData);
+      // Loop through each grid and perform updates
+      for (const { grid, levels, type, isTreatment } of combinedGrids) {
+        for (let i = 0; i < grid.length; i++) {
+          const updatedEntry = grid[i];
+          if (updatedEntry) {
+            const updateObject = this.mapGridToUpdateObject(updatedEntry, levels[i], type, isTreatment);
+            const pastEntry = entries.find(e => e.level === levels[i] && e.type === type && e.isTreatment === isTreatment);
+            if (pastEntry) {
+              const service = isTreatment ? this.treatmentService : this.entryService;
+              await service.updateEntry({
+                ...pastEntry,
+                ...updateObject,
+              });
+            }
           }
         }
       }
+    },
+
+    mapGridToUpdateObject(gridEntry, level, type, isTreatment) {
+      const fields = isTreatment ? treatmentFields : entryFields;
+      let updateObject = { level, type };
+
+      fields.forEach((field, index) => {
+        updateObject[field] = gridEntry[index] === "" ? false : gridEntry[index];
+      });
+
+      return updateObject;
     },
     async switchTab(tabNumber) {
       if (await this.validateForm(this.tab)) {
@@ -774,6 +565,15 @@ export default {
           }
         } else {
           this.tab++;
+        }
+      }
+    },
+    async handleComplaints(patientId, complaints) {
+      for (let complaint of complaints) {
+        if (complaint.id) {
+          await this.complaintService.updateComplaint({ ...complaint, patientId }, complaint.id);
+        } else {
+          await this.complaintService.addComplaint({ ...complaint }, patientId);
         }
       }
     },

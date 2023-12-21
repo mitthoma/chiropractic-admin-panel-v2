@@ -60,8 +60,6 @@
           <v-card class="pa-5">
             <v-row>
               <v-col cols="6">
-                {{ currentNote?.temperature }}
-                {{ activeNote?.temperature }}
                 <div class="d-flex align-center justify-space-around">
                   <v-col cols="12" class="text-center">
                     <v-label class="pb-0 mb-0">Visit Date</v-label>

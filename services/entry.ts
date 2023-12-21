@@ -12,11 +12,7 @@ export const createEntryService = (api: AxiosInstance) => ({
     return data.data;
   },
 
-  addEntry: async (payload: any, noteId: any) => {
-    payload = {
-      ...payload,
-      noteId,
-    };
+  addEntry: async (payload: any) => {
     const { data } = await api.post("/entry/entry", payload);
     return data.data;
   },
