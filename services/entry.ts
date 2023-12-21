@@ -13,7 +13,6 @@ export const createEntryService = (api: AxiosInstance) => ({
   },
 
   addEntry: async (payload: any) => {
-    console.log('payload for addEntry is ', payload);
     const { data } = await api.post("/entry/entry", payload);
     return data.data;
   },

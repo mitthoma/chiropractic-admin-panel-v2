@@ -109,8 +109,9 @@ export const deleteEntry = async (entryId: string) => {
   }
 };
 
-export const updateEntry = async (entryId: string, payload: Partial<any>) => {
+export const updateEntry = async (payload: Partial<any>) => {
   try {
+    const entryId = payload.id;
     const updatedEntry = await prisma.entry.update({
       where: { id: entryId },
       data: payload,

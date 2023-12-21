@@ -2,7 +2,6 @@ import { addEntry } from "~/server/repositories/entryRepository";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  console.log('CALLING NEW ENTRY');
   const cleanedBody: any = {
     category: body.type,
     region: body.region || null,
