@@ -328,47 +328,53 @@ export default {
     },
 
     async loadGrids(entries, treatments) {
-      this.spinalGrid = spinalLevels.map((level) => {
-        const entry = entries.find((entry) => entry.spinalLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
 
-      this.spinalTreatmentGrid = spinalLevels.map((level) => {
-        const entry = treatments.find((entry) => entry.spinalLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
+      if (entries) {
+        this.spinalGrid = spinalLevels.map((level) => {
+          const entry = entries.find((entry) => entry.spinalLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
 
-      this.extremityGrid = extremityLevels.map((level) => {
-        const entry = entries.find((entry) => entry.extremityLevel === level);
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
+        this.extremityGrid = extremityLevels.map((level) => {
+          const entry = entries.find((entry) => entry.extremityLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
+      }
 
-      this.extremityTreatmentGrid = extremityLevels.map((level) => {
-        const entry = treatments.find(
-          (entry) => entry.extremityLevel === level
-        );
-        if (entry) {
-          return entry;
-        } else {
-          return null;
-        }
-      });
+      if (treatments) {
+        this.spinalTreatmentGrid = spinalLevels.map((level) => {
+          const entry = treatments.find((entry) => entry.spinalLevel === level);
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
+
+        this.extremityTreatmentGrid = extremityLevels.map((level) => {
+          const entry = treatments.find(
+            (entry) => entry.extremityLevel === level
+          );
+          if (entry) {
+            return entry;
+          } else {
+            return null;
+          }
+        });
+      }
     },
 
     async saveEntriesAndTreatments(noteId, oldEntries, grid, levels, type, isTreatment = false) {
       for (let i = 0; i < grid.length; i++) {
+        
         let data = {
           noteId: noteId,
           level: levels[i],

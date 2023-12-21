@@ -30,11 +30,11 @@ interface EntryPayload {
   electStim: boolean;
   traction: boolean;
   massage: boolean;
-  technique: string;
+  technique?: string;
   manipulation: boolean;
   noteId?: string; // Optional because it's optional in the schema
-  physioPositioning: string;
-  treatmentPositioning: string;
+  physioPositioning?: string;
+  treatmentPositioning?: string;
 }
 
 export const addEntry = async (payload: EntryPayload) => {
@@ -59,23 +59,27 @@ export const addEntry = async (payload: EntryPayload) => {
       electStim: false,
       traction: false,
       massage: false,
-      technique: "",
       manipulation: false,
-      physioPositioning: "",
-      treatmentPositioning: "",
     };
 
     const completePayload = {
       ...defaultPayload,
       ...payload,
+      physioPositioning: null,
+      treatmentPositioning: null,
+      technique: null,
+
     };
 
     console.log('payload is ', payload);
 
     const { noteId, ...dataWithoutNoteId } = completePayload;
 
+    console.log('complete payload is ', completePayload);
+
     const note = await prisma.note.findUnique({ where: { id: noteId } });
 
+    console.log('note is ', note);
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);
     }
