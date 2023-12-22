@@ -11,14 +11,8 @@ export const createTreatmentService = (api: AxiosInstance) => ({
     return data.data;
   },
 
-  addTreatment: async (payload: any, noteId: any) => {
-    payload = {
-      ...payload,
-      noteId,
-    };
-    console.log('sending endpoint for treatment/treatment');
+  addTreatment: async (payload: any) => {
     const { data } = await api.post("/treatment/treatment", payload);
-    console.log('data returned from treatment/treatment is ', data);
     return data.data;
   },
 

@@ -1,91 +1,32 @@
 import { addTreatment } from "~/server/repositories/treatmentRepository";
 
-const requiredFields = [
-  "category",
-  "region",
-  "spinalLevel",
-  "extremityLevel",
-  "side",
-  "physioPositioning",
-  "coldPack",
-  "hotPack",
-  "electStim",
-  "traction",
-  "massage",
-  "treatmentPositioning",
-  "treatmentTechnique",
-  "treatmentManipulation",
-  "noteId",
-];
-
-const booleanFields = [
-  "coldPack",
-  "hotPack",
-  "electStim",
-  "traction",
-  "massage",
-  "treatmentManipulation",
-];
-
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  console.log('hitting treatment endpoint treatment/treatment and body is ', body);
-
-  // Correctly set enum fields to null if they are not provided
-  ['physioPositioning', 'treatmentPositioning', 'treatmentTechnique'].forEach((field) => {
-    if (!body.hasOwnProperty(field) || body[field] === false) {
-      body[field] = null;
-    }
-  });
-
-  // Convert string 'true'/'false' to boolean for boolean fields
-  booleanFields.forEach((field) => {
-    if (body.hasOwnProperty(field)) {
-      body[field] = body[field] === "true" || body[field] === true;
-    }
-  });
-
-  // requiredFields.forEach((field) => {
-  //   if (!body.hasOwnProperty(field)) {
-  //     if (booleanFields.includes(field)) {
-  //       body[field] = false;
-  //     } else if (
-  //       field === "physioPositioning" ||
-  //       field === "treatmentPositioning" ||
-  //       field === 'treatmentTechnique'
-  //     ) {
-  //       body[field] = null;
-  //     } else {
-  //       body[field] = "";
-  //     }
-  //   }
-  // });
-
-  console.log('getting here 2');
-
-  if (body.spinalLevel) {
-    body.spinalLevel = body.spinalLevel.toLowerCase();
-    body.category = "spinal";
-    body.extremityLevel = null;
-  }
-  console.log('getting here 3');
-  if (body.extremityLevel) {
-    body.extremityLevel = body.extremityLevel.toLowerCase();
-    body.category = "extremity";
-    body.spinalLevel = null;
-  }
-  console.log('getting here 4');
-  body.region = null;
-
-  console.log('body is ', body);
-
-  if (!body.side) {
-    console.log('getting here 5');
-    return;
+  console.log('HITTING ADD TREATMENT ENDPOINT AND BODY IS ', body);
+  const cleanedBody: any = {
+    category: body.type,
+    region: body.region || null,
+    side: body.side,
+    coldPack: body.coldPack === 'X' || body.coldPack === true ? true : false,
+    hotPack: body.hotPack === 'X' || body.hotPack === true ? true : false,
+    electStim: body.electStim === 'X' || body.electStim === true ? true : false,
+    traction: body.traction === 'X' || body.traction === true ? true : false,
+    massage: body.massage === 'X' || body.massage === true ? true : false,
+    treatmentManipulation: body.treatmentManipulation === 'X' || body.treatmentManipulation === true ? true : false,
+    noteId: body.noteId || null,
+    physioPositioning: body.physioPositioning || null,
+    treatmentPositioning: body.treatmentPositioning || null,
+    treatmentTechnique: body.treatmentTechnique || null,
+    spinalLevel: null,
+    extremityLevel: null,
   }
 
-  console.log("calling treatment/treatment repository function");
-  const response = await addTreatment(body);
-  console.log('response is ', response);
+  if (cleanedBody.category === 'spinal') {
+    cleanedBody.spinalLevel = body.level || null;
+  } else if (cleanedBody.category === 'extremity') {
+    cleanedBody.extremityLevel = body.level || null;
+  }
+
+  const response = await addTreatment(cleanedBody);
   return response;
 });

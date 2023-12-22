@@ -53,10 +53,10 @@ export const deleteTreatment = async (treatmentId: string) => {
 };
 
 export const updateTreatment = async (
-  treatmentId: string,
-  payload: Partial<TreatmentPayload>
+  payload: any
 ) => {
   try {
+    const treatmentId = payload.id;
     const updatedTreatment = await prisma.treatment.update({
       where: { id: treatmentId },
       data: payload,

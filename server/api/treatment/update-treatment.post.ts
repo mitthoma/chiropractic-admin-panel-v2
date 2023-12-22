@@ -5,45 +5,31 @@ import {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-
-  // Handle side field mapping
-  if (body.side === "Left") {
-    body.side = "l";
-  } else if (body.side === "Right") {
-    body.side = "r";
-  } else if (body.side === "Both") {
-    body.side = "b";
-  }
-
-  // Delete treatment if no side is specified
   if (!body.side) {
-    const res = await deleteTreatment(body.id);
-    if (res) {
-      console.log("Treatment successfully deleted");
-    }
-    return res;
+    await deleteTreatment(body.id);
+    return;
   }
 
-  // Define boolean fields specific to treatment entity
-  const booleanFields = [
-    "coldPack",
-    "hotPack",
-    "electStim",
-    "traction",
-    "massage",
-    "treatmentManipulation",
-  ];
+  const cleanedBody: any = {
+    id: body.id,
+    category: body.type,
+    region: body.region || null,
+    side: body.side,
+    coldPack: body.coldPack === 'X' || body.coldPack === true ? true : false,
+    hotPack: body.hotPack === 'X' || body.hotPack === true ? true : false,
+    electStim: body.electStim === 'X' || body.electStim === true ? true : false,
+    traction: body.traction === 'X' || body.traction === true ? true : false,
+    massage: body.massage === 'X' || body.massage === true ? true : false,
+    treatmentManipulation: body.treatmentManipulation === 'X' || body.treatmentManipulation === true ? true : false,
+    noteId: body.noteId || null,
+    physioPositioning: body.physioPositioning || null,
+    treatmentPositioning: body.treatmentPositioning || null,
+    treatmentTechnique: body.treatmentTechnique || null,
+    spinalLevel: null,
+    extremityLevel: null,
+  }
 
-  // Handle boolean fields logic
-  booleanFields.forEach((field) => {
-    if (body[field] === null) {
-      body[field] = false;
-    } else if (typeof body[field] === "string") {
-      body[field] = body[field].toLowerCase() === "true";
-    }
-  });
 
-  // Update the treatment in the database
-  const response = await updateTreatment(body.id, body);
+  const response = await updateTreatment(cleanedBody);
   return response;
 });

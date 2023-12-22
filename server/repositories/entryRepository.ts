@@ -39,43 +39,7 @@ interface EntryPayload {
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
-    // const defaultPayload = {
-    //   createdDate: new Date(),
-    //   category: "spinal", // Replace with a valid default category
-    //   region: null,
-    //   spinalLevel: null,
-    //   extremityLevel: null,
-    //   side: "l", // Replace with a valid default side
-    //   sublux: false,
-    //   muscleSpasm: false,
-    //   triggerPoints: false,
-    //   tenderness: false,
-    //   numbness: false,
-    //   edema: false,
-    //   swelling: false,
-    //   reducedMotion: false,
-    //   coldPack: false,
-    //   hotPack: false,
-    //   electStim: false,
-    //   traction: false,
-    //   massage: false,
-    //   manipulation: false,
-    // };
-
-    // const completePayload = {
-    //   ...defaultPayload,
-    //   ...payload,
-    //   physioPositioning: null,
-    //   treatmentPositioning: null,
-    //   technique: null,
-
-    // };
-
-    console.log('payload is ', payload);
     const noteId = payload.note;
-
-
-
     const note = await prisma.note.findUnique({ where: { id: noteId } });
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);

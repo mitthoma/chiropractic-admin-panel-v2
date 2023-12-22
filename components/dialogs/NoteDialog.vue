@@ -75,6 +75,7 @@
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
+              {{ spinalTreatmentGrid }}
               <SpinalTreatment
                 :existing-data="spinalTreatmentGrid"
                 @update:spinalTreatmentGrid="spinalTreatmentGrid = $event"
@@ -608,6 +609,7 @@ export default {
     closeDialog() {
       this.$emit("close-dialog");
       this.resetForm();
+      this.populateFormData();
     },
   },
 };
