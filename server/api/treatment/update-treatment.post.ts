@@ -6,9 +6,10 @@ import {
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   if (!body.side) {
-    await deleteTreatment(body.id);
-    return;
+    const res = await deleteTreatment(body.id);
+    return res;
   }
+  console.log('body on treatment is ', body);
 
   const cleanedBody: any = {
     id: body.id,
@@ -25,8 +26,8 @@ export default defineEventHandler(async (event) => {
     physioPositioning: body.physioPositioning || null,
     treatmentPositioning: body.treatmentPositioning || null,
     treatmentTechnique: body.treatmentTechnique || null,
-    spinalLevel: null,
-    extremityLevel: null,
+    spinalLevel: body.category === 'spinal' ? body.spinalLevel : null,
+    extremityLevel: body.category === 'extremity' ? body.extremityLevel : null,
   }
 
 

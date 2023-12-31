@@ -12,11 +12,13 @@ export const createTreatmentService = (api: AxiosInstance) => ({
   },
 
   addTreatment: async (payload: any) => {
+    console.log('in the add treatment service function and the payload is ', payload);
     const { data } = await api.post("/treatment/treatment", payload);
     return data.data;
   },
 
   updateTreatment: async (payload: any) => {
+    console.log('payload is ', payload);
     const { data } = await api.post("/treatment/update-treatment", payload);
     return data.data;
   },

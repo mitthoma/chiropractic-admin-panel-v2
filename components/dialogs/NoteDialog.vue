@@ -75,7 +75,6 @@
         <v-window-item :value="4">
           <v-container fluid>
             <v-form ref="form4" @input="validateForm(4)">
-              {{ spinalTreatmentGrid }}
               <SpinalTreatment
                 :existing-data="spinalTreatmentGrid"
                 @update:spinalTreatmentGrid="spinalTreatmentGrid = $event"
@@ -311,7 +310,7 @@ export default {
     },
 
     async populateFormData(item) {
-      const visitDate = parseISO(item.visitDate);
+      const visitDate = parseISO(item?.visitDate);
       this.form = {
         ...item,
       };
@@ -373,55 +372,73 @@ export default {
       }
     },
 
-    async saveEntriesAndTreatments(noteId, oldEntries, grid, levels, type, isTreatment = false) {
-      for (let i = 0; i < grid.length; i++) {
-        let data = {
-          noteId: noteId,
-          level: levels[i],
-          type: type,
-        };
+    async saveEntriesAndTreatments(noteId, grid, levels, type, isTreatment = false) {
+  const pastRecords = isTreatment ? this.oldTreatments : this.oldEntries;
+  const fields = isTreatment ? treatmentFields : entryFields;
 
-        for (let j = 0; j < grid[i].length; j++) {
-          if (grid[i][j]) {
-            data[isTreatment ? treatmentFields[j] : entryFields[j]] = grid[i][j];
-          }
-        }
+  for (let i = 0; i < grid.length; i++) {
+    let data = {
+      noteId: noteId,
+      level: levels[i],
+      type: type,
+    };
 
-        if (this.hasAnyField(data, isTreatment ? treatmentFields : entryFields)) {
-          let existing = null;
-          if (type === 'spinal') {
-            existing = oldEntries.find(
-              (entry) => entry.spinalLevel === levels[i] && entry.category === type
-            );
-          } else if (type === 'extremity') {
-            existing = oldEntries.find(
-              (entry) => entry.extremityLevelLevel === levels[i] && entry.category === type
-            );
-          }
+    let hasNonNullField = false;
 
-          if (existing) {
-            await (isTreatment ? this.treatmentService.updateTreatment : this.entryService.updateEntry)({
-              ...existing,
-              ...data,
-            });
-          } else {
-            await (isTreatment ? this.treatmentService.addTreatment : this.entryService.addEntry)(data);
-          }
-        }
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] !== null && grid[i][j] !== undefined) {
+        data[fields[j]] = grid[i][j];
+        hasNonNullField = true;
       }
-    },
+    }
 
-    async processSaveOperations(noteId, oldEntries, patientId) {
+    if (hasNonNullField) {
+      let existing = null;
+
+      if (type === 'spinal') {
+        existing = pastRecords.find(
+          (entry) => entry.spinalLevel === levels[i] && entry.category === type
+        );
+      } else if (type === 'extremity') {
+        existing = pastRecords.find(
+          (entry) => entry.extremityLevel === levels[i] && entry.category === type
+        );
+      }
+
+      if (existing) {
+        // Set to null for fields that are in 'existing' but not in 'data'
+        fields.forEach(field => {
+          if (data[field] === undefined && existing[field] !== null) {
+            data[field] = null;
+          }
+        });
+
+        await (isTreatment ? this.treatmentService.updateTreatment : this.entryService.updateEntry)({
+          ...existing,
+          ...data,
+        });
+      } else {
+        await (isTreatment ? this.treatmentService.addTreatment : this.entryService.addEntry)(data);
+      }
+    }
+  }
+},
+
+
+    async processSaveOperations(noteId, patientId) {
       // Handle complaints
       await this.handleComplaints(patientId, this.complaints);
 
+      console.log('this spinal grid is ', this.spinalGrid);
+      console.log('this spinal treatment grid is ', this.spinalTreatmentGrid);
+
       // Save or update spinal entries and treatments
-      await this.saveEntriesAndTreatments(noteId, oldEntries, this.spinalGrid, spinalLevels, "spinal");
-      await this.saveEntriesAndTreatments(noteId, oldEntries, this.spinalTreatmentGrid, spinalLevels, "spinal", true);
+      await this.saveEntriesAndTreatments(noteId, this.spinalGrid, spinalLevels, "spinal");
+      await this.saveEntriesAndTreatments(noteId, this.spinalTreatmentGrid, spinalLevels, "spinal", true);
 
       // Save or update extremity entries and treatments
-      await this.saveEntriesAndTreatments(noteId, oldEntries, this.extremityGrid, extremityLevels, "extremity");
-      await this.saveEntriesAndTreatments(noteId, oldEntries, this.extremityTreatmentGrid, extremityLevels, "extremity", true);
+      await this.saveEntriesAndTreatments(noteId, this.extremityGrid, extremityLevels, "extremity");
+      await this.saveEntriesAndTreatments(noteId, this.extremityTreatmentGrid, extremityLevels, "extremity", true);
     },
     resetForm() {
       this.tab = 0;
@@ -465,7 +482,7 @@ export default {
         if ((await res) instanceof Error) {
         } else {
           const noteId = res.id;
-          await this.processSaveOperations(noteId, this.oldEntries, this.currentPatient.id);
+          await this.processSaveOperations(noteId, this.currentPatient.id);
           this.$emit("note-added");
           this.closeDialog();
         }
@@ -473,6 +490,7 @@ export default {
       }
     },
     async updateNote() {
+      console.log('in update note');
       //format the date
       try {
         formattedDate = parseISO(this.form.visitDate);
@@ -487,9 +505,11 @@ export default {
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
 
+      console.log('this form is ', formData);
+
       // save the spinal and extremity entries -- SELECTED ITEM IS YOUR NOTE associated
       // I believe each of these functions populates the extremityGrid and spinalGrid as needed
-      await this.processSaveOperations(this.currentNote.id, this.oldEntries, this.currentPatient.id);
+      await this.processSaveOperations(this.currentNote.id, this.currentPatient.id);
 
       //update the note itself through the service -- this would apply to vitals
       const updateNote = await this.noteService.updateNote({
@@ -577,6 +597,7 @@ export default {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
           if (this.isUpdateMode) {
+            console.log('calling update note');
             await this.updateNote();
           } else {
             this.submitNoteForm();
