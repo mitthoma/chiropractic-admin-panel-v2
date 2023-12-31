@@ -16,7 +16,14 @@
           </div>
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
+          <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[i][j - 2]"
+                ></v-select>
+              </div>
           <div
+            v-else
             @click="
               toggleX(
                 i,
@@ -40,6 +47,7 @@
 </template>
 
 <script>
+import { treatmentOptions } from '../helpers/noteArrays';
 export default {
   props: {
     phaseFourForm: {
@@ -123,6 +131,8 @@ export default {
         "Treatment Manipulation",
       ],
 
+      positioningOptions: [],
+
       sidesOptions: [
         { text: "Left", value: "l" },
         { text: "Right", value: "r" },
@@ -143,6 +153,7 @@ export default {
     };
   },
   mounted() {
+    this.positioningOptions = treatmentOptions;
     if (this.existingData) {
       for (let entry of this.existingData) {
         if (entry) {
@@ -157,6 +168,28 @@ export default {
                   ? entry[key]
                   : "";
               }
+            } else if (col === "Physio Positioning") {
+              const key = "physioPositioning";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+            } else if (col === "Treatment Positioning") {
+              const key = "treatmentPositioning";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+            } else if (col === "Treatment Technique") {
+              const key = "treatmentTechnique";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+
             } else {
               const key = this.camelCaseColumns[col];
               if (entry[key] !== undefined) {
@@ -164,31 +197,22 @@ export default {
               }
             }
           });
-        }
-      }
-      for (let entry of this.existingData) {
-        if (entry) {
-          let rowIndex = this.rows.findIndex(
-            (row) => row.toLowerCase() === entry.extremityLevel
-          );
-          this.booleanColumns.forEach((col, colIndex) => {
-            const key = this.camelCaseColumns[col];
-            if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
+          // Correcting the logic for populating the grid
+          this.cols.forEach((col, colIndex) => {
+            if (this.booleanColumns.includes(col)) {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
+              }
             }
           });
+
           if (entry.side) {
-            const colLabel =
-              entry.side === "l"
-                ? "Left"
-                : entry.side === "r"
-                ? "Right"
-                : entry.side === "b"
-                ? "Both"
-                : null;
-            if (colLabel) {
-              let colIndex = this.cols.findIndex((col) => col === colLabel);
-              this.grid[rowIndex][colIndex] = "X";
+            const sideIndex = this.cols.indexOf(
+              entry.side === "l" ? "Left" : entry.side === "r" ? "Right" : "Both"
+            );
+            if (sideIndex !== -1) {
+              this.grid[rowIndex][sideIndex] = "X";
             }
           }
         }
