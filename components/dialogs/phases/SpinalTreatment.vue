@@ -87,7 +87,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -125,7 +132,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -163,7 +177,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -203,7 +224,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -241,7 +269,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else 
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -279,7 +314,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -319,7 +361,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -357,7 +406,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -397,7 +453,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -435,7 +498,14 @@
               </div>
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  :items="positioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
               <div
+                v-else
                 @click="
                   toggleX(
                     modifiedRow.index,
