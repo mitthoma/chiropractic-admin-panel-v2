@@ -1,0 +1,13 @@
+
+TODOS:
+
+
+Treatment Feature
+
+- make the three fields on treatment, dropdown inputs for various strings [a --> j]
+- ensure that treatments are being saved accurately
+- display treatments on note page
+
+
+
+Exam Summaries Feature

@@ -1,19 +1,14 @@
-import { User } from '../entity/User';
-import { initDataSource } from '../database';
-
+import { User } from "../entity/User";
+import { initDataSource } from "../database";
 
 const AppDataSource = initDataSource();
 
-
 export const getAllUsers = async () => {
   try {
-    const query = AppDataSource
-      .getRepository(User)
-      .createQueryBuilder('user');
+    const query = AppDataSource.getRepository(User).createQueryBuilder("user");
 
     const [results, count] = await query.getManyAndCount();
     return results;
-
   } catch (error) {
     console.log(error);
     return error;
@@ -28,9 +23,11 @@ export const saveNewUser = async (
     const userRepository = AppDataSource.getRepository(User);
 
     // Check if a user with the same firebaseUid already exists
-    const existingUser = await userRepository.findOne({ where: { firebaseUid: payload.firebaseUid } });
+    const existingUser = await userRepository.findOne({
+      where: { firebaseUid: payload.firebaseUid },
+    });
     if (existingUser) {
-      throw new Error('User with this Firebase UID already exists');
+      throw new Error("User with this Firebase UID already exists");
     }
 
     const newUser = userRepository.create(payload);
@@ -48,7 +45,7 @@ export const updateUser = async (id: number, payload: Partial<User>) => {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({ where: { id } });
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error("User not found");
 
     await userRepository.update(id, payload);
     const updatedUser = await userRepository.findOne({ where: { id } });
@@ -76,7 +73,7 @@ export const getUser = async (id: number) => {
   try {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({ where: { id } });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error("User not found");
     return user;
   } catch (error) {
     console.log(error);
@@ -89,7 +86,7 @@ export const getUserByFirebaseUid = async (firebaseUid: string) => {
   try {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({ where: { firebaseUid } });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error("User not found");
     return user;
   } catch (error) {
     console.log(error);

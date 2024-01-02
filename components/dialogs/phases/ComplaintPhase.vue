@@ -1,5 +1,5 @@
 <template>
-  <div style="max-height: 500px; overflow-y: auto;">
+  <div style="max-height: 500px; overflow-y: auto">
     <div v-for="(complaint, index) in complaints" :key="index">
       <v-row class="mx-5">
         <v-col cols="6">
@@ -17,7 +17,7 @@
             :value="complaint.painLevel"
             :max="5"
             :step="1"
-            :ticks='[0, 1, 2, 3, 4, 5]'
+            :ticks="[0, 1, 2, 3, 4, 5]"
             show-ticks="always"
             label="Pain Level"
             @input="updateComplaintPainLevel(index, $event)"
@@ -33,15 +33,19 @@
 
 <script>
 export default {
-  name: 'PhaseOne',
-  props: ['complaints', 'addComplaint'],
+  name: "ComplaintPhase",
+  props: ["complaints", "addComplaint"],
   methods: {
     updateComplaintText(index, newText) {
-      this.$emit('update-complaint-text', index, newText.target.value);
+      this.$emit("update-complaint-text", index, newText.target.value);
     },
     updateComplaintPainLevel(index, newPainLevel) {
-      this.$emit('update-complaint-pain-level', index, newPainLevel.target.value);
-    }
-  }
+      this.$emit(
+        "update-complaint-pain-level",
+        index,
+        newPainLevel.target.value
+      );
+    },
+  },
 };
 </script>

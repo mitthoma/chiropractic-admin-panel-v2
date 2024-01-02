@@ -1,35 +1,34 @@
 import { AxiosInstance } from "axios";
 
-export const createUserService = (api : AxiosInstance) => ({
+export const createUserService = (api: AxiosInstance) => ({
   getUsers: async () => {
-    const { data } = await api.get('/user/users');
+    const { data } = await api.get("/user/users");
     return data.data;
   },
 
   getUser: async (payload: any) => {
-    const { data } = await api.get('/user/user', payload);
+    const { data } = await api.get("/user/user", payload);
     return data.data;
   },
-  
-  getUserByFirebaseUID: async (payload : any) => {
-    const { data } = await api.post('/user/user-uid', payload);
+
+  getUserByFirebaseUID: async (payload: any) => {
+    const { data } = await api.post("/user/user-uid", payload);
     return data.data;
   },
-  
+
   addUser: async (payload: any) => {
     try {
-  
       const credentials = await createUser(payload.email, payload.password);
       if (credentials && credentials.user) {
         const firebaseUid = credentials.user.uid;
-  
-        const response = await api.post('/user/user', {
+
+        const response = await api.post("/user/user", {
           firstName: payload.firstName,
           lastName: payload.lastName,
           email: payload.email,
-          firebaseUid
+          firebaseUid,
         });
-  
+
         return response.data;
       }
     } catch (error) {
@@ -37,14 +36,14 @@ export const createUserService = (api : AxiosInstance) => ({
       throw error;
     }
   },
-  
-  updateUser: async (payload : any) => {
-    const { data } = await api.post('/user/update-user', payload);
+
+  updateUser: async (payload: any) => {
+    const { data } = await api.post("/user/update-user", payload);
     return data.data;
   },
-  
-  deleteUser: async (payload : any) => {
-    const { data } = await api.post('/user/delete-user', payload);
+
+  deleteUser: async (payload: any) => {
+    const { data } = await api.post("/user/delete-user", payload);
     return data.data;
   },
 });

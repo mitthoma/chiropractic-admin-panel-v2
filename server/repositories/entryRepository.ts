@@ -1,10 +1,18 @@
-import { PrismaClient, Prisma, entry_spinallevel_enum, entry_category_enum, entry_region_enum, entry_extremitylevel_enum, entry_side_enum } from '@prisma/client';
+import {
+  PrismaClient,
+  Prisma,
+  entry_spinallevel_enum,
+  entry_category_enum,
+  entry_region_enum,
+  entry_extremitylevel_enum,
+  entry_side_enum,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 interface EntryPayload {
   createdDate?: Date; // Optional because Prisma provides a default value
-  category: entry_category_enum; 
+  category: entry_category_enum;
   region?: entry_region_enum; // Optional because it's optional in the schema
   spinalLevel?: entry_spinallevel_enum; // Optional because it's optional in the schema
   extremityLevel?: entry_extremitylevel_enum; // Optional because it's optional in the schema
@@ -22,57 +30,24 @@ interface EntryPayload {
   electStim: boolean;
   traction: boolean;
   massage: boolean;
-  technique: string;
+  technique?: string;
   manipulation: boolean;
-  noteId?: string; // Optional because it's optional in the schema
-  physioPositioning: string;
-  treatmentPositioning: string;
+  note?: string; // Optional because it's optional in the schema
+  physioPositioning?: string;
+  treatmentPositioning?: string;
 }
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
-    const defaultPayload = {
-      createdDate: new Date(),
-      category: 'spinal', // Replace with a valid default category
-      region: null,
-      spinalLevel: null,
-      extremityLevel: null,
-      side: 'l', // Replace with a valid default side
-      sublux: false,
-      muscleSpasm: false,
-      triggerPoints: false,
-      tenderness: false,
-      numbness: false,
-      edema: false,
-      swelling: false,
-      reducedMotion: false,
-      coldPack: false,
-      hotPack: false,
-      electStim: false,
-      traction: false,
-      massage: false,
-      technique: '',
-      manipulation: false,
-      physioPositioning: '',
-      treatmentPositioning: ''
-    };
-
-    const completePayload = {
-      ...defaultPayload,
-      ...payload
-    };
-
-    const { noteId, ...dataWithoutNoteId } = completePayload;
-
+    const noteId = payload.note;
     const note = await prisma.note.findUnique({ where: { id: noteId } });
-
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);
     }
 
     const newEntry = await prisma.entry.create({
       data: {
-        ...dataWithoutNoteId,
+        ...payload,
         note: {
           connect: {
             id: noteId,
@@ -98,11 +73,12 @@ export const deleteEntry = async (entryId: string) => {
   }
 };
 
-export const updateEntry = async (entryId: string, payload: Partial<any>) => {
+export const updateEntry = async (payload: Partial<any>) => {
   try {
+    const entryId = payload.id;
     const updatedEntry = await prisma.entry.update({
       where: { id: entryId },
-      data: payload
+      data: payload,
     });
     return updatedEntry;
   } catch (error) {

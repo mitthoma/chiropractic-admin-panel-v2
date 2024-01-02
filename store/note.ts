@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia'
-import { note } from '@prisma/client';
+import { defineStore } from "pinia";
+import { note } from "@prisma/client";
 
 interface NoteState {
   currentNote: note;
 }
 
-export const noteStore = defineStore('note', {
+export const noteStore = defineStore("note", {
   state: () => ({
     currentNote: {} as note,
   }),
@@ -17,7 +17,7 @@ export const noteStore = defineStore('note', {
   },
   actions: {
     setCurrentNote(note: note) {
-        this.currentNote = note;
+      this.currentNote = note;
     },
   },
-})
+});

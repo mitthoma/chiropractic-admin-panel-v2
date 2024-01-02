@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import { deleteComplaint } from './complaintRepository';
-import { deleteEntry } from './entryRepository';
+import { deleteComplaint } from "./complaintRepository";
+import { deleteEntry } from "./entryRepository";
 
 //patient must exist for a note to be added so we don't need to add new patients here
 export const addNewNote = async (payload: any, patientId: number) => {
@@ -9,7 +9,9 @@ export const addNewNote = async (payload: any, patientId: number) => {
     const patientsRepository = prisma.patient;
 
     // Fetch the patient from the database
-    const patient = await patientsRepository.findUnique({ where: { id: patientId as number} });
+    const patient = await patientsRepository.findUnique({
+      where: { id: patientId as number },
+    });
 
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
@@ -17,7 +19,7 @@ export const addNewNote = async (payload: any, patientId: number) => {
     const newNote = await prisma.note.create({
       data: {
         ...payload,
-        patientId: patient.id as number
+        patientId: patient.id as number,
       },
     });
 
@@ -45,7 +47,7 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
   try {
     const updatedNote = await prisma.note.update({
       where: { id: noteId },
-      data: payload
+      data: payload,
     });
 
     return updatedNote;
@@ -57,11 +59,9 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
 
 export const deleteNote = async (noteId: any) => {
   try {
-    
-
     // Fetch all entries related to the note
     const entries = await prisma.entry.findMany({
-      where: { noteId : noteId },
+      where: { noteId: noteId },
     });
 
     // Delete all entries related to the note
@@ -92,6 +92,7 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
+    console.log('noteid is ', noteId)
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

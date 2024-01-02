@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, user } from '@prisma/client';
+import { PrismaClient, Prisma, user } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +21,7 @@ export const saveNewUser = async (
     });
 
     if (existingUser) {
-      throw new Error('User with this Firebase UID already exists');
+      throw new Error("User with this Firebase UID already exists");
     }
 
     const newUser = await prisma.user.create({
@@ -43,7 +43,7 @@ export const updateUser = async (
     const existingUser = await prisma.user.findUnique({ where: { id } });
 
     if (!existingUser) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     const updatedUser = await prisma.user.update({
@@ -68,12 +68,14 @@ export const deleteUser = async (id: number): Promise<boolean> => {
   }
 };
 
-export const getUser = async (id: number): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
+export const getUser = async (
+  id: number
+): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     return user;
@@ -83,25 +85,22 @@ export const getUser = async (id: number): Promise<Prisma.PromiseReturnType<type
   }
 };
 
-export const getUserByFirebaseUid = async (firebaseUid: string): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
+export const getUserByFirebaseUid = async (
+  firebaseUid: string
+): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
   try {
-    console.log('in GETUSERBYFIREBASEUID in the repository function and the firebaseUid is ', firebaseUid);
     if (!firebaseUid) {
-      throw new Error('Invalid firebaseUid');
+      throw new Error("Invalid firebaseUid");
     }
-    
-    console.log('fetching the user from the database from that id');
-    const user = await prisma.user.findUnique({ where: { firebaseUid } });
-    console.log('the user is ', user);
 
-    if (!user) {
-      throw new Error('User not found');
+
+    const user = await prisma.user.findUnique({ where: { firebaseUid } });
+
+    if (!user) {      throw new Error("User not found");
     }
-    console.log('VALIDATED USER BY FIREBASE UID');
-    console.log('returning the user');
-    return user;
-  } catch (error) {
-    console.error(error);
+
+
+    return user;  } catch (error) {    console.error(error);
     throw error;
   }
 };

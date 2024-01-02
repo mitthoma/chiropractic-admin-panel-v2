@@ -1,73 +1,40 @@
 import { addEntry } from "~/server/repositories/entryRepository";
 
-const requiredFields = [
-  'sublux',
-  'muscleSpasm',
-  'triggerPoints',
-  'tenderness',
-  'numbness',
-  'edema',
-  'swelling',
-  'reducedMotion',
-  'coldPack',
-  'hotPack',
-  'electStim',
-  'traction',
-  'massage',
-  'manipulation',
-  'technique',
-  'treatmentPositioning',
-  'physioPositioning',
-];
-
-const booleanFields = [
-  'sublux',
-  'muscleSpasm',
-  'triggerPoints',
-  'tenderness',
-  'numbness',
-  'edema',
-  'swelling',
-  'reducedMotion',
-  'coldPack',
-  'hotPack',
-  'electStim',
-  'traction',
-  'massage',
-  'manipulation'
-];
-
-export default defineEventHandler(async event => {
+export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  body.side = 'l';
-  requiredFields.forEach(field => {
-    if (!body.hasOwnProperty(field)) {
-      if (field === 'technique' || field === 'treatmentPositioning' || field === 'physioPositioning') {
-        body[field] = '';
-      } else {
-        body[field] = false;
-      }
-    }
-  });
-
-booleanFields.forEach(field => {
-  if (body.hasOwnProperty(field)) {
-    if (typeof body[field] === "boolean") {
-    } else {
-      body[field] = body[field] === 'true';
-    }
-  }
-});
-
-  if (body.spinalLevel) {
-    body.category = 'spinal';
-    body.spinalLevel = body.spinalLevel.toLowerCase();
-  }
-  else if (body.extremityLevel) {
-    body.category = 'extremity';
-    body.extremityLevel = body.extremityLevel.toLowerCase();
+  const cleanedBody: any = {
+    category: body.type,
+    region: body.region || null,
+    side: body.side,
+    sublux: body.sublux === 'X' || body.sublux === true ? true : false,
+    muscleSpasm: body.muscleSpasm === 'X' || body.muscleSpasm === true ? true : false,
+    triggerPoints: body.triggerPoints === 'X' || body.triggerPoints === true ? true : false,
+    tenderness: body.tenderness === 'X' || body.tenderness === true ? true : false,
+    numbness: body.numbness === 'X' || body.numbness === true ? true : false,
+    edema: body.edema === 'X' || body.edema === true ? true : false,
+    swelling: body.swelling === 'X' || body.swelling === true ? true : false,
+    reducedMotion: body.reducedMotion === 'X' || body.reducedMotion === true ? true : false,
+    coldPack: body.coldPack === 'X' || body.coldPack === true ? true : false,
+    hotPack: body.hotPack === 'X' || body.hotPack === true ? true : false,
+    electStim: body.electStim === 'X' || body.electStim === true ? true : false,
+    traction: body.traction === 'X' || body.traction === true ? true : false,
+    massage: body.massage === 'X' || body.massage === true ? true : false,
+    technique: body.technique || null,
+    manipulation: body.manipulation === 'X' || body.manipulation === true ? true : false,
+    note: body.noteId || null,
+    physioPositioning: body.physioPositioning || null,
+    treatmentPositioning: body.treatmentPositioning || null,
+    spinalLevel: null,
+    extremityLevel: null,
   }
 
-  const response = await addEntry(body);
+  if (cleanedBody.category === 'spinal') {
+    cleanedBody.spinalLevel = body.level || null;
+  } else if (cleanedBody.category === 'extremity') {
+    cleanedBody.extremityLevel = body.level || null;
+  }
+
+
+  const response = await addEntry(cleanedBody);
   return response;
-})
+});

@@ -35,13 +35,22 @@
               <v-checkbox v-model="form.sublux" label="Sublux"></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox v-model="form.muscleSpasm" label="Muscle Spasm"></v-checkbox>
+              <v-checkbox
+                v-model="form.muscleSpasm"
+                label="Muscle Spasm"
+              ></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox v-model="form.triggerPoints" label="Trigger Points"></v-checkbox>
+              <v-checkbox
+                v-model="form.triggerPoints"
+                label="Trigger Points"
+              ></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox v-model="form.tenderness" label="Tenderness"></v-checkbox>
+              <v-checkbox
+                v-model="form.tenderness"
+                label="Tenderness"
+              ></v-checkbox>
             </v-col>
           </v-row>
 
@@ -56,7 +65,10 @@
               <v-checkbox v-model="form.swelling" label="Swelling"></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox v-model="form.reducedMotion" label="Reduced Motion"></v-checkbox>
+              <v-checkbox
+                v-model="form.reducedMotion"
+                label="Reduced Motion"
+              ></v-checkbox>
             </v-col>
           </v-row>
           <v-card-text><h3>Physiotherapies</h3></v-card-text>
@@ -75,10 +87,7 @@
               ></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox
-                v-model="form.hotPack"
-                label="Hot Pack"
-              ></v-checkbox>
+              <v-checkbox v-model="form.hotPack" label="Hot Pack"></v-checkbox>
             </v-col>
           </v-row>
 
@@ -90,16 +99,10 @@
               ></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox
-                v-model="form.traction"
-                label="Traction"
-              ></v-checkbox>
+              <v-checkbox v-model="form.traction" label="Traction"></v-checkbox>
             </v-col>
             <v-col cols="3">
-              <v-checkbox
-                v-model="form.massage"
-                label="Massage"
-              ></v-checkbox>
+              <v-checkbox v-model="form.massage" label="Massage"></v-checkbox>
             </v-col>
           </v-row>
 
@@ -140,21 +143,12 @@
           >
             <v-card class="pa-2 technique-key">
               <v-row>
-                <v-col cols="6">
-                  D - Diversified
-                </v-col>
-                <v-col cols="6">
-                  F = Flexion/Distraction
-                </v-col>
+                <v-col cols="6"> D - Diversified </v-col>
+                <v-col cols="6"> F = Flexion/Distraction </v-col>
               </v-row>
               <v-row>
-                <v-col cols="6">
-                  A = Activator
-                </v-col>
-                <v-col cols="6">
-                  L = Logan Basic
-                </v-col>
-
+                <v-col cols="6"> A = Activator </v-col>
+                <v-col cols="6"> L = Logan Basic </v-col>
               </v-row>
             </v-card>
           </v-overlay>
@@ -170,56 +164,39 @@
           >
             <v-card class="pa-2">
               <v-row>
-                <v-col cols="4">
-                  1 - Standing
-                </v-col>
-                <v-col cols="4">
-                  2 - Seated
-                </v-col>
-                <v-col cols="4">
-                  3 -  Prone
-                </v-col>
+                <v-col cols="4"> 1 - Standing </v-col>
+                <v-col cols="4"> 2 - Seated </v-col>
+                <v-col cols="4"> 3 - Prone </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4">
-                  4 -  Prone w/ legs declined
-                </v-col>
-                <v-col cols="4">
-                  5 -  Supine
-                </v-col>
-                <v-col cols="4">
-                  6 -  Supine w/ knees bent
-                </v-col>
+                <v-col cols="4"> 4 - Prone w/ legs declined </v-col>
+                <v-col cols="4"> 5 - Supine </v-col>
+                <v-col cols="4"> 6 - Supine w/ knees bent </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4">
-                  7 -  Supine w/ knees elevated
-                </v-col>
-                <v-col cols="4">
-                  8 - Right Lateral Recumbent
-                </v-col>
-                <v-col cols="4">
-                  9 - Left Lateral Recumbent
-                </v-col>
+                <v-col cols="4"> 7 - Supine w/ knees elevated </v-col>
+                <v-col cols="4"> 8 - Right Lateral Recumbent </v-col>
+                <v-col cols="4"> 9 - Left Lateral Recumbent </v-col>
               </v-row>
             </v-card>
           </v-overlay>
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="closeDialog">Close</v-btn>
-        <v-btn color="blue darken-1" text @click="submitExtremityEntryForm()">{{saveButtonText}}</v-btn>
+        <v-btn color="blue darken-1" text @click="submitExtremityEntryForm()">{{
+          saveButtonText
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-
 <script>
-import { createEntryService } from '~/services/entry';
-import { sides, extremityLevels } from '../helper';
+import { createEntryService } from "~/services/entry";
+import { sides, extremityLevels } from "../helper";
 
 export default {
-  name: 'ExtremityEntryDialog',
+  name: "ExtremityEntryDialog",
   props: {
     value: {
       type: Boolean,
@@ -230,16 +207,16 @@ export default {
     },
     currentNote: {
       type: Object,
-    }
+    },
   },
   data() {
     return {
       form: {
-        category: 'extremity',
+        category: "extremity",
         region: null,
         spinalLevel: null,
-        extremityLevel: '',
-        side: '',
+        extremityLevel: "",
+        side: "",
         sublux: false,
         muscleSpasm: false,
         triggerPoints: false,
@@ -248,14 +225,14 @@ export default {
         edema: false,
         swelling: false,
         reducedMotion: false,
-        physioPositioning: '',
+        physioPositioning: "",
         coldPack: false,
         hotPack: false,
         electStim: false,
         traction: false,
         massage: false,
-        treatmentPositioning: '',
-        technique: '',
+        treatmentPositioning: "",
+        technique: "",
         manipulation: false,
       },
       formIsValid: false,
@@ -267,7 +244,7 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit('input', val);
+        this.$emit("input", val);
       },
     },
     sideOptions() {
@@ -280,10 +257,12 @@ export default {
       return !!this.selectedItem;
     },
     title() {
-      return this.isUpdateMode ? 'Update Extremity Entry' : 'Add Extremity Entry';
+      return this.isUpdateMode
+        ? "Update Extremity Entry"
+        : "Add Extremity Entry";
     },
     saveButtonText() {
-      return this.isUpdateMode ? 'Update' : 'Save';
+      return this.isUpdateMode ? "Update" : "Save";
     },
   },
   watch: {
@@ -298,28 +277,30 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.$emit('close-dialog');
+      this.$emit("close-dialog");
       this.resetForm();
     },
     resetForm() {
       for (const key in this.form) {
-        if (typeof this.form[key] === 'boolean') {
+        if (typeof this.form[key] === "boolean") {
           this.form[key] = false;
         } else {
-          this.form[key] = '';
+          this.form[key] = "";
         }
       }
     },
     populateFormData(item) {
       this.form = {
-        ...item
-      }
+        ...item,
+      };
     },
     async submitExtremityEntryForm() {
       const noteId = this.$route.params.noteId;
       if (this.$refs.extremityEntryForm.validate()) {
-        const res = this.isUpdateMode ? await this.entryService.updateEntry(this.form) : await this.entryService.addEntry(this.form, noteId);
-        if (await res instanceof Error) {
+        const res = this.isUpdateMode
+          ? await this.entryService.updateEntry(this.form)
+          : await this.entryService.addEntry(this.form, noteId);
+        if ((await res) instanceof Error) {
         } else {
           this.closeDialog();
         }
@@ -331,9 +312,7 @@ export default {
 </script>
 
 <style scoped>
-
 .technique-key {
   width: 400px;
 }
-
 </style>

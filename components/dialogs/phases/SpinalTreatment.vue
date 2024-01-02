@@ -1,0 +1,1005 @@
+<template>
+  <div class="grid-container">
+    <v-row>
+      <v-col cols="1" class="text-center"></v-col>
+      <v-col cols="1" class="text-center"></v-col>
+
+      <v-col cols="11">
+        <v-row
+          v-for="modifiedRow in modifiedRows(30, 31)"
+          :key="modifiedRow.index"
+        >
+          <v-col class="text-center">
+            <div class="mb-1">
+              <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+            </div>
+          </v-col>
+          <v-col v-for="(col, j) in cols" :key="j">
+            <div class="mb-1 rotate colLabels">
+              <strong>{{ col }}</strong>
+            </div>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <div class="scrollable-content">
+      <v-row>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">C-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Sub Occ</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(0, 1)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Upper Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(1, 3)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Mid Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(3, 5)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Lower Cerv</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(5, 8)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">T-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Upper T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(8, 10)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Mid T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(10, 14)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else 
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Lower T</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(14, 20)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">L-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Upper L</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(20, 22)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Lower L</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(22, 25)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">S-Levels</div>
+        </v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Upper S</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(25, 27)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="1" class="text-center"></v-col>
+        <v-col cols="1" class="text-center upper-level">
+          <div class="mb-1">Lower S</div>
+        </v-col>
+        <v-col cols="11">
+          <v-row
+            v-for="modifiedRow in modifiedRows(27, 30)"
+            :key="modifiedRow.index"
+          >
+            <v-col class="text-center">
+              <div class="mb-1">
+                <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              </div>
+            </v-col>
+            <v-col v-for="(col, j) in cols" :key="j">
+              <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
+                <v-select
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+              </div>
+              <div
+                v-else
+                @click="
+                  toggleX(
+                    modifiedRow.index,
+                    j,
+                    j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
+                  )
+                "
+                class="x-toggle"
+              >
+                <SvgRender
+                  v-if="displayGrid[modifiedRow.index][j] === 'X'"
+                  :width="20"
+                  :height="20"
+                  icon="x"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
+  </div>
+</template>
+
+<script>
+import { createTreatmentOptionService } from '~~/services/treatmentOption';
+
+export default {
+  props: {
+    existingData: {
+      type: Object,
+      required: false,
+    },
+  },
+  data() {
+    return {
+      dialog: true,
+      valid: true,
+      treatmentOptionService: null,
+      physioPositioningOptions: [],
+      treatmentPositioningOptions: [],
+      treatmentTechniqueOptions: [],
+      options: [],
+      rows: [
+        "occ_c1",
+        "c1_c2",
+        "c2_c3",
+        "c3_c4",
+        "c4_c5",
+        "c5_c6",
+        "c6_c7",
+        "c7_t1",
+        "t1_t2",
+        "t2_t3",
+        "t3_t4",
+        "t4_t5",
+        "t5_t6",
+        "t6_t7",
+        "t7_t8",
+        "t8_t9",
+        "t9_t10",
+        "t10_t11",
+        "t11_t12",
+        "t12_l1",
+        "l1_l2",
+        "l2_l3",
+        "l3_l4",
+        "l4_l5",
+        "l5_s1",
+        "s1_s2",
+        "s2_s3",
+        "s3_s4",
+        "s4_s5",
+        "s5_",
+        "",
+      ],
+      positioningOptions: [],
+      cols: [
+        "Left",
+        "Right",
+        "Both",
+        "Physio Positioning",
+        "Cold Pack",
+        "Hot Pack",
+        "Elect Stim",
+        "Traction",
+        "Massage",
+        "Treatment Positioning",
+        "Treatment Technique",
+        "Treatment Manipulation",
+      ],
+      grid: Array.from({ length: 30 }, () => Array(12).fill(null)),
+      answerGrid: Array.from({ length: 30 }, () => Array(10).fill(null)),
+      changes: [],
+      options: {
+        a: null,
+        b: null,
+        c: null,
+      },
+      booleanColumns: [
+        "Left",
+        "Right",
+        "Both",
+        "Cold Pack",
+        "Hot Pack",
+        "Elect Stim",
+        "Traction",
+        "Massage",
+        "Treatment Manipulation",
+      ],
+      answerGridColumns: [
+        "Sides",
+        "Physio Positioning",
+        "Cold Pack",
+        "Hot Pack",
+        "Elect Stim",
+        "Traction",
+        "Massage",
+        "Treatment Positioning",
+        "Treatment Technique",
+        "Treatment Manipulation",
+      ],
+      sidesOptions: [
+        { text: "Left", value: "l" },
+        { text: "Right", value: "r" },
+        { text: "Both", value: "b" },
+      ],
+      camelCaseColumns: {
+        Sides: "sides",
+        "Physio Positioning": "physioPositioning",
+        "Cold Pack": "coldPack",
+        "Hot Pack": "hotPack",
+        "Elect Stim": "electStim",
+        Traction: "traction",
+        Massage: "massage",
+        "Treatment Positioning": "treatmentPositioning",
+        "Treatment Technique": "treatmentTechnique",
+        "Treatment Manipulation": "treatmentManipulation",
+      },
+    };
+  },
+  async mounted() {
+    this.treatmentOptionService = createTreatmentOptionService(this.$api);
+    this.options = await this.treatmentOptionService.getTreatmentOptions();
+    console.log('opt')
+    this.physioPositioningOptions = this.options
+      .filter(option => option.category === 'physioPositioning')
+      .map(option => option.text);
+
+    this.treatmentPositioningOptions = this.options
+      .filter(option => option.category === 'treatmentPositioning')
+      .map(option => option.text);
+
+    this.treatmentTechniqueOptions = this.options
+      .filter(option => option.category === 'treatmentTechnique')
+      .map(option => option.text);
+    console.log('here');
+    if (this.existingData) {
+      for (let entry of this.existingData) {
+        if (entry) {
+          let rowIndex = this.rows.findIndex(
+            (row) => row.toLowerCase() === entry.spinalLevel
+          );
+          this.answerGridColumns.forEach((col, colIndex) => {
+            if (col === "Sides") {
+              const key = "side";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+            } else if (col === "Physio Positioning") {
+              const key = "physioPositioning";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+            } else if (col === "Treatment Positioning") {
+              const key = "treatmentPositioning";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+            } else if (col === "Treatment Technique") {
+              const key = "treatmentTechnique";
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : "";
+              }
+
+            } else {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? "X" : "";
+              }
+            }
+          });
+          // Correcting the logic for populating the grid
+          this.cols.forEach((col, colIndex) => {
+            if (this.booleanColumns.includes(col)) {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
+              }
+            }
+          });
+
+          if (entry.side) {
+            const sideIndex = this.cols.indexOf(
+              entry.side === "l" ? "Left" : entry.side === "r" ? "Right" : "Both"
+            );
+            if (sideIndex !== -1) {
+              this.grid[rowIndex][sideIndex] = "X";
+            }
+          }
+        }
+      }
+    }
+    this.$emit("update:spinalTreatmentGrid", this.answerGrid);
+  },
+  computed: {
+    displayGrid() {
+      return this.grid.map((row) => {
+        return row.map((cell, index) => {
+          if (this.booleanColumns.includes(this.cols[index])) {
+            return cell ? "X" : "";
+          }
+          return cell;
+        });
+      });
+    },
+  },
+  watch: {
+    answerGrid: {
+      handler(newGrid, oldGrid) {
+        this.$emit("update:spinalTreatmentGrid", this.answerGrid);
+      },
+      deep: true,
+    }
+  },
+  methods: {
+    getRangeLabel(row, i) {
+      return row.toUpperCase().replace("_", " - ");
+    },
+    modifiedRows(slice1, slice2) {
+      return this.rows.slice(slice1, slice2).map((row, index) => {
+        return { row, index: slice1 + index };
+      });
+    },
+    toggleX(i, j, sideOption = null) {
+      if (j >= 0 && j <= 2) {
+        if (this.grid[i][j] === "X" || this.grid[i][j]) {
+          for (let col = 0; col < this.grid[i].length; col++) {
+            this.grid[i][col] = false;
+            this.answerGrid[i][col] = false;
+          }
+          this.$emit("update:spinalTreatmentGrid", this.answerGrid);
+          return;
+        }
+      }
+
+      // Previous logic for setting the selected side
+      if (sideOption) {
+        let side;
+
+        if (j === 0) {
+          side = "l";
+        } else if (j === 1) {
+          side = "r";
+        } else if (j === 2) {
+          side = "b";
+        }
+
+        this.grid[i][0] = false;
+        this.grid[i][1] = false;
+        this.grid[i][2] = false;
+
+        this.grid[i][j] = true;
+        this.answerGrid[i][0] = side;
+      } else {
+        if (this.grid[i][j]) {
+          this.grid[i][j] = false;
+          this.answerGrid[i][j - 2] = false;
+        } else {
+          this.grid[i][j] = true;
+          this.answerGrid[i][j - 2] = true;
+        }
+      }
+
+      this.$emit("update:spinalTreatmentGrid", this.answerGrid);
+    },
+  },
+};
+</script>
+
+<style scoped>
+.input-field {
+  text-transform: capitalize;
+}
+
+.grid-container {
+  max-height: 70vh;
+  padding: 20px;
+}
+
+.dialog-card {
+  max-width: 90vw;
+}
+
+.header-row {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  overflow-y: auto;
+}
+.scrollable-content {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-top: 15px;
+}
+.v-text-field {
+  width: 100%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.v-col {
+  padding: 0;
+  flex: 1;
+  margin: 10px;
+}
+
+.colLabels {
+  font-size: 12px !important;
+}
+
+.rotate {
+  transform: rotate(90deg);
+  margin-bottom: 40px !important;
+  white-space: normal;
+  /* line-height: 1.2; */
+  /* height: 80px;    */
+  /* width: 100px;   */
+  overflow: hidden;
+  /* padding-top: 15px; */
+  text-align: center; /* Centers the header text */
+}
+
+.centered-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.x-toggle {
+  width: 100%;
+  padding: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.upper-level {
+  font-weight: 700;
+  font-size: 20px;
+  /* transform: rotate(270deg); */
+  border-top: 1px solid white;
+}
+</style>
