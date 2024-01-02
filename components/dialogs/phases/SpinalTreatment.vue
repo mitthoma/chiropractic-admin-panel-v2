@@ -1,7 +1,5 @@
 <template>
   <div class="grid-container">
-    grid is {{ grid }}
-    answer grid is {{ answerGrid }}
     <v-row>
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="1" class="text-center"></v-col>

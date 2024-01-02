@@ -14,16 +14,16 @@
           >Vital Statistics</v-tab
         >
         <v-tab :value="tab === 2" :disabled="tab < 2" @click="switchTab(2)"
-          >Spinal Levels</v-tab
+          >Spinal Entries</v-tab
         >
         <v-tab :value="tab === 3" :disabled="tab < 3" @click="switchTab(3)"
-          >Extremity Levels</v-tab
+          >Extremity Entries</v-tab
         >
         <v-tab :value="tab === 4" :disabled="tab < 4" @click="switchTab(4)"
-          >Assessment</v-tab
+          >Spinal Treatments</v-tab
         >
         <v-tab :value="tab === 5" :disabled="tab < 5" @click="switchTab(5)"
-          >Treatment & Plan</v-tab
+          >Extremity Treatments</v-tab
         >
       </v-tabs>
       <v-window v-model="tab" class="phaseWindow">
