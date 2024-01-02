@@ -56,6 +56,22 @@
       </v-row>
       <v-row>
         <v-col cols="12">
+          <v-card-title> Treatments - Extremity </v-card-title>
+          <v-card class="pa-5 text-center">
+            <!-- <SpinalTreatmentGrid :treatments="spinalTreatments" /> -->
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-card-title> Treatments - Extremity </v-card-title>
+          <v-card class="pa-5 text-center">
+            <ExtremityTreatmentGrid :treatments="extremityTreatments" />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <v-card-title> General Info / Vitals </v-card-title>
           <v-card class="pa-5">
             <v-row>
@@ -151,9 +167,12 @@ import { patientStore } from "~/store/patient";
 import { createEntryService } from "~/services/entry";
 import { createNoteService } from "~/services/note";
 import { createComplaintService } from "~/services/complaint";
+import { createTreatmentService } from "~~/services/treatment";
 import { createPatientService } from "~~/services/patient";
 import SpinalGrid from "~/components/grids/SpinalGrid.vue";
 import ExtremityGrid from "~/components/grids/ExtremityGrid.vue";
+import SpinalTreatmentGrid from "~~/components/grids/SpinalTreatmentGrid.vue";
+import ExtremityTreatmentGrid from "~~/components/grids/ExtremityTreatmentGrid.vue";
 
 export default {
   name: "NotePage",
@@ -161,18 +180,24 @@ export default {
     NoteDialog,
     SpinalGrid,
     ExtremityGrid,
+    SpinalTreatmentGrid,
+    ExtremityTreatmentGrid,
   },
   data() {
     return {
       noteService: null,
       complaintService: null,
       patientService: null,
+      treatmentService: null,
       noteDialog: false,
       noteStore: null,
       patientStore: null,
       noteEntries: [],
+      noteTreatments: [],
       spinalEntries: [],
       extremityEntries: [],
+      spinalTreatments: [],
+      extremityTreatments: [],
       entryService: null,
       selectedSpinalItem: null,
       selectedExtremityItem: null,
@@ -198,6 +223,7 @@ export default {
     this.noteService = createNoteService(this.$api);
     this.complaintService = createComplaintService(this.$api);
     this.patientService = createPatientService(this.$api);
+    this.treatmentService = createTreatmentService(this.$api);
     // assign patient to a currentpatient variable from using the getPatient service function from id after /patient/{id} in the url
     const patientId = this.$route.params.id;
     this.currentPatient = await this.patientService.getPatient({
@@ -235,6 +261,15 @@ export default {
         this.noteEntries = await this.entryService.getEntriesForNote({
           noteId: this.currentNote?.id,
         });
+        this.noteTreatments = await this.treatmentService.getTreatmentsForNote({
+          noteId: this.currentNote?.id,
+        })
+        this.spinalTreatments = this.noteTreatments.filter(
+          (treatment) => treatment.category === 'spinal'
+        );
+        this.extremityTreatments = this.noteTreatments.filter(
+          (treatment) => treatment.category === 'extremity'
+        );
         this.spinalEntries = this.noteEntries.filter(
           (entry) => entry.category === "spinal"
         );
