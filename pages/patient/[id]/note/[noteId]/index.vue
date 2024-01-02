@@ -56,9 +56,9 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-card-title> Treatments - Extremity </v-card-title>
+          <v-card-title> Treatments - Spinal </v-card-title>
           <v-card class="pa-5 text-center">
-            <!-- <SpinalTreatmentGrid :treatments="spinalTreatments" /> -->
+            <SpinalTreatmentGrid :treatments="spinalTreatments" />
           </v-card>
         </v-col>
       </v-row>

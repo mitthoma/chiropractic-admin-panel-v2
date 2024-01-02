@@ -260,8 +260,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 22, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i, j) === 'X' || getValue(i, j)">
+                <SvgRender v-if="getValue(i, j) === 'X'" :width="20" :height="20" icon="x" />
+                <div class="font-weight-bold" v-else>{{ getValue(i, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -327,7 +328,7 @@
   <script>
   export default {
     props: {
-      entries: {
+      treatments: {
         type: Array,
         required: true,
       },
@@ -370,37 +371,37 @@
           "L",
           "R",
           "B",
-          "Subluxation",
-          "Muscle Spasm",
-          "Trigger Points",
-          "Tenderness",
-          "Numbness",
-          "Edema",
-          "Swelling",
-          "Reduced Motion",
+          "Physio Positioning",
+          "Cold Pack",
+          "Hot Pack",
+          "Elect Stim",
+          "Traction",
+          "Massage",
+          "Positioning",
+          "Technique",
+          "Manipulation",
         ],
         mapColsToFields: {
           L: "side",
           R: "side",
           B: "side",
-          Subluxation: "sublux",
-          "Muscle Spasm": "muscleSpasm",
-          "Trigger Points": "triggerPoints",
-          Tenderness: "tenderness",
-          Numbness: "numbness",
-          Edema: "edema",
-          Swelling: "swelling",
-          "Reduced Motion": "reducedMotion",
+          "Physio Positioning": "physioPositioning",
+          "Cold Pack": "coldPack",
+          "Hot Pack": "hotPack",
+          "Elect Stim": "electStim",
+          Traction: "traction",
+          Massage: "massage",
+          "Positioning": "treatmentPositioning",
+          "Technique": "treatmentTechnique",
+          "Manipulation": "treatmentManipulation",
         },
         booleanFields: [
-          "sublux",
-          "muscleSpasm",
-          "triggerPoints",
-          "tenderness",
-          "numbness",
-          "edema",
-          "swelling",
-          "reducedMotion",
+          "coldPack",
+          "hotPack",
+          "electStim",
+          "traction",
+          "massage",
+          "treatmentManipulation",
         ],
       };
     },
@@ -409,15 +410,15 @@
         return row.toUpperCase().replace("_", " - ");
       },
       getValue(i, j) {
-        const entry = this.entries.find(
-          (entry) =>
-            entry.spinalLevel?.toLowerCase() === this.rows[i]?.toLowerCase()
+        const treatment = this.treatments.find(
+          (treatment) =>
+            treatment.spinalLevel?.toLowerCase() === this.rows[i]?.toLowerCase()
         );
   
-        if (!entry) return "";
+        if (!treatment) return "";
   
         const fieldName = this.mapColsToFields[this.cols[j]];
-        const value = entry[fieldName];
+        const value = treatment[fieldName];
   
         if (this.booleanFields.includes(fieldName)) {
           return value ? "X" : "";
