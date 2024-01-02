@@ -91,16 +91,3 @@ export const booleanColumns = [
     Swelling: "swelling",
     "Reduced Motion": "reducedMotion",
   };
-
-  export const treatmentOptions = [
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h',
-    'i',
-    'j',
-  ];

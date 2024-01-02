@@ -17,11 +17,22 @@
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
           <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
-                <v-select
-                  :items="positioningOptions"
-                  v-model="answerGrid[i][j - 2]"
-                ></v-select>
-              </div>
+              <v-select
+                v-if="col === 'Physio Positioning'"
+                :items="physioPositioningOptions"
+                v-model="answerGrid[i][j - 2]"
+              ></v-select>
+              <v-select
+                v-else-if="col === 'Treatment Positioning'"
+                :items="treatmentPositioningOptions"
+                v-model="answerGrid[i][j - 2]"
+              ></v-select>
+              <v-select
+                v-else-if="col === 'Treatment Technique'"
+                :items="treatmentTechniqueOptions"
+                v-model="answerGrid[i][j - 2]"
+              ></v-select>
+          </div>
           <div
             v-else
             @click="
@@ -47,7 +58,8 @@
 </template>
 
 <script>
-import { treatmentOptions } from '../helpers/noteArrays';
+import { createTreatmentOptionService } from '~~/services/treatmentOption';
+
 export default {
   props: {
     phaseFourForm: {
@@ -63,6 +75,11 @@ export default {
     return {
       dialog: true,
       valid: true,
+      treatmentOptionService: null,
+      physioPositioningOptions: [],
+      treatmentPositioningOptions: [],
+      treatmentTechniqueOptions: [],
+      options: [],
       rows: [
         "Shoulder",
         "Arm",
@@ -131,8 +148,6 @@ export default {
         "Treatment Manipulation",
       ],
 
-      positioningOptions: [],
-
       sidesOptions: [
         { text: "Left", value: "l" },
         { text: "Right", value: "r" },
@@ -152,8 +167,22 @@ export default {
       },
     };
   },
-  mounted() {
-    this.positioningOptions = treatmentOptions;
+  async mounted() {
+    this.treatmentOptionService = createTreatmentOptionService(this.$api);
+    this.options = await this.treatmentOptionService.getTreatmentOptions();
+    this.physioPositioningOptions = this.options
+      .filter(option => option.category === 'physioPositioning')
+      .map(option => option.text);
+
+    this.treatmentPositioningOptions = this.options
+      .filter(option => option.category === 'treatmentPositioning')
+      .map(option => option.text);
+
+    this.treatmentTechniqueOptions = this.options
+      .filter(option => option.category === 'treatmentTechnique')
+      .map(option => option.text);
+
+
     if (this.existingData) {
       for (let entry of this.existingData) {
         if (entry) {

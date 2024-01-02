@@ -1,5 +1,7 @@
 <template>
   <div class="grid-container">
+    grid is {{ grid }}
+    answer grid is {{ answerGrid }}
     <v-row>
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="1" class="text-center"></v-col>
@@ -43,7 +45,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -89,7 +102,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -134,7 +158,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -179,7 +214,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -226,7 +272,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -271,7 +328,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -316,7 +384,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -363,7 +442,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -408,7 +498,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -455,7 +556,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -500,7 +612,18 @@
             <v-col v-for="(col, j) in cols" :key="j">
               <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
                 <v-select
-                  :items="positioningOptions"
+                  v-if="col === 'Physio Positioning'"
+                  :items="physioPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Positioning'"
+                  :items="treatmentPositioningOptions"
+                  v-model="answerGrid[modifiedRow.index][j - 2]"
+                ></v-select>
+                <v-select
+                  v-else-if="col === 'Treatment Technique'"
+                  :items="treatmentTechniqueOptions"
                   v-model="answerGrid[modifiedRow.index][j - 2]"
                 ></v-select>
               </div>
@@ -531,7 +654,7 @@
 </template>
 
 <script>
-import { treatmentOptions } from '../helpers/noteArrays';
+import { createTreatmentOptionService } from '~~/services/treatmentOption';
 
 export default {
   props: {
@@ -544,6 +667,11 @@ export default {
     return {
       dialog: true,
       valid: true,
+      treatmentOptionService: null,
+      physioPositioningOptions: [],
+      treatmentPositioningOptions: [],
+      treatmentTechniqueOptions: [],
+      options: [],
       rows: [
         "occ_c1",
         "c1_c2",
@@ -643,7 +771,21 @@ export default {
     };
   },
   async mounted() {
-    this.positioningOptions = treatmentOptions;
+    this.treatmentOptionService = createTreatmentOptionService(this.$api);
+    this.options = await this.treatmentOptionService.getTreatmentOptions();
+    console.log('opt')
+    this.physioPositioningOptions = this.options
+      .filter(option => option.category === 'physioPositioning')
+      .map(option => option.text);
+
+    this.treatmentPositioningOptions = this.options
+      .filter(option => option.category === 'treatmentPositioning')
+      .map(option => option.text);
+
+    this.treatmentTechniqueOptions = this.options
+      .filter(option => option.category === 'treatmentTechnique')
+      .map(option => option.text);
+    console.log('here');
     if (this.existingData) {
       for (let entry of this.existingData) {
         if (entry) {
@@ -725,7 +867,6 @@ export default {
   watch: {
     answerGrid: {
       handler(newGrid, oldGrid) {
-        console.log('Grid changed:', newGrid);
         this.$emit("update:spinalTreatmentGrid", this.answerGrid);
       },
       deep: true,

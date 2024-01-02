@@ -51,8 +51,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+                <div v-if="getValue(i, j) === 'X' || getValue(i, j)">
+                    <SvgRender v-if="getValue(i, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -76,8 +77,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 1, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 1, j) === 'X' || getValue(i + 1, j)">
+                    <SvgRender v-if="getValue(i + 1, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 1, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -103,8 +105,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 3, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 3, j) === 'X' || getValue(i + 3, j)">
+                    <SvgRender v-if="getValue(i + 3, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 3, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -128,8 +131,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 5, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 5, j) === 'X' || getValue(i + 5, j)">
+                    <SvgRender v-if="getValue(i + 5, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 5, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -154,8 +158,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 8, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 8, j) === 'X' || getValue(i + 8, j)">
+                    <SvgRender v-if="getValue(i + 8, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 8, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -179,8 +184,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 10, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 10, j) === 'X' || getValue(i + 10, j)">
+                    <SvgRender v-if="getValue(i + 10, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 10, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -206,8 +212,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 14, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 14, j) === 'X' || getValue(i + 14, j)">
+                    <SvgRender v-if="getValue(i + 14, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 14, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -233,8 +240,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 20, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 20, j) === 'X' || getValue(i + 20, j)">
+                    <SvgRender v-if="getValue(i + 20, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 20, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -260,9 +268,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-              <div v-if="getValue(i, j) === 'X' || getValue(i, j)">
-                <SvgRender v-if="getValue(i, j) === 'X'" :width="20" :height="20" icon="x" />
-                <div class="font-weight-bold" v-else>{{ getValue(i, j) }}</div>
+              <div v-if="getValue(i + 22, j) === 'X' || getValue(i + 22, j)">
+                    <SvgRender v-if="getValue(i + 22, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 22, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -287,8 +295,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 25, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 25, j) === 'X' || getValue(i + 25, j)">
+                    <SvgRender v-if="getValue(i + 25, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 25, j) }}</div>
                 </div>
               </v-col>
             </v-row>
@@ -314,8 +323,9 @@
                 class="grid-cell"
                 :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
               >
-                <div v-if="getValue(i + 27, j) === 'X'">
-                  <SvgRender :width="20" :height="20" icon="x" />
+              <div v-if="getValue(i + 27, j) === 'X' || getValue(i + 27, j)">
+                    <SvgRender v-if="getValue(i + 27, j) === 'X'" :width="20" :height="20" icon="x" />
+                    <div class="font-weight-bold" v-else>{{ getValue(i + 27, j) }}</div>
                 </div>
               </v-col>
             </v-row>
