@@ -17,6 +17,7 @@
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
           <div
+            class="x-toggle"
             @click="
               toggleX(
                 i,
@@ -24,7 +25,6 @@
                 j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
               )
             "
-            class="x-toggle"
           >
             <SvgRender
               v-if="displayGrid[i][j] === 'X'"
@@ -56,173 +56,173 @@ export default {
       dialog: true,
       valid: true,
       rows: [
-        "Shoulder",
-        "Arm",
-        "Bicep",
-        "Tricep",
-        "Elbow",
-        "Wrist",
-        "Hand",
-        "Hip",
-        "Thigh",
-        "Leg",
-        "Knee",
-        "Calf",
-        "Ankle",
-        "Foot",
+        'Shoulder',
+        'Arm',
+        'Bicep',
+        'Tricep',
+        'Elbow',
+        'Wrist',
+        'Hand',
+        'Hip',
+        'Thigh',
+        'Leg',
+        'Knee',
+        'Calf',
+        'Ankle',
+        'Foot',
       ],
       cols: [
-        "Left",
-        "Right",
-        "Both",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'Left',
+        'Right',
+        'Both',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
       grid: Array.from({ length: 14 }, () => Array(11).fill(null)),
       answerGrid: Array.from({ length: 14 }, () => Array(9).fill(null)),
       PHs: {
-        Sides: "LRB",
-        Subluxation: "SX",
-        "Muscle Spasm": "MS",
-        "Trigger Points": "TP",
-        Tenderness: "TN",
-        Numbness: "NB",
-        Edema: "ED",
-        Swelling: "SW",
-        "Reduced Motion": "RM",
+        Sides: 'LRB',
+        Subluxation: 'SX',
+        'Muscle Spasm': 'MS',
+        'Trigger Points': 'TP',
+        Tenderness: 'TN',
+        Numbness: 'NB',
+        Edema: 'ED',
+        Swelling: 'SW',
+        'Reduced Motion': 'RM',
       },
       changes: [],
       booleanColumns: [
-        "Left",
-        "Right",
-        "Both",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'Left',
+        'Right',
+        'Both',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
       answerGridColumns: [
-        "Sides",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'Sides',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
 
       sidesOptions: [
-        { text: "Left", value: "l" },
-        { text: "Right", value: "r" },
-        { text: "Both", value: "b" },
+        { text: 'Left', value: 'l' },
+        { text: 'Right', value: 'r' },
+        { text: 'Both', value: 'b' },
       ],
       camelCaseColumns: {
-        Sides: "sides",
-        Subluxation: "sublux",
-        "Muscle Spasm": "muscleSpasm",
-        "Trigger Points": "triggerPoints",
-        Tenderness: "tenderness",
-        Numbness: "numbness",
-        Edema: "edema",
-        Swelling: "swelling",
-        "Reduced Motion": "reducedMotion",
+        Sides: 'sides',
+        Subluxation: 'sublux',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        Tenderness: 'tenderness',
+        Numbness: 'numbness',
+        Edema: 'edema',
+        Swelling: 'swelling',
+        'Reduced Motion': 'reducedMotion',
       },
     };
-  },
-  mounted() {
-    if (this.existingData) {
-      for (let entry of this.existingData) {
-        if (entry) {
-          let rowIndex = this.rows.findIndex(
-            (row) => row.toLowerCase() === entry.extremityLevel
-          );
-          this.answerGridColumns.forEach((col, colIndex) => {
-            if (col === "Sides") {
-              const key = "side";
-              if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key]
-                  ? entry[key]
-                  : "";
-              }
-            } else {
-              const key = this.camelCaseColumns[col];
-              if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key] ? "X" : "";
-              }
-            }
-          });
-        }
-      }
-      for (let entry of this.existingData) {
-        if (entry) {
-          let rowIndex = this.rows.findIndex(
-            (row) => row.toLowerCase() === entry.extremityLevel
-          );
-          this.booleanColumns.forEach((col, colIndex) => {
-            const key = this.camelCaseColumns[col];
-            if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
-            }
-          });
-          if (entry.side) {
-            const colLabel =
-              entry.side === "l"
-                ? "Left"
-                : entry.side === "r"
-                ? "Right"
-                : entry.side === "b"
-                ? "Both"
-                : null;
-            if (colLabel) {
-              let colIndex = this.cols.findIndex((col) => col === colLabel);
-              this.grid[rowIndex][colIndex] = "X";
-            }
-          }
-        }
-      }
-    }
-    this.$emit("update:extremityGrid", this.answerGrid);
   },
   computed: {
     displayGrid() {
       return this.grid.map((row) => {
         return row.map((cell, index) => {
           if (this.booleanColumns.includes(this.cols[index])) {
-            return cell ? "X" : "";
+            return cell ? 'X' : '';
           }
           return cell;
         });
       });
     },
   },
+  mounted() {
+    if (this.existingData) {
+      for (const entry of this.existingData) {
+        if (entry) {
+          const rowIndex = this.rows.findIndex(
+            (row) => row.toLowerCase() === entry.extremityLevel
+          );
+          this.answerGridColumns.forEach((col, colIndex) => {
+            if (col === 'Sides') {
+              const key = 'side';
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : '';
+              }
+            } else {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+              }
+            }
+          });
+        }
+      }
+      for (const entry of this.existingData) {
+        if (entry) {
+          const rowIndex = this.rows.findIndex(
+            (row) => row.toLowerCase() === entry.extremityLevel
+          );
+          this.booleanColumns.forEach((col, colIndex) => {
+            const key = this.camelCaseColumns[col];
+            if (entry[key] !== undefined) {
+              this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+            }
+          });
+          if (entry.side) {
+            const colLabel =
+              entry.side === 'l'
+                ? 'Left'
+                : entry.side === 'r'
+                  ? 'Right'
+                  : entry.side === 'b'
+                    ? 'Both'
+                    : null;
+            if (colLabel) {
+              const colIndex = this.cols.findIndex((col) => col === colLabel);
+              this.grid[rowIndex][colIndex] = 'X';
+            }
+          }
+        }
+      }
+    }
+    this.$emit('update:extremityGrid', this.answerGrid);
+  },
   methods: {
     toggleX(i, j, sideOption = null) {
       // Check if the column clicked is 'left', 'right', or 'both'
-      console.log("j is ", j);
+      console.log('j is ', j);
       if (j >= 0 && j <= 2) {
         // Check if there's already an 'X' in the clicked cell
-        console.log("grid i j is ", this.grid[i][j]);
-        if (this.grid[i][j] === "X" || this.grid[i][j]) {
-          console.log("HITTING AN X FOR SIDES");
+        console.log('grid i j is ', this.grid[i][j]);
+        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
+          console.log('HITTING AN X FOR SIDES');
           // Clear the row values and return
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;
           }
-          this.$emit("update:phaseTwoForm", this.answerGrid);
-          this.$emit("update:extremityGrid", this.answerGrid);
+          this.$emit('update:phaseTwoForm', this.answerGrid);
+          this.$emit('update:extremityGrid', this.answerGrid);
           return;
         }
       }
@@ -232,11 +232,11 @@ export default {
         let side;
 
         if (j === 0) {
-          side = "l";
+          side = 'l';
         } else if (j === 1) {
-          side = "r";
+          side = 'r';
         } else if (j === 2) {
-          side = "b";
+          side = 'b';
         }
 
         this.grid[i][0] = false;
@@ -245,17 +245,15 @@ export default {
 
         this.grid[i][j] = true;
         this.answerGrid[i][0] = side;
+      } else if (this.grid[i][j]) {
+        this.grid[i][j] = false;
+        this.answerGrid[i][j - 2] = false;
       } else {
-        if (this.grid[i][j]) {
-          this.grid[i][j] = false;
-          this.answerGrid[i][j - 2] = false;
-        } else {
-          this.grid[i][j] = true;
-          this.answerGrid[i][j - 2] = true;
-        }
+        this.grid[i][j] = true;
+        this.answerGrid[i][j - 2] = true;
       }
 
-      this.$emit("update:extremityGrid", this.answerGrid);
+      this.$emit('update:extremityGrid', this.answerGrid);
     },
   },
 };

@@ -72,16 +72,13 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  name: "DefaultLayout",
-  data: () => ({ drawer: null }),
-};
-</script>
+<script></script>
 
 <script setup>
-import { userStore } from "~/store/user";
-import { useTheme } from "vuetify";
+import { ref, watch } from 'vue';
+import { useTheme } from 'vuetify';
+import { userStore } from '~/store/user';
+
 const store = userStore();
 const theme = useTheme();
 const drawer = ref(null);
@@ -90,47 +87,49 @@ const initials =
   store.user?.firstName && store.user?.lastName
     ? store.user?.firstName[0]?.toUpperCase() +
       store.user?.lastName[0]?.toUpperCase()
-    : "";
+    : '';
 const user = {
   firstName: store.user?.firstName,
   lastName: store.user?.lastName,
   email: store.user?.email,
-  initials: store.user ? initials : "",
+  initials: store.user ? initials : '',
 };
 const items = [
   {
-    icon: "mdi-apps",
-    title: "Dashboard",
-    to: "/",
+    icon: 'mdi-apps',
+    title: 'Dashboard',
+    to: '/',
   },
   {
-    icon: "mdi-chart-bubble",
-    title: "Patients",
-    to: "/patient",
+    icon: 'mdi-chart-bubble',
+    title: 'Patients',
+    to: '/patient',
   },
   {
-    icon: "mdi-chart-bubble",
-    title: "User Management",
-    to: "/user",
+    icon: 'mdi-chart-bubble',
+    title: 'User Management',
+    to: '/user',
   },
   {
-    icon: "mdi-chart-bubble",
-    title: "App Settings",
-    to: "/settings",
+    icon: 'mdi-chart-bubble',
+    title: 'App Settings',
+    to: '/settings',
   },
-  // todo: make this view valuable
-  // {
-  //   icon: 'mdi-chart-bubble',
-  //   title: 'Notes',
-  //   to: '/note'
-  // },
 ];
 
-//create method signoutuser that sets the isloggedin in user store to be false
+// create method signoutuser that sets the isloggedin in user store to be false
 const signOut = async () => {
   await signOutUser();
 };
 watch(themeToggler, () => {
-  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
 });
+</script>
+
+<script>
+// Define component options here
+export default {
+  name: 'DefaultLayout',
+  // Other options like methods, computed properties, etc.
+};
 </script>

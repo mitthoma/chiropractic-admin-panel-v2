@@ -1,4 +1,4 @@
-import { deleteOption } from "~~/server/repositories/treatmentOptionRepository";
+import { deleteOption } from '~~/server/repositories/treatmentOptionRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

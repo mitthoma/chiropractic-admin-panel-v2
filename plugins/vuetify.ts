@@ -1,13 +1,13 @@
-import { createVuetify, ThemeDefinition } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
-const myTheme: ThemeDefinition = {
-  colors: {
-    primary: "#EAEAEA",
-    secondary: "#fff012",
-  },
-};
+// const myTheme: ThemeDefinition = {
+//   colors: {
+//     primary: '#EAEAEA',
+//     secondary: '#fff012',
+//   },
+// };
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
@@ -17,7 +17,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       // themes: {
 
       // }
-      defaultTheme: "dark",
+      defaultTheme: 'dark',
     },
   });
 

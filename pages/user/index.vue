@@ -30,8 +30,7 @@
               <td>{{ user.lastName }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
-              <td class="d-flex justify-end">
-              </td>
+              <td class="d-flex justify-end"></td>
             </tr>
           </tbody>
         </v-table>
@@ -53,13 +52,12 @@
 </template>
 
 <script>
-import { userStore } from "~/store/user";
-import { createUser } from "~/composables/useFirebase";
-import { createUserService } from "~/services/user";
-import UserDialog from "~/components/dialogs/UserDialog.vue";
+import { userStore } from '~/store/user';
+import { createUserService } from '~/services/user';
+import UserDialog from '~/components/dialogs/UserDialog.vue';
 
 export default {
-  name: "UserPage",
+  name: 'UserPage',
   components: {
     UserDialog,
   },
@@ -115,7 +113,7 @@ export default {
     },
 
     backToDashboard() {
-      this.$router.push("/");
+      this.$router.push('/');
     },
     closeUserDialog() {
       this.selectedUserItem = null;
@@ -132,7 +130,7 @@ export default {
         });
         this.refreshUserList();
       } catch (error) {
-        console.error("Error deleting user:", error);
+        console.error('Error deleting user:', error);
       }
     },
   },

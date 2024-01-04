@@ -1,6 +1,6 @@
-import { getAllRooms } from "~/server/repositories/roomRepository";
+import { getAllRooms } from '~/server/repositories/roomRepository';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   const res = await getAllRooms();
   return {
     data: res,

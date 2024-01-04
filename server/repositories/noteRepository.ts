@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
+import { deleteEntry } from './entryRepository';
 const prisma = new PrismaClient();
-import { deleteComplaint } from "./complaintRepository";
-import { deleteEntry } from "./entryRepository";
 
-//patient must exist for a note to be added so we don't need to add new patients here
+// patient must exist for a note to be added so we don't need to add new patients here
 export const addNewNote = async (payload: any, patientId: number) => {
   try {
     const patientsRepository = prisma.patient;
@@ -61,7 +60,7 @@ export const deleteNote = async (noteId: any) => {
   try {
     // Fetch all entries related to the note
     const entries = await prisma.entry.findMany({
-      where: { noteId: noteId },
+      where: { noteId },
     });
 
     // Delete all entries related to the note
@@ -72,7 +71,7 @@ export const deleteNote = async (noteId: any) => {
     }
 
     // Delete the note
-    const result = await prisma.note.delete({ where: { id: noteId } });
+    await prisma.note.delete({ where: { id: noteId } });
     return true;
   } catch (error) {
     console.log(error);
@@ -92,7 +91,7 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
-    console.log('noteid is ', noteId)
+    console.log('noteid is ', noteId);
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

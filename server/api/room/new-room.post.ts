@@ -1,4 +1,4 @@
-import { saveNewRoom } from "~/server/repositories/roomRepository";
+import { saveNewRoom } from '~/server/repositories/roomRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

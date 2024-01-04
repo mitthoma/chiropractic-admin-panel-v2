@@ -72,14 +72,14 @@
 // import { getPatients, addPatient } from '~/services/patient';
 
 export default {
-  name: "NotesPage",
+  name: 'NotesPage',
   data() {
     return {
       patients: [],
       showDialog: false,
       form: {
-        firstName: "",
-        lastName: "",
+        firstName: '',
+        lastName: '',
         age: null,
       },
     };
@@ -99,16 +99,12 @@ export default {
     closeDialog() {
       this.showDialog = false;
     },
-    async saveForm() {
-      const formData = {
-        ...this.form,
-      };
-      try {
-        // const res = await addPatient(formData);
-        return res;
-      } catch (error) {
-        console.log(error);
-      }
+    saveForm() {
+      // try {
+      //   return res;
+      // } catch (error) {
+      //   console.log(error);
+      // }
     },
   },
 };

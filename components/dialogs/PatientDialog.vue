@@ -66,10 +66,10 @@
           <div v-if="isUpdateMode">
             <label class="form-label">Next Appointment</label>
             <VueDatePicker
+              v-model="form.nextAppointment"
               type="date"
               teleport-center
               :enable-time-picker="false"
-              v-model="form.nextAppointment"
               dark
             />
           </div>
@@ -87,12 +87,12 @@
 </template>
 
 <script>
-import { createPatientService } from "~/services/patient";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import { createPatientService } from '~/services/patient';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
-  name: "PatientDialog",
+  name: 'PatientDialog',
   components: {
     VueDatePicker,
   },
@@ -110,23 +110,23 @@ export default {
     return {
       form: {
         acctNo: null,
-        firstName: "",
+        firstName: '',
         middleName: null,
-        lastName: "",
-        email: "",
-        phoneNumber: "",
+        lastName: '',
+        email: '',
+        phoneNumber: '',
         nextAppointment: null,
       },
       patientService: null,
       formValid: false,
-      acctRules: [(v) => !!v || "This field is required"],
-      nameRules: [(v) => !!v || "This field is required"],
+      acctRules: [(v) => !!v || 'This field is required'],
+      nameRules: [(v) => !!v || 'This field is required'],
       emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+        (v) => !!v || 'E-mail is required',
+        (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
       phoneRules: [
-        (v) => !v || /^\d{10}$/.test(v) || "Phone number must be 10 digits",
+        (v) => !v || /^\d{10}$/.test(v) || 'Phone number must be 10 digits',
       ],
     };
   },
@@ -136,17 +136,17 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit("input", val);
+        this.$emit('input', val);
       },
     },
     isUpdateMode() {
       return !!this.selectedItem;
     },
     title() {
-      return this.isUpdateMode ? "Update Patient" : "Add Patient";
+      return this.isUpdateMode ? 'Update Patient' : 'Add Patient';
     },
     saveButtonText() {
-      return this.isUpdateMode ? "Update" : "Save";
+      return this.isUpdateMode ? 'Update' : 'Save';
     },
   },
   watch: {
@@ -156,12 +156,12 @@ export default {
       }
     },
   },
-  async mounted() {
+  mounted() {
     this.patientService = createPatientService(this.$api);
   },
   methods: {
     closeDialog() {
-      this.$emit("close-dialog");
+      this.$emit('close-dialog');
       this.resetForm();
     },
     populateFormData(item) {
@@ -169,10 +169,10 @@ export default {
     },
     resetForm() {
       this.form.acctNo = null;
-      this.form.firstName = "";
-      this.form.lastName = "";
-      this.form.email = "";
-      this.form.phoneNumber = "";
+      this.form.firstName = '';
+      this.form.lastName = '';
+      this.form.email = '';
+      this.form.phoneNumber = '';
       this.form.nextAppointment = null;
     },
     async submitPatientForm() {
@@ -181,18 +181,18 @@ export default {
           ? await this.patientService.updatePatient(this.form)
           : await this.patientService.addPatient(this.form);
         if ((await res) instanceof Error) {
-          console.log("Patient not added/updated");
+          console.log('Patient not added/updated');
         } else {
           console.log(
             this.isUpdateMode
-              ? "Patient updated successfully"
-              : "Patient added successfully"
+              ? 'Patient updated successfully'
+              : 'Patient added successfully'
           );
-          this.$emit("patient-added");
+          this.$emit('patient-added');
           this.closeDialog();
         }
       } else {
-        console.log("Form not submitted. Did not meet validation standards.");
+        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
   },

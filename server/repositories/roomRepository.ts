@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, room } from "@prisma/client";
+import { PrismaClient, Prisma, room } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const saveNewRoom = async (
@@ -9,7 +9,7 @@ export const saveNewRoom = async (
       where: { text: payload.text },
     });
     if (existingRoom) {
-      throw new Error("Room already exists");
+      throw new Error('Room already exists');
     }
 
     const savedRoom = await prisma.room.create({ data: payload });

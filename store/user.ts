@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { user } from "@prisma/client";
+import { defineStore } from 'pinia';
+import { user } from '@prisma/client';
 
 interface UserState {
   user: user;
@@ -7,7 +7,7 @@ interface UserState {
   authInitialized: boolean;
 }
 
-export const userStore = defineStore("user", {
+export const userStore = defineStore('user', {
   state: () => ({
     user: {} as user,
     isLoggedIn: false,

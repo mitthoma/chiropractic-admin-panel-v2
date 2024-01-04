@@ -8,7 +8,7 @@ export const updateComplaintPainLevel = (complaints, index, newPainLevel) => {
 
 export const addComplaint = (complaints) => {
   complaints.push({
-    text: "",
+    text: '',
     painLevel: 0,
   });
 };
@@ -18,7 +18,7 @@ export const hasAnyField = (entryData, entryFields) => {
 };
 
 export const formatDate = (datetime) => {
-  const z = (n) => ("0" + n).slice(-2);
+  const z = (n) => ('0' + n).slice(-2);
   const YYYY = datetime.getUTCFullYear();
   const MM = z(datetime.getUTCMonth() + 1);
   const DD = z(datetime.getUTCDate());

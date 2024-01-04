@@ -1,4 +1,4 @@
-import { getEntryById } from "~/server/repositories/entryRepository";
+import { getEntryById } from '~/server/repositories/entryRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

@@ -33,15 +33,15 @@
 
 <script>
 export default {
-  name: "ComplaintPhase",
-  props: ["complaints", "addComplaint"],
+  name: 'ComplaintPhase',
+  props: ['complaints', 'addComplaint'],
   methods: {
     updateComplaintText(index, newText) {
-      this.$emit("update-complaint-text", index, newText.target.value);
+      this.$emit('update-complaint-text', index, newText.target.value);
     },
     updateComplaintPainLevel(index, newPainLevel) {
       this.$emit(
-        "update-complaint-pain-level",
+        'update-complaint-pain-level',
         index,
         newPainLevel.target.value
       );

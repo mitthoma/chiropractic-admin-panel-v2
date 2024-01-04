@@ -1,12 +1,12 @@
+/* eslint-disable camelcase */
 import {
   PrismaClient,
-  Prisma,
   entry_spinallevel_enum,
   entry_category_enum,
   entry_region_enum,
   entry_extremitylevel_enum,
   entry_side_enum,
-} from "@prisma/client";
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -65,7 +65,7 @@ export const addEntry = async (payload: EntryPayload) => {
 
 export const deleteEntry = async (entryId: string) => {
   try {
-    const result = await prisma.entry.delete({ where: { id: entryId } });
+    await prisma.entry.delete({ where: { id: entryId } });
     return true;
   } catch (error) {
     console.log(error);

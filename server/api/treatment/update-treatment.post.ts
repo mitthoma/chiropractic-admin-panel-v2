@@ -1,7 +1,7 @@
 import {
   updateTreatment,
   deleteTreatment,
-} from "~/server/repositories/treatmentRepository";
+} from '~/server/repositories/treatmentRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -16,20 +16,21 @@ export default defineEventHandler(async (event) => {
     category: body.type,
     region: body.region || null,
     side: body.side,
-    coldPack: body.coldPack === 'X' || body.coldPack === true ? true : false,
-    hotPack: body.hotPack === 'X' || body.hotPack === true ? true : false,
-    electStim: body.electStim === 'X' || body.electStim === true ? true : false,
-    traction: body.traction === 'X' || body.traction === true ? true : false,
-    massage: body.massage === 'X' || body.massage === true ? true : false,
-    treatmentManipulation: body.treatmentManipulation === 'X' || body.treatmentManipulation === true ? true : false,
+    coldPack: !!(body.coldPack === 'X' || body.coldPack === true),
+    hotPack: !!(body.hotPack === 'X' || body.hotPack === true),
+    electStim: !!(body.electStim === 'X' || body.electStim === true),
+    traction: !!(body.traction === 'X' || body.traction === true),
+    massage: !!(body.massage === 'X' || body.massage === true),
+    treatmentManipulation: !!(
+      body.treatmentManipulation === 'X' || body.treatmentManipulation === true
+    ),
     noteId: body.noteId || null,
     physioPositioning: body.physioPositioning || null,
     treatmentPositioning: body.treatmentPositioning || null,
     treatmentTechnique: body.treatmentTechnique || null,
     spinalLevel: body.category === 'spinal' ? body.spinalLevel : null,
     extremityLevel: body.category === 'extremity' ? body.extremityLevel : null,
-  }
-
+  };
 
   const response = await updateTreatment(cleanedBody);
   return response;

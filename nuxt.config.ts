@@ -1,11 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   css: [
-    "vuetify/lib/styles/main.sass",
-    "@mdi/font/css/materialdesignicons.min.css",
+    'vuetify/lib/styles/main.sass',
+    '@mdi/font/css/materialdesignicons.min.css',
   ],
   build: {
-    transpile: ["vuetify", "@vuepic/vue-datepicker", "chart.js"],
+    transpile: ['vuetify', '@vuepic/vue-datepicker', 'chart.js'],
   },
   auth: {
     strategies: {
@@ -17,11 +17,11 @@ export default defineNuxtConfig({
   },
 
   plugins: [
-    "~/plugins/firebaseAuth.ts",
-    "~/plugins/axios.ts",
-    "~/plugins/vuetify.ts",
-    "~/plugins/reflect-metadata.ts",
-    "~/plugins/chart.ts",
+    '~/plugins/firebaseAuth.ts',
+    '~/plugins/axios.ts',
+    '~/plugins/vuetify.ts',
+    '~/plugins/reflect-metadata.ts',
+    '~/plugins/chart.ts',
 
     // '~/plugins/pdfmake.ts'
   ],
@@ -46,8 +46,8 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@pinia/nuxt"],
+  modules: ['@pinia/nuxt'],
   pinia: {
-    autoImports: ["defineStore", "acceptHMRUpdate"],
+    autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
 });

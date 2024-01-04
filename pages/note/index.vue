@@ -60,12 +60,12 @@
 </template>
 
 <script>
-import NoteDialog from "~/components/dialogs/NoteDialog.vue";
-import { createNoteService } from "~/services/note";
-import { noteStore } from "~/store/note";
+import NoteDialog from '~/components/dialogs/NoteDialog.vue';
+import { createNoteService } from '~/services/note';
+import { noteStore } from '~/store/note';
 
 export default {
-  name: "NotePage",
+  name: 'NotePage',
   components: {
     NoteDialog,
   },
@@ -96,7 +96,7 @@ export default {
       this.updateDisplayedNotes();
     },
     goToNote(item) {
-      this.noteStore.setCurrentNote(item);
+      noteStore.setCurrentNote(item);
       this.$router.push(`/note/${item.id}`);
     },
     editNoteItem(note) {
@@ -104,7 +104,7 @@ export default {
       this.noteDialog = true;
     },
     backToDashboard() {
-      this.$router.push("/");
+      this.$router.push('/');
     },
     closeNoteDialog() {
       this.selectedNoteItem = null;
@@ -120,8 +120,8 @@ export default {
     },
     sortNotes(field) {
       this.notes = this.notes.sort((a, b) => {
-        const [aField, aSubField] = field.split(".");
-        const [bField, bSubField] = field.split(".");
+        const [aField, aSubField] = field.split('.');
+        const [bField, bSubField] = field.split('.');
 
         const aValue = aSubField ? a[aField][aSubField] : a[aField];
         const bValue = bSubField ? b[bField][bSubField] : b[bField];
@@ -138,13 +138,13 @@ export default {
     },
     formatDate(date, item) {
       if (isNaN(Date.parse(date))) {
-        return item.visitDateText || "Invalid date";
+        return item.visitDateText || 'Invalid date';
       }
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(new Date(date));
 
       return `${formattedDate}`;

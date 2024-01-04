@@ -63,10 +63,10 @@
 </template>
 
 <script>
-import { createUserService } from "~/services/user";
+import { createUserService } from '~/services/user';
 
 export default {
-  name: "UserDialog",
+  name: 'UserDialog',
   components: {
     // VueDatePicker
   },
@@ -83,19 +83,19 @@ export default {
   data() {
     return {
       form: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "", // new field
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '', // new field
       },
       userService: null,
       formValid: false,
-      nameRules: [(v) => !!v || "This field is required"],
+      nameRules: [(v) => !!v || 'This field is required'],
       emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+        (v) => !!v || 'E-mail is required',
+        (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
-      passwordRules: [(v) => !!v || "Password is required"], // new field
+      passwordRules: [(v) => !!v || 'Password is required'], // new field
     };
   },
   computed: {
@@ -104,17 +104,17 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit("input", val);
+        this.$emit('input', val);
       },
     },
     isUpdateMode() {
       return !!this.selectedItem;
     },
     title() {
-      return this.isUpdateMode ? "Update User" : "Add User";
+      return this.isUpdateMode ? 'Update User' : 'Add User';
     },
     saveButtonText() {
-      return this.isUpdateMode ? "Update" : "Save";
+      return this.isUpdateMode ? 'Update' : 'Save';
     },
   },
   watch: {
@@ -124,21 +124,21 @@ export default {
       }
     },
   },
-  async mounted() {
+  mounted() {
     this.userService = createUserService(this.$api);
   },
   methods: {
     closeDialog() {
-      this.$emit("close-dialog");
+      this.$emit('close-dialog');
       this.resetForm();
     },
     populateFormData(item) {
       this.form = { ...item };
     },
     resetForm() {
-      this.form.firstName = "";
-      this.form.lastName = "";
-      this.form.email = "";
+      this.form.firstName = '';
+      this.form.lastName = '';
+      this.form.email = '';
     },
     async submitUserForm() {
       if (this.$refs.userForm.validate()) {
@@ -149,18 +149,18 @@ export default {
               password: this.form.password,
             });
         if ((await res) instanceof Error) {
-          console.log("User not added/updated");
+          console.log('User not added/updated');
         } else {
           console.log(
             this.isUpdateMode
-              ? "User updated successfully"
-              : "User added successfully"
+              ? 'User updated successfully'
+              : 'User added successfully'
           );
-          this.$emit("user-added");
+          this.$emit('user-added');
           this.closeDialog();
         }
       } else {
-        console.log("Form not submitted. Did not meet validation standards.");
+        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
   },

@@ -1,6 +1,6 @@
-import { PrismaClient, Prisma, patient, complaint } from "@prisma/client";
-import { deleteNote } from "./noteRepository";
-import { deleteComplaint } from "./complaintRepository";
+import { PrismaClient, Prisma, patient } from '@prisma/client';
+import { deleteNote } from './noteRepository';
+import { deleteComplaint } from './complaintRepository';
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
@@ -11,7 +11,7 @@ export const saveNewPatient = async (
       where: { email: payload.email },
     });
     if (existingPatient) {
-      throw new Error("User with this email already exists");
+      throw new Error('User with this email already exists');
     }
 
     const savedPatient = await prisma.patient.create({ data: payload });

@@ -4,12 +4,16 @@
       <v-col cols="1" class="text-center static-col pb-8"></v-col>
       <v-col cols="1" class="text-center static-col"> </v-col>
       <v-col cols="10">
-        <v-row class="mb-12" v-for="(row, i) in spinalLevels.slice(0, 1)" :key="i">
+        <v-row
+          v-for="(row, i) in spinalLevels.slice(0, 1)"
+          :key="i"
+          class="mb-12"
+        >
           <v-col class="text-center grid-cell grid-cell-heading"> </v-col>
           <v-col
-            class="grid-cell grid-cell-heading text-center"
             v-for="(col, j) in cols"
             :key="j"
+            class="grid-cell grid-cell-heading text-center"
           >
             <div
               v-if="!(col === 'R' || col === 'L' || col === 'B')"
@@ -42,7 +46,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(0, 1)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -67,7 +71,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(1, 3)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -94,7 +98,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(3, 5)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -119,7 +123,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(5, 8)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -145,7 +149,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(8, 10)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -170,7 +174,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(10, 14)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -197,7 +201,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(14, 20)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -224,7 +228,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(20, 22)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -251,7 +255,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(22, 25)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -277,7 +281,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(25, 27)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -304,7 +308,7 @@
           <v-row v-for="(row, i) in spinalLevels.slice(27, 30)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
-                <strong>{{ getRangeLabel(row, i) }}</strong>
+                <strong>{{ getRangeLabel(row) }}</strong>
               </div>
             </v-col>
             <v-col
@@ -337,46 +341,46 @@ export default {
   data() {
     return {
       cols: [
-        "L",
-        "R",
-        "B",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'L',
+        'R',
+        'B',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
       mapColsToFields: {
-        L: "side",
-        R: "side",
-        B: "side",
-        Subluxation: "sublux",
-        "Muscle Spasm": "muscleSpasm",
-        "Trigger Points": "triggerPoints",
-        Tenderness: "tenderness",
-        Numbness: "numbness",
-        Edema: "edema",
-        Swelling: "swelling",
-        "Reduced Motion": "reducedMotion",
+        L: 'side',
+        R: 'side',
+        B: 'side',
+        Subluxation: 'sublux',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        Tenderness: 'tenderness',
+        Numbness: 'numbness',
+        Edema: 'edema',
+        Swelling: 'swelling',
+        'Reduced Motion': 'reducedMotion',
       },
       booleanFields: [
-        "sublux",
-        "muscleSpasm",
-        "triggerPoints",
-        "tenderness",
-        "numbness",
-        "edema",
-        "swelling",
-        "reducedMotion",
+        'sublux',
+        'muscleSpasm',
+        'triggerPoints',
+        'tenderness',
+        'numbness',
+        'edema',
+        'swelling',
+        'reducedMotion',
       ],
     };
   },
   methods: {
-    getRangeLabel(row, i) {
-      return row.toUpperCase().replace("_", " - ");
+    getRangeLabel(row) {
+      return row.toUpperCase().replace('_', ' - ');
     },
     getValue(i, j) {
       const entry = this.entries.find(
@@ -384,37 +388,37 @@ export default {
           entry.spinalLevel?.toLowerCase() === spinalLevels[i]?.toLowerCase()
       );
 
-      if (!entry) return "";
+      if (!entry) return '';
 
       const fieldName = this.mapColsToFields[this.cols[j]];
       const value = entry[fieldName];
 
       if (this.booleanFields.includes(fieldName)) {
-        return value ? "X" : "";
+        return value ? 'X' : '';
       }
 
       return this.getDisplayedValue(value, this.cols[j]);
     },
     getDisplayedValue(value, colName) {
-      if (colName === "L" && value === "l") return "X";
-      if (colName === "R" && value === "r") return "X";
-      if (colName === "B" && value === "b") return "X";
+      if (colName === 'L' && value === 'l') return 'X';
+      if (colName === 'R' && value === 'r') return 'X';
+      if (colName === 'B' && value === 'b') return 'X';
 
       if (
-        (value === "l" && colName === "R") ||
-        (value === "l" && colName === "B")
+        (value === 'l' && colName === 'R') ||
+        (value === 'l' && colName === 'B')
       ) {
-        return "";
+        return '';
       } else if (
-        (value === "r" && colName === "L") ||
-        (value === "r" && colName === "B")
+        (value === 'r' && colName === 'L') ||
+        (value === 'r' && colName === 'B')
       ) {
-        return "";
+        return '';
       } else if (
-        (value === "b" && colName === "L") ||
-        (value === "b" && colName === "R")
+        (value === 'b' && colName === 'L') ||
+        (value === 'b' && colName === 'R')
       ) {
-        return "";
+        return '';
       }
 
       return value;

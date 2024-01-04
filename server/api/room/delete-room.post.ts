@@ -1,4 +1,4 @@
-import { deleteRoom } from "~/server/repositories/roomRepository";
+import { deleteRoom } from '~/server/repositories/roomRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

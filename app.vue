@@ -96,20 +96,20 @@
   <NuxtLayout v-else name="default"> </NuxtLayout>
 </template>
 <script>
-import { userStore } from "./store/user";
+import { userStore } from './store/user';
 
 export default {
   data() {
     return {
       visible: false,
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       loginUnsuccessful: false,
       store: null,
       loading: false,
       passwordVisibility: false,
       showResetDialog: false,
-      resetEmail: "",
+      resetEmail: '',
       clientSide: false,
     };
   },
@@ -154,7 +154,7 @@ export default {
           this.passwordVisibility = false;
         }
       } catch (err) {
-        console.log("Sign in unsuccessful", err);
+        console.log('Sign in unsuccessful', err);
       } finally {
         this.loading = false;
       }
@@ -170,12 +170,12 @@ export default {
         this.store.reset(); // Assuming reset() is a method that resets your store
         location.reload(); // Reload the page
       } catch (err) {
-        console.log("Failed to send reset email", err);
+        console.log('Failed to send reset email', err);
         // Show an error message
       } finally {
         this.loading = false;
         this.showResetDialog = false;
-        this.resetEmail = "";
+        this.resetEmail = '';
       }
     },
   },

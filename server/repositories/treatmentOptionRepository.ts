@@ -1,15 +1,19 @@
-import { PrismaClient, Prisma, treatmentOption, treatmentOptionCategory } from "@prisma/client";
+import { PrismaClient, Prisma, treatmentOption } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const saveNewOption = async (
   payload: Prisma.treatmentOptionCreateInput
-): Promise<{ success: boolean; treatmentOption?: treatmentOption; error?: string }> => {
+): Promise<{
+  success: boolean;
+  treatmentOption?: treatmentOption;
+  error?: string;
+}> => {
   try {
     const existingOption = await prisma.treatmentOption.findFirst({
       where: { text: payload.text, category: payload.category },
     });
     if (existingOption) {
-      throw new Error("Option already exists");
+      throw new Error('Option already exists');
     }
 
     const savedOption = await prisma.treatmentOption.create({ data: payload });
@@ -46,9 +50,13 @@ export const deleteOption = async (id: number): Promise<boolean> => {
   }
 };
 
-export const getTreatmentOption = async (id: number): Promise<treatmentOption | null> => {
+export const getTreatmentOption = async (
+  id: number
+): Promise<treatmentOption | null> => {
   try {
-    const treatmentOption = await prisma.treatmentOption.findUnique({ where: { id } });
+    const treatmentOption = await prisma.treatmentOption.findUnique({
+      where: { id },
+    });
     return treatmentOption;
   } catch (error) {
     console.error(error);

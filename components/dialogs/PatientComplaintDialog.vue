@@ -38,10 +38,10 @@
 </template>
 
 <script>
-import { createComplaintService } from "~/services/complaint";
+import { createComplaintService } from '~/services/complaint';
 
 export default {
-  name: "PatientComplaintDialog",
+  name: 'PatientComplaintDialog',
   props: {
     value: {
       type: Boolean,
@@ -54,12 +54,12 @@ export default {
   data() {
     return {
       form: {
-        text: "",
+        text: '',
         painLevel: null,
       },
       formIsValid: false,
       painLevelRules: [
-        (v) => !v || (v >= 1 && v <= 5) || "Pain level must be between 1 and 5",
+        (v) => !v || (v >= 1 && v <= 5) || 'Pain level must be between 1 and 5',
       ],
     };
   },
@@ -69,17 +69,17 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit("input", val);
+        this.$emit('input', val);
       },
     },
     isUpdateMode() {
       return !!this.selectedItem;
     },
     title() {
-      return this.isUpdateMode ? "Update Complaint" : "Add Complaint";
+      return this.isUpdateMode ? 'Update Complaint' : 'Add Complaint';
     },
     saveButtonText() {
-      return this.isUpdateMode ? "Update" : "Save";
+      return this.isUpdateMode ? 'Update' : 'Save';
     },
   },
   watch: {
@@ -89,19 +89,19 @@ export default {
       }
     },
   },
-  async mounted() {
+  mounted() {
     this.complaintService = createComplaintService(this.$api);
   },
   methods: {
     closeDialog() {
-      this.$emit("close-dialog");
+      this.$emit('close-dialog');
       this.resetForm();
     },
     populateFormData(item) {
       this.form = { ...item };
     },
     resetForm() {
-      this.form.text = "";
+      this.form.text = '';
       this.form.painLevel = null;
     },
     async submitComplaintForm() {
@@ -117,13 +117,13 @@ export default {
           ? await this.complaintService.updateComplaint(formData)
           : await this.complaintService.addComplaint(formData, patientId);
         if (res instanceof Error) {
-          console.log("Complaint not updated/added");
+          console.log('Complaint not updated/added');
         } else {
-          this.$emit("complaint-added");
+          this.$emit('complaint-added');
           this.closeDialog();
         }
       } else {
-        console.log("Form not submitted. Did not meet validation standards.");
+        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
   },

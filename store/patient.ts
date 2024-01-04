@@ -1,11 +1,11 @@
-import { defineStore } from "pinia";
-import { patient } from "@prisma/client";
+import { defineStore } from 'pinia';
+import { patient } from '@prisma/client';
 
 interface PatientState {
   currentPatient: patient;
 }
 
-export const patientStore = defineStore("patient", {
+export const patientStore = defineStore('patient', {
   state: () => ({
     currentPatient: {} as patient,
   }),

@@ -16,25 +16,32 @@
           </div>
         </v-col>
         <v-col v-for="(col, j) in cols" :key="j">
-          <div v-if="col === 'Physio Positioning' || col === 'Treatment Positioning' || col === 'Treatment Technique'">
-              <v-select
-                v-if="col === 'Physio Positioning'"
-                :items="physioPositioningOptions"
-                v-model="answerGrid[i][j - 2]"
-              ></v-select>
-              <v-select
-                v-else-if="col === 'Treatment Positioning'"
-                :items="treatmentPositioningOptions"
-                v-model="answerGrid[i][j - 2]"
-              ></v-select>
-              <v-select
-                v-else-if="col === 'Treatment Technique'"
-                :items="treatmentTechniqueOptions"
-                v-model="answerGrid[i][j - 2]"
-              ></v-select>
+          <div
+            v-if="
+              col === 'Physio Positioning' ||
+              col === 'Treatment Positioning' ||
+              col === 'Treatment Technique'
+            "
+          >
+            <v-select
+              v-if="col === 'Physio Positioning'"
+              v-model="answerGrid[i][j - 2]"
+              :items="physioPositioningOptions"
+            ></v-select>
+            <v-select
+              v-else-if="col === 'Treatment Positioning'"
+              v-model="answerGrid[i][j - 2]"
+              :items="treatmentPositioningOptions"
+            ></v-select>
+            <v-select
+              v-else-if="col === 'Treatment Technique'"
+              v-model="answerGrid[i][j - 2]"
+              :items="treatmentTechniqueOptions"
+            ></v-select>
           </div>
           <div
             v-else
+            class="x-toggle"
             @click="
               toggleX(
                 i,
@@ -42,7 +49,6 @@
                 j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
               )
             "
-            class="x-toggle"
           >
             <SvgRender
               v-if="displayGrid[i][j] === 'X'"
@@ -81,148 +87,158 @@ export default {
       treatmentTechniqueOptions: [],
       options: [],
       rows: [
-        "Shoulder",
-        "Arm",
-        "Bicep",
-        "Tricep",
-        "Elbow",
-        "Wrist",
-        "Hand",
-        "Hip",
-        "Thigh",
-        "Leg",
-        "Knee",
-        "Calf",
-        "Ankle",
-        "Foot",
+        'Shoulder',
+        'Arm',
+        'Bicep',
+        'Tricep',
+        'Elbow',
+        'Wrist',
+        'Hand',
+        'Hip',
+        'Thigh',
+        'Leg',
+        'Knee',
+        'Calf',
+        'Ankle',
+        'Foot',
       ],
       cols: [
-        "Left",
-        "Right",
-        "Both",
-        "Physio Positioning",
-        "Cold Pack",
-        "Hot Pack",
-        "Elect Stim",
-        "Traction",
-        "Massage",
-        "Treatment Positioning",
-        "Treatment Technique",
-        "Treatment Manipulation",
+        'Left',
+        'Right',
+        'Both',
+        'Physio Positioning',
+        'Cold Pack',
+        'Hot Pack',
+        'Elect Stim',
+        'Traction',
+        'Massage',
+        'Treatment Positioning',
+        'Treatment Technique',
+        'Treatment Manipulation',
       ],
       grid: Array.from({ length: 30 }, () => Array(12).fill(null)),
       answerGrid: Array.from({ length: 30 }, () => Array(10).fill(null)),
       PHs: {
-        Sides: "LRB",
-        Subluxation: "SX",
-        "Muscle Spasm": "MS",
-        "Trigger Points": "TP",
-        Tenderness: "TN",
-        Numbness: "NB",
-        Edema: "ED",
-        Swelling: "SW",
-        "Reduced Motion": "RM",
+        Sides: 'LRB',
+        Subluxation: 'SX',
+        'Muscle Spasm': 'MS',
+        'Trigger Points': 'TP',
+        Tenderness: 'TN',
+        Numbness: 'NB',
+        Edema: 'ED',
+        Swelling: 'SW',
+        'Reduced Motion': 'RM',
       },
       changes: [],
       booleanColumns: [
-        "Left",
-        "Right",
-        "Both",
-        "Cold Pack",
-        "Hot Pack",
-        "Elect Stim",
-        "Traction",
-        "Massage",
-        "Treatment Manipulation",
+        'Left',
+        'Right',
+        'Both',
+        'Cold Pack',
+        'Hot Pack',
+        'Elect Stim',
+        'Traction',
+        'Massage',
+        'Treatment Manipulation',
       ],
       answerGridColumns: [
-        "Sides",
-        "Physio Positioning",
-        "Cold Pack",
-        "Hot Pack",
-        "Elect Stim",
-        "Traction",
-        "Massage",
-        "Treatment Positioning",
-        "Treatment Technique",
-        "Treatment Manipulation",
+        'Sides',
+        'Physio Positioning',
+        'Cold Pack',
+        'Hot Pack',
+        'Elect Stim',
+        'Traction',
+        'Massage',
+        'Treatment Positioning',
+        'Treatment Technique',
+        'Treatment Manipulation',
       ],
 
       sidesOptions: [
-        { text: "Left", value: "l" },
-        { text: "Right", value: "r" },
-        { text: "Both", value: "b" },
+        { text: 'Left', value: 'l' },
+        { text: 'Right', value: 'r' },
+        { text: 'Both', value: 'b' },
       ],
       camelCaseColumns: {
-        Sides: "sides",
-        "Physio Positioning": "physioPositioning",
-        "Cold Pack": "coldPack",
-        "Hot Pack": "hotPack",
-        "Elect Stim": "electStim",
-        Traction: "traction",
-        Massage: "massage",
-        "Treatment Positioning": "treatmentPositioning",
-        "Treatment Technique": "treatmentTechnique",
-        "Treatment Manipulation": "treatmentManipulation",
+        Sides: 'sides',
+        'Physio Positioning': 'physioPositioning',
+        'Cold Pack': 'coldPack',
+        'Hot Pack': 'hotPack',
+        'Elect Stim': 'electStim',
+        Traction: 'traction',
+        Massage: 'massage',
+        'Treatment Positioning': 'treatmentPositioning',
+        'Treatment Technique': 'treatmentTechnique',
+        'Treatment Manipulation': 'treatmentManipulation',
       },
     };
+  },
+  computed: {
+    displayGrid() {
+      return this.grid.map((row) => {
+        return row.map((cell, index) => {
+          if (this.booleanColumns.includes(this.cols[index])) {
+            return cell ? 'X' : '';
+          }
+          return cell;
+        });
+      });
+    },
   },
   async mounted() {
     this.treatmentOptionService = createTreatmentOptionService(this.$api);
     this.options = await this.treatmentOptionService.getTreatmentOptions();
     this.physioPositioningOptions = this.options
-      .filter(option => option.category === 'physioPositioning')
-      .map(option => option.text);
+      .filter((option) => option.category === 'physioPositioning')
+      .map((option) => option.text);
 
     this.treatmentPositioningOptions = this.options
-      .filter(option => option.category === 'treatmentPositioning')
-      .map(option => option.text);
+      .filter((option) => option.category === 'treatmentPositioning')
+      .map((option) => option.text);
 
     this.treatmentTechniqueOptions = this.options
-      .filter(option => option.category === 'treatmentTechnique')
-      .map(option => option.text);
-
+      .filter((option) => option.category === 'treatmentTechnique')
+      .map((option) => option.text);
 
     if (this.existingData) {
-      for (let entry of this.existingData) {
+      for (const entry of this.existingData) {
         if (entry) {
-          let rowIndex = this.rows.findIndex(
+          const rowIndex = this.rows.findIndex(
             (row) => row.toLowerCase() === entry.extremityLevel
           );
           this.answerGridColumns.forEach((col, colIndex) => {
-            if (col === "Sides") {
-              const key = "side";
+            if (col === 'Sides') {
+              const key = 'side';
               if (entry[key] !== undefined) {
                 this.answerGrid[rowIndex][colIndex] = entry[key]
                   ? entry[key]
-                  : "";
+                  : '';
               }
-            } else if (col === "Physio Positioning") {
-              const key = "physioPositioning";
+            } else if (col === 'Physio Positioning') {
+              const key = 'physioPositioning';
               if (entry[key] !== undefined) {
                 this.answerGrid[rowIndex][colIndex] = entry[key]
                   ? entry[key]
-                  : "";
+                  : '';
               }
-            } else if (col === "Treatment Positioning") {
-              const key = "treatmentPositioning";
+            } else if (col === 'Treatment Positioning') {
+              const key = 'treatmentPositioning';
               if (entry[key] !== undefined) {
                 this.answerGrid[rowIndex][colIndex] = entry[key]
                   ? entry[key]
-                  : "";
+                  : '';
               }
-            } else if (col === "Treatment Technique") {
-              const key = "treatmentTechnique";
+            } else if (col === 'Treatment Technique') {
+              const key = 'treatmentTechnique';
               if (entry[key] !== undefined) {
                 this.answerGrid[rowIndex][colIndex] = entry[key]
                   ? entry[key]
-                  : "";
+                  : '';
               }
-
             } else {
               const key = this.camelCaseColumns[col];
               if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key] ? "X" : "";
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? 'X' : '';
               }
             }
           });
@@ -231,48 +247,40 @@ export default {
             if (this.booleanColumns.includes(col)) {
               const key = this.camelCaseColumns[col];
               if (entry[key] !== undefined) {
-                this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
+                this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
               }
             }
           });
 
           if (entry.side) {
             const sideIndex = this.cols.indexOf(
-              entry.side === "l" ? "Left" : entry.side === "r" ? "Right" : "Both"
+              entry.side === 'l'
+                ? 'Left'
+                : entry.side === 'r'
+                  ? 'Right'
+                  : 'Both'
             );
             if (sideIndex !== -1) {
-              this.grid[rowIndex][sideIndex] = "X";
+              this.grid[rowIndex][sideIndex] = 'X';
             }
           }
         }
       }
     }
-    this.$emit("update:extremityTreatmentGrid", this.answerGrid);
-  },
-  computed: {
-    displayGrid() {
-      return this.grid.map((row) => {
-        return row.map((cell, index) => {
-          if (this.booleanColumns.includes(this.cols[index])) {
-            return cell ? "X" : "";
-          }
-          return cell;
-        });
-      });
-    },
+    this.$emit('update:extremityTreatmentGrid', this.answerGrid);
   },
   methods: {
     toggleX(i, j, sideOption = null) {
       // Check if the column clicked is 'left', 'right', or 'both'
       if (j >= 0 && j <= 2) {
         // Check if there's already an 'X' in the clicked cell
-        if (this.grid[i][j] === "X" || this.grid[i][j]) {
+        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
           // Clear the row values and return
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;
           }
-          this.$emit("update:extremityTreatmentGrid", this.answerGrid);
+          this.$emit('update:extremityTreatmentGrid', this.answerGrid);
           return;
         }
       }
@@ -282,11 +290,11 @@ export default {
         let side;
 
         if (j === 0) {
-          side = "l";
+          side = 'l';
         } else if (j === 1) {
-          side = "r";
+          side = 'r';
         } else if (j === 2) {
-          side = "b";
+          side = 'b';
         }
 
         this.grid[i][0] = false;
@@ -295,17 +303,15 @@ export default {
 
         this.grid[i][j] = true;
         this.answerGrid[i][0] = side;
+      } else if (this.grid[i][j]) {
+        this.grid[i][j] = false;
+        this.answerGrid[i][j - 2] = false;
       } else {
-        if (this.grid[i][j]) {
-          this.grid[i][j] = false;
-          this.answerGrid[i][j - 2] = false;
-        } else {
-          this.grid[i][j] = true;
-          this.answerGrid[i][j - 2] = true;
-        }
+        this.grid[i][j] = true;
+        this.answerGrid[i][j - 2] = true;
       }
 
-      this.$emit("update:extremityTreatmentGrid", this.answerGrid);
+      this.$emit('update:extremityTreatmentGrid', this.answerGrid);
     },
   },
 };

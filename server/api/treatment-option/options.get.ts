@@ -1,6 +1,6 @@
-import { getAllTreatmentOptions } from "~~/server/repositories/treatmentOptionRepository";
+import { getAllTreatmentOptions } from '~~/server/repositories/treatmentOptionRepository';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   const res = await getAllTreatmentOptions();
   return {
     data: res,

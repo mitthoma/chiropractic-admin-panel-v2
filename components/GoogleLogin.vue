@@ -9,14 +9,14 @@ export default {
     async loginWithGoogle() {
       this.loading = true;
       try {
-        const result = await this.$auth.loginWith("google");
+        const result = await this.$auth.loginWith('google');
         if (result.error) {
-          console.log("Google login unsuccessful", result.error);
+          console.log('Google login unsuccessful', result.error);
         } else {
-          this.$router.push("/");
+          this.$router.push('/');
         }
       } catch (err) {
-        console.log("Google login error", err);
+        console.log('Google login error', err);
       } finally {
         this.loading = false;
       }
