@@ -425,6 +425,7 @@ export default {
   },
   data() {
     return {
+      spinalLevels: [],
       cols: [
         'L',
         'R',
@@ -462,6 +463,9 @@ export default {
         'treatmentManipulation',
       ],
     };
+  },
+  mounted() {
+    this.spinalLevels = spinalLevels;
   },
   methods: {
     getRangeLabel(row) {

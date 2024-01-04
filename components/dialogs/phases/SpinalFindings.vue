@@ -4,14 +4,9 @@
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="11">
-        <v-row
-          v-for="modifiedRow in modifiedRows(30, 31)"
-          :key="modifiedRow.index"
-        >
+        <v-row>
           <v-col class="text-center">
-            <div class="mb-1">
-              <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
-            </div>
+            <div class="mb-1"></div>
           </v-col>
           <v-col v-for="(col, j) in cols" :key="j">
             <div class="mb-1 rotate">
@@ -465,6 +460,7 @@ export default {
   },
   data() {
     return {
+      booleanColumns: [],
       dialog: true,
       valid: true,
       cols: [
@@ -525,13 +521,14 @@ export default {
     },
   },
   mounted() {
+    this.booleanColumns = booleanColumns;
     if (this.existingData) {
       for (const entry of this.existingData) {
         if (entry) {
           const rowIndex = spinalLevels.findIndex(
             (row) => row.toLowerCase() === entry.spinalLevel
           );
-          booleanColumns.forEach((col, colIndex) => {
+          this.booleanColumns.forEach((col, colIndex) => {
             if (col === 'Sides') {
               const key = 'side';
               if (entry[key] !== undefined) {

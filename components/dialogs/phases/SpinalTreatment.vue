@@ -5,13 +5,10 @@
       <v-col cols="1" class="text-center"></v-col>
 
       <v-col cols="11">
-        <v-row
-          v-for="modifiedRow in modifiedRows(30, 31)"
-          :key="modifiedRow.index"
-        >
+        <v-row>
           <v-col class="text-center">
             <div class="mb-1">
-              <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
+              <!-- <strong>{{ getRangeLabel(modifiedRow.row) }}</strong> -->
             </div>
           </v-col>
           <v-col v-for="(col, j) in cols" :key="j">
@@ -726,6 +723,7 @@ export default {
     existingData: {
       type: Object,
       required: false,
+      default: null,
     },
   },
   data() {

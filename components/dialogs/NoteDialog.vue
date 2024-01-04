@@ -411,12 +411,13 @@ export default {
         if (hasNonNullField) {
           let existing = null;
 
-          if (type === 'spinal') {
+          if (type === 'spinal' && pastRecords) {
+            console.log('pastRecords are ', pastRecords);
             existing = pastRecords.find(
               (entry) =>
                 entry.spinalLevel === levels[i] && entry.category === type
             );
-          } else if (type === 'extremity') {
+          } else if (type === 'extremity' && pastRecords) {
             existing = pastRecords.find(
               (entry) =>
                 entry.extremityLevel === levels[i] && entry.category === type

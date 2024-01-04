@@ -1,21 +1,27 @@
 <template>
   <div class="grid-container">
-    <v-row class="header-row text-center">
-      <v-col></v-col>
-      <v-col v-for="(col, j) in cols" :key="j">
-        <div class="mb-1 rotate pt-3 colLabels">
+    <!-- Labels Row -->
+    <v-row class="labels-row">
+      <v-col class="text-center static-col">
+        <!-- Placeholder for the first static column -->
+      </v-col>
+      <v-col
+        v-for="(col, j) in cols"
+        :key="j"
+        class="label-col rotate colLabels pt-6"
+      >
+        <div class="label-text">
           <strong>{{ col }}</strong>
         </div>
       </v-col>
     </v-row>
     <div class="scrollable-content">
       <v-row v-for="(row, i) in rows" :key="i">
+        <!-- Static Column -->
         <v-col class="text-center static-col">
-          <div class="mb-1">
-            <strong>{{ row }}</strong>
-          </div>
+          <strong>{{ row }}</strong>
         </v-col>
-        <v-col v-for="(col, j) in cols" :key="j">
+        <v-col v-for="(col, j) in cols" :key="j" class="data-col">
           <div
             v-if="
               col === 'Physio Positioning' ||
@@ -75,6 +81,7 @@ export default {
     existingData: {
       type: Object,
       required: false,
+      default: null,
     },
   },
   data() {
@@ -363,6 +370,17 @@ export default {
   padding: 0;
   flex: 1;
   margin: 10px;
+}
+
+.label-col,
+.data-col {
+  padding: 0; /* Remove padding to align labels with fields */
+}
+
+.label-text {
+  /* Adjust to align and style your labels */
+  text-align: center;
+  margin-bottom: 5px; /* Adjust as needed */
 }
 
 .rotate {

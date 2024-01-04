@@ -49,6 +49,7 @@ export default {
     existingData: {
       type: Object,
       required: false,
+      default: null,
     },
   },
   data() {

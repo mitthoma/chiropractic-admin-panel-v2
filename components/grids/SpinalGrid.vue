@@ -340,6 +340,7 @@ export default {
   },
   data() {
     return {
+      spinalLevels: [],
       cols: [
         'L',
         'R',
@@ -377,6 +378,9 @@ export default {
         'reducedMotion',
       ],
     };
+  },
+  mounted() {
+    this.spinalLevels = spinalLevels;
   },
   methods: {
     getRangeLabel(row) {
