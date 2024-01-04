@@ -13,7 +13,6 @@ export default {
         if (result.error) {
           console.log("Google login unsuccessful", result.error);
         } else {
-          // Redirect to the home page.
           this.$router.push("/");
         }
       } catch (err) {

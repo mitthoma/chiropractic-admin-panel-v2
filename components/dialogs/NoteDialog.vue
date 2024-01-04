@@ -58,7 +58,6 @@
                 :existing-data="spinalGrid"
                 @update:spinalGrid="spinalGrid = $event"
               />
-              {}
             </v-form>
           </v-container>
         </v-window-item>

@@ -4,7 +4,7 @@
       <v-col cols="1" class="text-center static-col pb-8"></v-col>
       <v-col cols="1" class="text-center static-col"> </v-col>
       <v-col cols="10">
-        <v-row class="mb-12" v-for="(row, i) in rows.slice(0, 1)" :key="i">
+        <v-row class="mb-12" v-for="(row, i) in spinalLevels.slice(0, 1)" :key="i">
           <v-col class="text-center grid-cell grid-cell-heading"> </v-col>
           <v-col
             class="grid-cell grid-cell-heading text-center"
@@ -39,7 +39,7 @@
           <div class="mb-1">Sub Occ</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(0, 1)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(0, 1)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -64,7 +64,7 @@
           <div class="mb-1">Upper Cerv</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(1, 3)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(1, 3)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -91,7 +91,7 @@
           <div class="mb-1">Mid Cerv</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(3, 5)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(3, 5)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -116,7 +116,7 @@
           <div class="mb-1">Lower Cerv</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(5, 8)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(5, 8)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -142,7 +142,7 @@
           <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(8, 10)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(8, 10)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -167,7 +167,7 @@
           <div class="mb-1">Mid T</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(10, 14)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(10, 14)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -194,7 +194,7 @@
           <div class="mb-1">Lower T</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(14, 20)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(14, 20)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -221,7 +221,7 @@
           <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(20, 22)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(20, 22)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -248,7 +248,7 @@
           <div class="mb-1">Lower L</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(22, 25)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(22, 25)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -274,7 +274,7 @@
           <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(25, 27)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(25, 27)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -301,7 +301,7 @@
           <div class="mb-1">Lower S</div>
         </v-col>
         <v-col cols="10">
-          <v-row v-for="(row, i) in rows.slice(27, 30)" :key="i">
+          <v-row v-for="(row, i) in spinalLevels.slice(27, 30)" :key="i">
             <v-col class="text-center static-col grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row, i) }}</strong>
@@ -325,6 +325,8 @@
 </template>
 
 <script>
+import { spinalLevels } from '../dialogs/helpers/noteArrays';
+
 export default {
   props: {
     entries: {
@@ -334,38 +336,6 @@ export default {
   },
   data() {
     return {
-      rows: [
-        "occ_c1",
-        "c1_c2",
-        "c2_c3",
-        "c3_c4",
-        "c4_c5",
-        "c5_c6",
-        "c6_c7",
-        "c7_t1",
-        "t1_t2",
-        "t2_t3",
-        "t3_t4",
-        "t4_t5",
-        "t5_t6",
-        "t6_t7",
-        "t7_t8",
-        "t8_t9",
-        "t9_t10",
-        "t10_t11",
-        "t11_t12",
-        "t12_l1",
-        "l1_l2",
-        "l2_l3",
-        "l3_l4",
-        "l4_l5",
-        "l5_s1",
-        "s1_s2",
-        "s2_s3",
-        "s3_s4",
-        "s4_s5",
-        "s5_",
-      ],
       cols: [
         "L",
         "R",
@@ -411,7 +381,7 @@ export default {
     getValue(i, j) {
       const entry = this.entries.find(
         (entry) =>
-          entry.spinalLevel?.toLowerCase() === this.rows[i]?.toLowerCase()
+          entry.spinalLevel?.toLowerCase() === spinalLevels[i]?.toLowerCase()
       );
 
       if (!entry) return "";

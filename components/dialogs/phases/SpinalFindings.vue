@@ -453,6 +453,8 @@
 </template>
 
 <script>
+import { spinalLevels, booleanColumns } from '../helpers/noteArrays';
+
 export default {
   props: {
     existingData: {
@@ -464,40 +466,6 @@ export default {
     return {
       dialog: true,
       valid: true,
-      rows: [
-        "occ_c1",
-        "c1_c2",
-        "c2_c3",
-        "c3_c4",
-        "c4_c5",
-        "c5_c6",
-        "c6_c7",
-        "c7_t1",
-        "t1_t2",
-        "t2_t3",
-        "t3_t4",
-        "t4_t5",
-        "t5_t6",
-        "t6_t7",
-        "t7_t8",
-        "t8_t9",
-        "t9_t10",
-        "t10_t11",
-        "t11_t12",
-        "t12_l1",
-        "l1_l2",
-        "l2_l3",
-        "l3_l4",
-        "l4_l5",
-        "l5_s1",
-        "s1_s2",
-        "s2_s3",
-        "s3_s4",
-        "s4_s5",
-        "s5_",
-        "",
-      ],
-
       cols: [
         "Left",
         "Right",
@@ -525,30 +493,6 @@ export default {
         "Reduced Motion": "RM",
       },
       changes: [],
-      booleanColumns: [
-        "Left",
-        "Right",
-        "Both",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
-      ],
-      answerGridColumns: [
-        "Sides",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
-      ],
       sidesOptions: [
         { text: "Left", value: "l" },
         { text: "Right", value: "r" },
@@ -571,10 +515,10 @@ export default {
     if (this.existingData) {
       for (let entry of this.existingData) {
         if (entry) {
-          let rowIndex = this.rows.findIndex(
+          let rowIndex = spinalLevels.findIndex(
             (row) => row.toLowerCase() === entry.spinalLevel
           );
-          this.answerGridColumns.forEach((col, colIndex) => {
+          booleanColumns.forEach((col, colIndex) => {
             if (col === "Sides") {
               const key = "side";
               if (entry[key] !== undefined) {
@@ -593,10 +537,10 @@ export default {
       }
       for (let entry of this.existingData) {
         if (entry) {
-          let rowIndex = this.rows.findIndex(
+          let rowIndex = spinalLevels.findIndex(
             (row) => row.toLowerCase() === entry.spinalLevel
           );
-          this.booleanColumns.forEach((col, colIndex) => {
+          this.cols.forEach((col, colIndex) => {
             const key = this.camelCaseColumns[col];
             if (entry[key] !== undefined) {
               this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
@@ -626,7 +570,7 @@ export default {
     displayGrid() {
       return this.grid.map((row) => {
         return row.map((cell, index) => {
-          if (this.booleanColumns.includes(this.cols[index])) {
+          if (this.cols.includes(this.cols[index])) {
             return cell ? "X" : "";
           }
           return cell;
@@ -646,7 +590,7 @@ export default {
       return row.toUpperCase().replace("_", " - ");
     },
     modifiedRows(slice1, slice2) {
-      return this.rows.slice(slice1, slice2).map((row, index) => {
+      return spinalLevels.slice(slice1, slice2).map((row, index) => {
         return { row, index: slice1 + index };
       });
     },

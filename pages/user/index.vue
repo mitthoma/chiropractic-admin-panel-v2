@@ -21,7 +21,6 @@
               </th>
               <th class="text-left" @click="sortUsers('email')">Email</th>
               <th class="text-left" @click="sortUsers('role')">User Role</th>
-              <!-- Additional columns as per your requirements -->
               <th class="text-left"></th>
             </tr>
           </thead>
@@ -31,11 +30,7 @@
               <td>{{ user.lastName }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
-
-              <!-- Additional fields as per your requirements -->
               <td class="d-flex justify-end">
-                <!-- <v-btn color="primary" @click="resetPassword(user)">Reset Password</v-btn> -->
-                <!-- Additional action items as per your requirements -->
               </td>
             </tr>
           </tbody>
@@ -58,10 +53,9 @@
 </template>
 
 <script>
-//   import UserDialog from '~/components/dialogs/UserDialog.vue'; // Import your UserDialog component
-import { userStore } from "~/store/user"; // Import your userStore
-import { createUser } from "~/composables/useFirebase"; // Import your createUser function
-import { createUserService } from "~/services/user"; // Import your user service
+import { userStore } from "~/store/user";
+import { createUser } from "~/composables/useFirebase";
+import { createUserService } from "~/services/user";
 import UserDialog from "~/components/dialogs/UserDialog.vue";
 
 export default {
@@ -89,16 +83,12 @@ export default {
   async mounted() {
     this.userStore = userStore();
     this.userService = createUserService(this.$api);
-    // Load the users here from your user service
-    // this.users = <Your code to load users from Prisma>;
     this.users = await this.userService.getUsers();
 
     this.updateDisplayedUsers();
   },
   methods: {
     async refreshUserList() {
-      // Load the users here from your user service
-      // this.users = <Your code to load users from Prisma>;
       this.users = await this.userService.getUsers();
       this.updateDisplayedUsers();
     },
