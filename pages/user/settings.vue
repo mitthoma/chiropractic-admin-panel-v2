@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "User Settings",
+  name: 'User Settings',
   async mounted() {},
 };
 </script>

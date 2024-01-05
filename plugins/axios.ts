@@ -1,5 +1,5 @@
-import axios from "axios";
-import { setApiInstance } from "@/utils/apiInstance";
+import axios from 'axios';
+import { setApiInstance } from '@/utils/apiInstance';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();

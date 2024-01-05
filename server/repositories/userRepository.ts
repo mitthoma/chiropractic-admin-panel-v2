@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, user } from "@prisma/client";
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +21,7 @@ export const saveNewUser = async (
     });
 
     if (existingUser) {
-      throw new Error("User with this Firebase UID already exists");
+      throw new Error('User with this Firebase UID already exists');
     }
 
     const newUser = await prisma.user.create({
@@ -43,7 +43,7 @@ export const updateUser = async (
     const existingUser = await prisma.user.findUnique({ where: { id } });
 
     if (!existingUser) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     const updatedUser = await prisma.user.update({
@@ -75,7 +75,7 @@ export const getUser = async (
     const user = await prisma.user.findUnique({ where: { id } });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     return user;
@@ -90,17 +90,18 @@ export const getUserByFirebaseUid = async (
 ): Promise<Prisma.PromiseReturnType<typeof prisma.user.findUnique>> => {
   try {
     if (!firebaseUid) {
-      throw new Error("Invalid firebaseUid");
+      throw new Error('Invalid firebaseUid');
     }
-
 
     const user = await prisma.user.findUnique({ where: { firebaseUid } });
 
-    if (!user) {      throw new Error("User not found");
+    if (!user) {
+      throw new Error('User not found');
     }
 
-
-    return user;  } catch (error) {    console.error(error);
+    return user;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };

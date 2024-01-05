@@ -1,4 +1,4 @@
-import { getTreatmentOption } from "~~/server/repositories/treatmentOptionRepository";
+import { getTreatmentOption } from '~~/server/repositories/treatmentOptionRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

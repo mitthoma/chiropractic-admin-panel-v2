@@ -4,14 +4,9 @@
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="1" class="text-center"></v-col>
       <v-col cols="11">
-        <v-row
-          v-for="modifiedRow in modifiedRows(30, 31)"
-          :key="modifiedRow.index"
-        >
+        <v-row>
           <v-col class="text-center">
-            <div class="mb-1">
-              <strong>{{ getRangeLabel(modifiedRow.row) }}</strong>
-            </div>
+            <div class="mb-1"></div>
           </v-col>
           <v-col v-for="(col, j) in cols" :key="j">
             <div class="mb-1 rotate">
@@ -41,6 +36,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -48,7 +44,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -80,6 +75,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -87,7 +83,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -118,6 +113,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -125,7 +121,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -156,6 +151,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -163,7 +159,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -196,6 +191,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -203,7 +199,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -234,6 +229,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -241,7 +237,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -272,6 +267,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -279,7 +275,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -312,6 +307,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -319,7 +315,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -350,6 +345,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -357,7 +353,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -390,6 +385,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -397,7 +393,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -428,6 +423,7 @@
             </v-col>
             <v-col v-for="(col, j) in cols" :key="j">
               <div
+                class="x-toggle"
                 @click="
                   toggleX(
                     modifiedRow.index,
@@ -435,7 +431,6 @@
                     j === 0 ? 'l' : j === 1 ? 'r' : j === 2 ? 'b' : null
                   )
                 "
-                class="x-toggle"
               >
                 <SvgRender
                   v-if="displayGrid[modifiedRow.index][j] === 'X'"
@@ -460,134 +455,136 @@ export default {
     existingData: {
       type: Object,
       required: false,
+      default: null,
     },
   },
   data() {
     return {
+      booleanColumns: [],
       dialog: true,
       valid: true,
       cols: [
-        "Left",
-        "Right",
-        "Both",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'Left',
+        'Right',
+        'Both',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
       grid: Array.from({ length: 30 }, () => Array(11).fill(null)),
       answerGrid: Array.from({ length: 30 }, () => Array(9).fill(null)),
       PHs: {
-        Sides: "LRB",
-        Subluxation: "SX",
-        "Muscle Spasm": "MS",
-        "Trigger Points": "TP",
-        Tenderness: "TN",
-        Numbness: "NB",
-        Edema: "ED",
-        Swelling: "SW",
-        "Reduced Motion": "RM",
+        Sides: 'LRB',
+        Subluxation: 'SX',
+        'Muscle Spasm': 'MS',
+        'Trigger Points': 'TP',
+        Tenderness: 'TN',
+        Numbness: 'NB',
+        Edema: 'ED',
+        Swelling: 'SW',
+        'Reduced Motion': 'RM',
       },
       changes: [],
       sidesOptions: [
-        { text: "Left", value: "l" },
-        { text: "Right", value: "r" },
-        { text: "Both", value: "b" },
+        { text: 'Left', value: 'l' },
+        { text: 'Right', value: 'r' },
+        { text: 'Both', value: 'b' },
       ],
       camelCaseColumns: {
-        Sides: "sides",
-        Subluxation: "sublux",
-        "Muscle Spasm": "muscleSpasm",
-        "Trigger Points": "triggerPoints",
-        Tenderness: "tenderness",
-        Numbness: "numbness",
-        Edema: "edema",
-        Swelling: "swelling",
-        "Reduced Motion": "reducedMotion",
+        Sides: 'sides',
+        Subluxation: 'sublux',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        Tenderness: 'tenderness',
+        Numbness: 'numbness',
+        Edema: 'edema',
+        Swelling: 'swelling',
+        'Reduced Motion': 'reducedMotion',
       },
     };
-  },
-  mounted() {
-    if (this.existingData) {
-      for (let entry of this.existingData) {
-        if (entry) {
-          let rowIndex = spinalLevels.findIndex(
-            (row) => row.toLowerCase() === entry.spinalLevel
-          );
-          booleanColumns.forEach((col, colIndex) => {
-            if (col === "Sides") {
-              const key = "side";
-              if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key]
-                  ? entry[key]
-                  : "";
-              }
-            } else {
-              const key = this.camelCaseColumns[col];
-              if (entry[key] !== undefined) {
-                this.answerGrid[rowIndex][colIndex] = entry[key] ? "X" : "";
-              }
-            }
-          });
-        }
-      }
-      for (let entry of this.existingData) {
-        if (entry) {
-          let rowIndex = spinalLevels.findIndex(
-            (row) => row.toLowerCase() === entry.spinalLevel
-          );
-          this.cols.forEach((col, colIndex) => {
-            const key = this.camelCaseColumns[col];
-            if (entry[key] !== undefined) {
-              this.grid[rowIndex][colIndex] = entry[key] ? "X" : "";
-            }
-          });
-          if (entry.side) {
-            const colLabel =
-              entry.side === "l"
-                ? "Left"
-                : entry.side === "r"
-                ? "Right"
-                : entry.side === "b"
-                ? "Both"
-                : null;
-            if (colLabel) {
-              let colIndex = this.cols.findIndex((col) => col === colLabel);
-              this.grid[rowIndex][colIndex] = "X";
-            }
-          }
-        }
-      }
-    }
-    this.$emit("update:spinalGrid", this.answerGrid);
-
   },
   computed: {
     displayGrid() {
       return this.grid.map((row) => {
         return row.map((cell, index) => {
           if (this.cols.includes(this.cols[index])) {
-            return cell ? "X" : "";
+            return cell ? 'X' : '';
           }
           return cell;
         });
       });
     },
   },
+  mounted() {
+    this.booleanColumns = booleanColumns;
+    if (this.existingData) {
+      for (const entry of this.existingData) {
+        if (entry) {
+          const rowIndex = spinalLevels.findIndex(
+            (row) => row.toLowerCase() === entry.spinalLevel
+          );
+          this.booleanColumns.forEach((col, colIndex) => {
+            if (col === 'Sides') {
+              const key = 'side';
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key]
+                  ? entry[key]
+                  : '';
+              }
+            } else {
+              const key = this.camelCaseColumns[col];
+              if (entry[key] !== undefined) {
+                this.answerGrid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+              }
+            }
+          });
+        }
+      }
+      for (const entry of this.existingData) {
+        if (entry) {
+          const rowIndex = spinalLevels.findIndex(
+            (row) => row.toLowerCase() === entry.spinalLevel
+          );
+          this.cols.forEach((col, colIndex) => {
+            const key = this.camelCaseColumns[col];
+            if (entry[key] !== undefined) {
+              this.grid[rowIndex][colIndex] = entry[key] ? 'X' : '';
+            }
+          });
+          if (entry.side) {
+            const colLabel =
+              entry.side === 'l'
+                ? 'Left'
+                : entry.side === 'r'
+                  ? 'Right'
+                  : entry.side === 'b'
+                    ? 'Both'
+                    : null;
+            if (colLabel) {
+              const colIndex = this.cols.findIndex((col) => col === colLabel);
+              this.grid[rowIndex][colIndex] = 'X';
+            }
+          }
+        }
+      }
+    }
+    this.$emit('update:spinalGrid', this.answerGrid);
+  },
   methods: {
     handleSelectChange(rowIndex, colIndex, value) {
-    // Update the value in the grid
-    this.$set(this.grid[rowIndex], colIndex, value === '' ? null : value);
+      // Update the value in the grid
+      this.$set(this.grid[rowIndex], colIndex, value === '' ? null : value);
 
-    // Emit the updated grid to the parent component
-    this.$emit("update:spinalTreatmentGrid", this.grid);
-  },
-    getRangeLabel(row, i) {
-      return row.toUpperCase().replace("_", " - ");
+      // Emit the updated grid to the parent component
+      this.$emit('update:spinalTreatmentGrid', this.grid);
+    },
+    getRangeLabel(row) {
+      return row.toUpperCase().replace('_', ' - ');
     },
     modifiedRows(slice1, slice2) {
       return spinalLevels.slice(slice1, slice2).map((row, index) => {
@@ -596,12 +593,12 @@ export default {
     },
     toggleX(i, j, sideOption = null) {
       if (j >= 0 && j <= 2) {
-        if (this.grid[i][j] === "X" || this.grid[i][j]) {
+        if (this.grid[i][j] === 'X' || this.grid[i][j]) {
           for (let col = 0; col < this.grid[i].length; col++) {
             this.grid[i][col] = false;
             this.answerGrid[i][col] = false;
           }
-          this.$emit("update:spinalGrid", this.answerGrid);
+          this.$emit('update:spinalGrid', this.answerGrid);
           return;
         }
       }
@@ -611,11 +608,11 @@ export default {
         let side;
 
         if (j === 0) {
-          side = "l";
+          side = 'l';
         } else if (j === 1) {
-          side = "r";
+          side = 'r';
         } else if (j === 2) {
-          side = "b";
+          side = 'b';
         }
 
         this.grid[i][0] = false;
@@ -624,17 +621,15 @@ export default {
 
         this.grid[i][j] = true;
         this.answerGrid[i][0] = side;
+      } else if (this.grid[i][j]) {
+        this.grid[i][j] = false;
+        this.answerGrid[i][j - 2] = false;
       } else {
-        if (this.grid[i][j]) {
-          this.grid[i][j] = false;
-          this.answerGrid[i][j - 2] = false;
-        } else {
-          this.grid[i][j] = true;
-          this.answerGrid[i][j - 2] = true;
-        }
+        this.grid[i][j] = true;
+        this.answerGrid[i][j - 2] = true;
       }
 
-      this.$emit("update:spinalGrid", this.answerGrid);
+      this.$emit('update:spinalGrid', this.answerGrid);
     },
   },
 };

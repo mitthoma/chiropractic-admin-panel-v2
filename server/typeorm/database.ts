@@ -1,6 +1,6 @@
-import "reflect-metadata";
-import { DataSource } from "typeorm";
-import { User } from "~/server/typeorm/entity/User";
+import 'reflect-metadata';
+import { DataSource } from 'typeorm';
+import { User } from '~/server/typeorm/entity/User';
 
 let AppDataSource: DataSource | null = null;
 
@@ -27,7 +27,7 @@ export function getAppDataSource(config: {
 }): DataSource {
   if (!AppDataSource) {
     AppDataSource = new DataSource({
-      type: "postgres",
+      type: 'postgres',
       host: config.host,
       port: config.port,
       username: config.username,

@@ -1,4 +1,4 @@
-import { updateNote } from "~/server/repositories/noteRepository";
+import { updateNote } from '~/server/repositories/noteRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

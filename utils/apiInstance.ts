@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance } from 'axios';
 
 let api: AxiosInstance | null = null;
 

@@ -1,4 +1,4 @@
-import { userStore } from "~~/store/user";
+import { userStore } from '~~/store/user';
 
 interface RouteMeta {
   auth?: boolean;
@@ -9,6 +9,6 @@ export default defineNuxtRouteMiddleware((to) => {
   const meta = to.meta as RouteMeta;
 
   if (meta && meta.auth !== false && !store.getIsLoggedIn) {
-    return { path: "/" };
+    return { path: '/' };
   }
 });

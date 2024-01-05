@@ -1,33 +1,29 @@
-//https://firebase.google.com/docs/auth/web/start
-import { AxiosInstance } from "axios";
+// https://firebase.google.com/docs/auth/web/start
+import { AxiosInstance } from 'axios';
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   sendPasswordResetEmail,
-} from "firebase/auth";
-import { createAuthService } from "~/services/auth";
-import { createUserService } from "~/services/user";
-import { userStore } from "~/store/user";
-import { user } from "@prisma/client";
-import { getApiInstance } from "~/utils/apiInstance";
+} from 'firebase/auth';
+import { user } from '@prisma/client';
+import { createAuthService } from '~/services/auth';
+import { createUserService } from '~/services/user';
+import { userStore } from '~/store/user';
+import { getApiInstance } from '~/utils/apiInstance';
 
 export const createUser = async (email: string, password: string) => {
   if (!password) {
-    throw new Error("Password is not provided");
+    throw new Error('Password is not provided');
   }
   const auth = getAuth();
-  try {
-    const credentials = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    return credentials;
-  } catch (error: any) {
-    throw error;
-  }
+  const credentials = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  return credentials;
 };
 export const signInUser = async (email: string, password: string) => {
   const api = getApiInstance();
@@ -46,12 +42,12 @@ export const signInUser = async (email: string, password: string) => {
         store.setIsLoggedIn(true);
         return { success: true };
       } else {
-        return { success: false, error: "Error signing user in." };
+        return { success: false, error: 'Error signing user in.' };
       }
     }
     return {
       success: false,
-      error: "Error signing user in. Not receiving credentials from Firebase",
+      error: 'Error signing user in. Not receiving credentials from Firebase',
     };
   } catch (error) {
     console.log(error);
@@ -59,7 +55,7 @@ export const signInUser = async (email: string, password: string) => {
   }
 };
 
-export const initUser = async () => {
+export const initUser = () => {
   const api = getApiInstance();
   const auth = getAuth();
   const store = userStore();
@@ -73,7 +69,7 @@ export const initUser = async () => {
         });
 
         if (response instanceof Error) {
-          console.log("Invalid response from getUserByFirebaseUID");
+          console.log('Invalid response from getUserByFirebaseUID');
         } else {
           store.setUser(response);
           store.setIsLoggedIn(true);
@@ -95,9 +91,5 @@ export const signOutUser = async () => {
 
 export const resetPassword = async (email: string) => {
   const auth = getAuth();
-  try {
-    await sendPasswordResetEmail(auth, email);
-  } catch (error: any) {
-    throw error;
-  }
+  await sendPasswordResetEmail(auth, email);
 };

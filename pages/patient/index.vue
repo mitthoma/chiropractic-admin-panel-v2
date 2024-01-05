@@ -73,12 +73,12 @@
 </template>
 
 <script>
-import PatientDialog from "~/components/dialogs/PatientDialog.vue";
-import { patientStore } from "~/store/patient";
-import { createPatientService } from "~/services/patient";
+import PatientDialog from '~/components/dialogs/PatientDialog.vue';
+import { patientStore } from '~/store/patient';
+import { createPatientService } from '~/services/patient';
 
 export default {
-  name: "PatientPage",
+  name: 'PatientPage',
   components: {
     PatientDialog,
   },
@@ -113,7 +113,7 @@ export default {
         });
         this.refreshPatientList();
       } catch (error) {
-        console.error("Error deleting patient:", error);
+        console.error('Error deleting patient:', error);
       }
     },
     async refreshPatientList() {
@@ -129,7 +129,7 @@ export default {
       this.patientDialog = true;
     },
     backToDashboard() {
-      this.$router.push("/");
+      this.$router.push('/');
     },
     closePatientDialog() {
       this.selectedPatientItem = null;
@@ -157,25 +157,25 @@ export default {
     },
     formatDateTime(dateTime) {
       const date = new Date(dateTime);
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(date);
 
-      const formattedTime = new Intl.DateTimeFormat("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }).format(date);
+      // const formattedTime = new Intl.DateTimeFormat('en-US', {
+      //   hour: '2-digit',
+      //   minute: '2-digit',
+      //   hour12: true,
+      // }).format(date);
 
       return `${formattedDate}`;
     },
     formatPhoneNumber(phoneNumber) {
-      const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+      const cleaned = ('' + phoneNumber).replace(/\D/g, '');
       const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
       if (match) {
-        return "(" + match[1] + ") " + match[2] + "-" + match[3];
+        return '(' + match[1] + ') ' + match[2] + '-' + match[3];
       }
       return null;
     },

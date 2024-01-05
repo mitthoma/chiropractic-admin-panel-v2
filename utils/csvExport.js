@@ -1,13 +1,13 @@
 // Import the necessary dependencies
-import { saveAs } from "file-saver";
-import { cellMappings } from "./cellMappings";
-import * as XLSX from "xlsx";
+import { saveAs } from 'file-saver';
+import { cellMappings } from './cellMappings';
+import * as XLSX from 'xlsx';
 
 // Helper function to convert an alphanumeric cell reference to row and column index
 function cellReferenceToIndex(ref) {
   const match = ref.match(/([A-Z]+)(\d+)/);
   const col = match[1]
-    .split("")
+    .split('')
     .reduce((acc, char) => acc * 26 + char.charCodeAt(0) - 64, 0);
   const row = parseInt(match[2], 10);
   return { row: row - 1, col: col - 1 };
@@ -33,19 +33,19 @@ export function generateCSV(payload) {
   // Create a 2D array representing the cells of the CSV content
   const rows = 62; // Define the number of rows
   const cols = 29; // Define the number of columns (A to AC)
-  const cells = new Array(rows).fill(null).map(() => new Array(cols).fill(""));
+  const cells = new Array(rows).fill(null).map(() => new Array(cols).fill(''));
   // Populate the cells based on the cell mappings
   for (const [ref, value] of Object.entries(cellMappings)) {
     const { row, col } = cellReferenceToIndex(ref);
     try {
-      if (typeof value === "function") {
+      if (typeof value === 'function') {
         cells[row][col] = value(payload);
       } else {
         cells[row][col] = value;
       }
     } catch (error) {
       console.error(`Error populating cell ${ref}:`, error);
-      cells[row][col] = ""; // Set an empty string or a default value in case of error
+      cells[row][col] = ''; // Set an empty string or a default value in case of error
     }
   }
 
@@ -54,14 +54,14 @@ export function generateCSV(payload) {
 
   // Convert the 2D array to a CSV formatted string
   const csvContent = cells
-    .map((row) => row.filter((cell) => cell !== null).join(","))
-    .join("\n");
+    .map((row) => row.filter((cell) => cell !== null).join(','))
+    .join('\n');
 
   // Create a Blob object with the CSV file content
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 
   // Export the CSV file to the user
-  saveAs(blob, "exported_data.csv");
+  saveAs(blob, 'exported_data.csv');
 }
 
 // Define the generateXLSX function
@@ -69,20 +69,20 @@ export function generateXLSX(payload, exportAsPDF = false, getPdfMakeInstance) {
   // Create a 2D array representing the cells of the XLSX content
   const rows = 42; // Define the number of rows
   const cols = 29; // Define the number of columns (A to AC)
-  const cells = new Array(rows).fill(null).map(() => new Array(cols).fill(""));
+  const cells = new Array(rows).fill(null).map(() => new Array(cols).fill(''));
 
   // Populate the cells based on the cell mappings
   for (const [ref, value] of Object.entries(cellMappings)) {
     const { row, col } = cellReferenceToIndex(ref);
     try {
-      if (typeof value === "function") {
+      if (typeof value === 'function') {
         cells[row][col] = value(payload);
       } else {
         cells[row][col] = value;
       }
     } catch (error) {
       console.error(`Error populating cell ${ref}:`, error);
-      cells[row][col] = ""; // Set an empty string or a default value in case of error
+      cells[row][col] = ''; // Set an empty string or a default value in case of error
     }
   }
 
@@ -102,17 +102,17 @@ export function generateXLSX(payload, exportAsPDF = false, getPdfMakeInstance) {
 
   // Create a workbook and add the worksheet
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
   if (exportAsPDF) {
     // const pdfMakeInstance = getPdfMakeInstance(); // Get the pdfMake instance using the provided function
     // generatePDF(wb, pdfMakeInstance);
   } else {
     // Export the XLSX file to the user
-    const wopts = { bookType: "xlsx", bookSST: false, type: "array" };
+    const wopts = { bookType: 'xlsx', bookSST: false, type: 'array' };
     const wbout = XLSX.write(wb, wopts);
-    const blob = new Blob([wbout], { type: "application/octet-stream" });
-    saveAs(blob, "exported_data.xlsx");
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    saveAs(blob, 'exported_data.xlsx');
   }
 }
 

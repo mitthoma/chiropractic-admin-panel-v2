@@ -1,18 +1,18 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance } from 'axios';
 
 export const createUserService = (api: AxiosInstance) => ({
   getUsers: async () => {
-    const { data } = await api.get("/user/users");
+    const { data } = await api.get('/user/users');
     return data.data;
   },
 
   getUser: async (payload: any) => {
-    const { data } = await api.get("/user/user", payload);
+    const { data } = await api.get('/user/user', payload);
     return data.data;
   },
 
   getUserByFirebaseUID: async (payload: any) => {
-    const { data } = await api.post("/user/user-uid", payload);
+    const { data } = await api.post('/user/user-uid', payload);
     return data.data;
   },
 
@@ -22,7 +22,7 @@ export const createUserService = (api: AxiosInstance) => ({
       if (credentials && credentials.user) {
         const firebaseUid = credentials.user.uid;
 
-        const response = await api.post("/user/user", {
+        const response = await api.post('/user/user', {
           firstName: payload.firstName,
           lastName: payload.lastName,
           email: payload.email,
@@ -38,12 +38,12 @@ export const createUserService = (api: AxiosInstance) => ({
   },
 
   updateUser: async (payload: any) => {
-    const { data } = await api.post("/user/update-user", payload);
+    const { data } = await api.post('/user/update-user', payload);
     return data.data;
   },
 
   deleteUser: async (payload: any) => {
-    const { data } = await api.post("/user/delete-user", payload);
+    const { data } = await api.post('/user/delete-user', payload);
     return data.data;
   },
 });

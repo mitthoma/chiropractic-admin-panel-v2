@@ -6,9 +6,9 @@
         <v-row v-for="(row, i) in rows.slice(0, 1)" :key="i">
           <v-col class="grid-cell grid-cell-heading"> </v-col>
           <v-col
-            class="grid-cell grid-cell-heading"
             v-for="(col, j) in cols"
             :key="j"
+            class="grid-cell grid-cell-heading"
           >
             <div
               v-if="!(col === 'R' || col === 'L' || col === 'B')"
@@ -62,56 +62,56 @@ export default {
   data() {
     return {
       rows: [
-        "Shoulder",
-        "Arm",
-        "Bicep",
-        "Tricep",
-        "Elbow",
-        "Wrist",
-        "Hand",
-        "Hip",
-        "Thigh",
-        "Leg",
-        "Knee",
-        "Calf",
-        "Ankle",
-        "Foot",
+        'Shoulder',
+        'Arm',
+        'Bicep',
+        'Tricep',
+        'Elbow',
+        'Wrist',
+        'Hand',
+        'Hip',
+        'Thigh',
+        'Leg',
+        'Knee',
+        'Calf',
+        'Ankle',
+        'Foot',
       ],
       cols: [
-        "L",
-        "R",
-        "B",
-        "Subluxation",
-        "Muscle Spasm",
-        "Trigger Points",
-        "Tenderness",
-        "Numbness",
-        "Edema",
-        "Swelling",
-        "Reduced Motion",
+        'L',
+        'R',
+        'B',
+        'Subluxation',
+        'Muscle Spasm',
+        'Trigger Points',
+        'Tenderness',
+        'Numbness',
+        'Edema',
+        'Swelling',
+        'Reduced Motion',
       ],
       mapColsToFields: {
-        L: "side",
-        R: "side",
-        B: "side",
-        Subluxation: "sublux",
-        "Muscle Spasm": "muscleSpasm",
-        "Trigger Points": "triggerPoints",
-        Tenderness: "tenderness",
-        Numbness: "numbness",
-        Edema: "edema",
-        Swelling: "swelling",
-        "Reduced Motion": "reducedMotion",
+        L: 'side',
+        R: 'side',
+        B: 'side',
+        Subluxation: 'sublux',
+        'Muscle Spasm': 'muscleSpasm',
+        'Trigger Points': 'triggerPoints',
+        Tenderness: 'tenderness',
+        Numbness: 'numbness',
+        Edema: 'edema',
+        Swelling: 'swelling',
+        'Reduced Motion': 'reducedMotion',
       },
       booleanFields: [
-        "sublux",
-        "muscleSpasm",
-        "triggerPoints",
-        "tenderness",
-        "numbness",
-        "edema",
-        "swelling",
-        "reducedMotion",
+        'sublux',
+        'muscleSpasm',
+        'triggerPoints',
+        'tenderness',
+        'numbness',
+        'edema',
+        'swelling',
+        'reducedMotion',
       ],
     };
   },
@@ -121,37 +121,37 @@ export default {
         (entry) =>
           entry.extremityLevel?.toLowerCase() === this.rows[i]?.toLowerCase()
       );
-      if (!entry) return "";
+      if (!entry) return '';
 
       const fieldName = this.mapColsToFields[this.cols[j]];
       const value = entry[fieldName];
 
       if (this.booleanFields.includes(fieldName)) {
-        return value ? "X" : "";
+        return value ? 'X' : '';
       }
 
       return this.getDisplayedValue(value, this.cols[j]);
     },
     getDisplayedValue(value, colName) {
-      if (colName === "L" && value === "l") return "X";
-      if (colName === "R" && value === "r") return "X";
-      if (colName === "B" && value === "b") return "X";
+      if (colName === 'L' && value === 'l') return 'X';
+      if (colName === 'R' && value === 'r') return 'X';
+      if (colName === 'B' && value === 'b') return 'X';
 
       if (
-        (value === "l" && colName === "R") ||
-        (value === "l" && colName === "B")
+        (value === 'l' && colName === 'R') ||
+        (value === 'l' && colName === 'B')
       ) {
-        return "";
+        return '';
       } else if (
-        (value === "r" && colName === "L") ||
-        (value === "r" && colName === "B")
+        (value === 'r' && colName === 'L') ||
+        (value === 'r' && colName === 'B')
       ) {
-        return "";
+        return '';
       } else if (
-        (value === "b" && colName === "L") ||
-        (value === "b" && colName === "R")
+        (value === 'b' && colName === 'L') ||
+        (value === 'b' && colName === 'R')
       ) {
-        return "";
+        return '';
       }
 
       return value;

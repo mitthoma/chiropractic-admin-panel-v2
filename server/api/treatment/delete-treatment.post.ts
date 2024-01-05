@@ -1,4 +1,4 @@
-import { deleteTreatment } from "~/server/repositories/treatmentRepository";
+import { deleteTreatment } from '~/server/repositories/treatmentRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

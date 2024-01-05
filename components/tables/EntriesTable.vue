@@ -35,7 +35,7 @@ import {
   extremityLevels,
   spinalLevels,
   spinalRegions,
-} from "../helper.js";
+} from '../helper.js';
 
 export default {
   props: {

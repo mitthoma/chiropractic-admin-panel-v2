@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const addNewComplaint = async (payload: any, patientId: number) => {
@@ -65,7 +65,7 @@ export const updateComplaint = async (
 
 export const deleteComplaint = async (complaintId: string) => {
   try {
-    const result = await prisma.complaint.delete({
+    await prisma.complaint.delete({
       where: { id: complaintId },
     });
     return true;

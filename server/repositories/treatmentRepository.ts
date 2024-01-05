@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   PrismaClient,
   entry_category_enum,
@@ -5,7 +6,7 @@ import {
   entry_extremitylevel_enum,
   entry_side_enum,
   entry_spinallevel_enum,
-} from "@prisma/client";
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 

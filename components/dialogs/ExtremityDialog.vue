@@ -192,11 +192,11 @@
 </template>
 
 <script>
-import { createEntryService } from "~/services/entry";
-import { sides, extremityLevels } from "../helper";
+import { sides, extremityLevels } from '../helper';
+import { createEntryService } from '~/services/entry';
 
 export default {
-  name: "ExtremityEntryDialog",
+  name: 'ExtremityEntryDialog',
   props: {
     value: {
       type: Boolean,
@@ -212,11 +212,11 @@ export default {
   data() {
     return {
       form: {
-        category: "extremity",
+        category: 'extremity',
         region: null,
         spinalLevel: null,
-        extremityLevel: "",
-        side: "",
+        extremityLevel: '',
+        side: '',
         sublux: false,
         muscleSpasm: false,
         triggerPoints: false,
@@ -225,14 +225,14 @@ export default {
         edema: false,
         swelling: false,
         reducedMotion: false,
-        physioPositioning: "",
+        physioPositioning: '',
         coldPack: false,
         hotPack: false,
         electStim: false,
         traction: false,
         massage: false,
-        treatmentPositioning: "",
-        technique: "",
+        treatmentPositioning: '',
+        technique: '',
         manipulation: false,
       },
       formIsValid: false,
@@ -244,7 +244,7 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit("input", val);
+        this.$emit('input', val);
       },
     },
     sideOptions() {
@@ -258,11 +258,11 @@ export default {
     },
     title() {
       return this.isUpdateMode
-        ? "Update Extremity Entry"
-        : "Add Extremity Entry";
+        ? 'Update Extremity Entry'
+        : 'Add Extremity Entry';
     },
     saveButtonText() {
-      return this.isUpdateMode ? "Update" : "Save";
+      return this.isUpdateMode ? 'Update' : 'Save';
     },
   },
   watch: {
@@ -272,20 +272,20 @@ export default {
       }
     },
   },
-  async mounted() {
+  mounted() {
     this.entryService = createEntryService(this.$api);
   },
   methods: {
     closeDialog() {
-      this.$emit("close-dialog");
+      this.$emit('close-dialog');
       this.resetForm();
     },
     resetForm() {
       for (const key in this.form) {
-        if (typeof this.form[key] === "boolean") {
+        if (typeof this.form[key] === 'boolean') {
           this.form[key] = false;
         } else {
-          this.form[key] = "";
+          this.form[key] = '';
         }
       }
     },
@@ -301,10 +301,10 @@ export default {
           ? await this.entryService.updateEntry(this.form)
           : await this.entryService.addEntry(this.form, noteId);
         if ((await res) instanceof Error) {
+          console.log('error');
         } else {
           this.closeDialog();
         }
-      } else {
       }
     },
   },

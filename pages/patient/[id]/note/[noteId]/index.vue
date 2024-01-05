@@ -29,7 +29,7 @@
                 <tr v-for="item in complaints" :key="item.id">
                   <td class="text-center">{{ item.text }}</td>
                   <td class="text-center">
-                    {{ item.text ? item.painLevel : "" }}
+                    {{ item.text ? item.painLevel : '' }}
                   </td>
                   <td class="text-center">{{ formatDate(item.lastEdited) }}</td>
                 </tr>
@@ -161,21 +161,21 @@
 </template>
 
 <script>
-import NoteDialog from "~/components/dialogs/NoteDialog.vue";
-import { noteStore } from "~/store/note";
-import { patientStore } from "~/store/patient";
-import { createEntryService } from "~/services/entry";
-import { createNoteService } from "~/services/note";
-import { createComplaintService } from "~/services/complaint";
-import { createTreatmentService } from "~~/services/treatment";
-import { createPatientService } from "~~/services/patient";
-import SpinalGrid from "~/components/grids/SpinalGrid.vue";
-import ExtremityGrid from "~/components/grids/ExtremityGrid.vue";
-import SpinalTreatmentGrid from "~~/components/grids/SpinalTreatmentGrid.vue";
-import ExtremityTreatmentGrid from "~~/components/grids/ExtremityTreatmentGrid.vue";
+import NoteDialog from '~/components/dialogs/NoteDialog.vue';
+import { noteStore } from '~/store/note';
+import { patientStore } from '~/store/patient';
+import { createEntryService } from '~/services/entry';
+import { createNoteService } from '~/services/note';
+import { createComplaintService } from '~/services/complaint';
+import { createTreatmentService } from '~~/services/treatment';
+import { createPatientService } from '~~/services/patient';
+import SpinalGrid from '~/components/grids/SpinalGrid.vue';
+import ExtremityGrid from '~/components/grids/ExtremityGrid.vue';
+import SpinalTreatmentGrid from '~~/components/grids/SpinalTreatmentGrid.vue';
+import ExtremityTreatmentGrid from '~~/components/grids/ExtremityTreatmentGrid.vue';
 
 export default {
-  name: "NotePage",
+  name: 'NotePage',
   components: {
     NoteDialog,
     SpinalGrid,
@@ -232,7 +232,7 @@ export default {
     await this.getCurrentNote();
     this.fetchEntries();
     this.complaints = await this.complaintService.getComplaintsForPatient({
-      patientId: patientId,
+      patientId,
     });
   },
   methods: {
@@ -263,7 +263,7 @@ export default {
         });
         this.noteTreatments = await this.treatmentService.getTreatmentsForNote({
           noteId: this.currentNote?.id,
-        })
+        });
         this.spinalTreatments = this.noteTreatments.filter(
           (treatment) => treatment.category === 'spinal'
         );
@@ -271,41 +271,40 @@ export default {
           (treatment) => treatment.category === 'extremity'
         );
         this.spinalEntries = this.noteEntries.filter(
-          (entry) => entry.category === "spinal"
+          (entry) => entry.category === 'spinal'
         );
         this.extremityEntries = this.noteEntries.filter(
-          (entry) => entry.category === "extremity"
+          (entry) => entry.category === 'extremity'
         );
       } else {
-        console.warn("Current note is not available.");
+        console.warn('Current note is not available.');
       }
     },
     formatDate(date) {
       if (isNaN(Date.parse(date))) {
-        return "Invalid date";
+        return 'Invalid date';
       }
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(new Date(date));
 
       return `${formattedDate}`;
     },
     formatVisitDate(date, item) {
       if (!date && !item.visitDateText) {
-        return "No Date Data";
-        f;
+        return 'No Date Data';
       }
       if (!date || isNaN(Date.parse(date))) {
         return item.visitDateText;
       }
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(new Date(date));
 
       return `${formattedDate}`;

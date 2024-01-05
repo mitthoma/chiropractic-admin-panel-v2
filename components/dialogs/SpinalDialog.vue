@@ -191,11 +191,11 @@
 </template>
 
 <script>
-import { createEntryService } from "~/services/entry";
-import { sides, spinalLevels, spinalRegions } from "../helper";
+import { sides, spinalLevels, spinalRegions } from '../helper';
+import { createEntryService } from '~/services/entry';
 
 export default {
-  name: "SpinalEntryDialog",
+  name: 'SpinalEntryDialog',
   props: {
     value: {
       type: Boolean,
@@ -211,11 +211,11 @@ export default {
   data() {
     return {
       form: {
-        category: "spinal",
-        region: "",
-        spinalLevel: "",
+        category: 'spinal',
+        region: '',
+        spinalLevel: '',
         extremityLevel: null,
-        side: "",
+        side: '',
         sublux: false,
         muscleSpasm: false,
         triggerPoints: false,
@@ -224,14 +224,14 @@ export default {
         edema: false,
         swelling: false,
         reducedMotion: false,
-        physioPositioning: "",
+        physioPositioning: '',
         coldPack: false,
         hotPack: false,
         electStim: false,
         traction: false,
         massage: false,
-        treatmentPositioning: "",
-        technique: "",
+        treatmentPositioning: '',
+        technique: '',
         manipulation: false,
       },
       formIsValid: false,
@@ -243,7 +243,7 @@ export default {
         return this.value;
       },
       set(val) {
-        this.$emit("input", val);
+        this.$emit('input', val);
       },
     },
     sideOptions() {
@@ -259,10 +259,10 @@ export default {
       return !!this.selectedItem;
     },
     title() {
-      return this.isUpdateMode ? "Update Spinal Entry" : "Add Spinal Entry";
+      return this.isUpdateMode ? 'Update Spinal Entry' : 'Add Spinal Entry';
     },
     saveButtonText() {
-      return this.isUpdateMode ? "Update" : "Save";
+      return this.isUpdateMode ? 'Update' : 'Save';
     },
   },
   watch: {
@@ -272,20 +272,20 @@ export default {
       }
     },
   },
-  async mounted() {
+  mounted() {
     this.entryService = createEntryService(this.$api);
   },
   methods: {
     closeDialog() {
-      this.$emit("close-dialog");
+      this.$emit('close-dialog');
       this.resetForm();
     },
     resetForm() {
       for (const key in this.form) {
-        if (typeof this.form[key] === "boolean") {
+        if (typeof this.form[key] === 'boolean') {
           this.form[key] = false;
         } else {
-          this.form[key] = "";
+          this.form[key] = '';
         }
       }
     },
@@ -301,14 +301,14 @@ export default {
           ? await this.entryService.updateEntry(this.form)
           : await this.entryService.addEntry(this.form, noteId);
         if ((await res) instanceof Error) {
-          console.log("Entry not added");
+          console.log('Entry not added');
         } else {
-          console.log("Entry added successfully");
-          this.$emit("entry-added");
+          console.log('Entry added successfully');
+          this.$emit('entry-added');
           this.closeDialog();
         }
       } else {
-        console.log("Form not submitted. Did not meet validation standards.");
+        console.log('Form not submitted. Did not meet validation standards.');
       }
     },
   },

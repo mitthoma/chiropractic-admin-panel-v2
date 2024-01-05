@@ -154,43 +154,40 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog v-model="deleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Delete Note</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this note? Deleting this note will
+          delete all subjective complaint and entry data associated with it.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="deleteDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="darken-1" text @click="deleteConfirmed()"
+            >Delete Note</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
-  <v-dialog v-model="deleteDialog" max-width="500px">
-    <v-card>
-      <v-card-title class="headline">Delete Note</v-card-title>
-      <v-card-text>
-        Are you sure you want to delete this note? Deleting this note will
-        delete all subjective complaint and entry data associated with it.
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="deleteDialog = false"
-          >Cancel</v-btn
-        >
-        <v-btn color="darken-1" text @click="deleteConfirmed()"
-          >Delete Note</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
 </template>
 
 <script>
-import { patientStore } from "~/store/patient";
-import { noteStore } from "~/store/note";
-import { createPatientService } from "~/services/patient";
-import { createNoteService } from "~/services/note";
-import { createEntryService } from "~/services/entry";
-import { createComplaintService } from "~/services/complaint";
-import NoteDialog from "~/components/dialogs/NoteDialog.vue";
-import { generateCSV, generateXLSX } from "~/utils/csvExport";
-// import PatientComplaintDialog from '~/components/dialogs/PatientComplaintDialog.vue';
+import { patientStore } from '~/store/patient';
+import { noteStore } from '~/store/note';
+import { createPatientService } from '~/services/patient';
+import { createNoteService } from '~/services/note';
+import { createEntryService } from '~/services/entry';
+import NoteDialog from '~/components/dialogs/NoteDialog.vue';
+import { generateCSV, generateXLSX } from '~/utils/csvExport';
 
 export default {
-  name: "PatientPage",
+  name: 'PatientPage',
   components: {
     NoteDialog,
-    // PatientComplaintDialog
   },
   data() {
     return {
@@ -204,8 +201,8 @@ export default {
       complaintService: null,
       payload: null,
       exportItems: [
-        { title: "Export as CSV", type: "csv" },
-        { title: "Export as Excel", type: "excel" },
+        { title: 'Export as CSV', type: 'csv' },
+        { title: 'Export as Excel', type: 'excel' },
       ],
       itemsPerPage: 6,
       currentPage: 1,
@@ -243,24 +240,19 @@ export default {
     this.noteStore = noteStore();
     this.noteService = createNoteService(this.$api);
     this.entryService = createEntryService(this.$api);
-    // this.complaintService = createComplaintService(this.$api);
     this.notes = await this.noteService.getNotesForPatient({
       patientId: this.$route.params.id,
     });
     this.updateDisplayedNotes();
-    // this.complaints = await this.complaintService.getComplaintsForPatient({ patientId: this.$route.params.id });
-    // this.updateDisplayedComplaints();
   },
   methods: {
     updateDisplayedNotes() {
-      // sort notes based on createdDate in descending order
-
       if (Array.isArray(this.notes)) {
         this.notes.sort((a, b) => {
           return new Date(b.createdDate) - new Date(a.createdDate);
         });
       } else {
-        console.error("notes is not an array:", this.notes);
+        console.error('notes is not an array:', this.notes);
       }
       this.notes.sort((a, b) => {
         return new Date(b.createdDate) - new Date(a.createdDate);
@@ -289,23 +281,23 @@ export default {
         });
         this.refreshNotes();
       } catch (error) {
-        console.error("Error deleting note:", error);
+        console.error('Error deleting note:', error);
       }
     },
     async handleExport(type, item) {
       await this.assignPayload(item);
-      if (type === "csv") {
+      if (type === 'csv') {
         generateCSV(this.payload);
-      } else if (type === "excel") {
+      } else if (type === 'excel') {
         generateXLSX(this.payload);
       }
     },
     formatPhoneNumber(number) {
-      if (!number) return "";
-      const cleaned = ("" + number).replace(/\D/g, "");
+      if (!number) return '';
+      const cleaned = ('' + number).replace(/\D/g, '');
       const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
       if (match) {
-        return "(" + match[1] + ") " + match[2] + "-" + match[3];
+        return '(' + match[1] + ') ' + match[2] + '-' + match[3];
       }
       return null;
     },
@@ -316,7 +308,7 @@ export default {
       });
 
       // 2. construct the payload
-      let payload = entries.reduce((acc, entry) => {
+      const payload = entries.reduce((acc, entry) => {
         const key = entry.spinalLevel || entry.extremityLevel;
         if (!acc[key]) {
           acc[key] = {
@@ -349,30 +341,30 @@ export default {
         return acc;
       }, {});
       payload.phaseOneRoomAssignments = {
-        physio: "",
-        tx: "",
+        physio: '',
+        tx: '',
       };
       const currentPatient = await this.getCurrentPatient();
 
       payload.patientFirstName = currentPatient.firstName;
       payload.patientLastName = currentPatient.lastName;
-      payload.noteVisitDate = note.visitDate || note.visitDateText || "";
+      payload.noteVisitDate = note.visitDate || note.visitDateText || '';
       payload.height =
-        `${currentPatient.heightFeet || ""}'${
-          currentPatient.heightInches || ""
-        }"` || "";
-      payload.weight = `${currentPatient.weight || ""} lbs`;
-      payload.temperature = `${note.temperature} F` || "";
-      payload.systolic = note.systolic || "";
-      payload.diastoic = note.diastoic || "";
-      payload.pulse = note.pulse || "";
-      payload.respiration = note.respiration || "";
-      payload.physiotherapyNumber = note.physiotherapy || "";
+        `${currentPatient.heightFeet || ''}'${
+          currentPatient.heightInches || ''
+        }"` || '';
+      payload.weight = `${currentPatient.weight || ''} lbs`;
+      payload.temperature = `${note.temperature} F` || '';
+      payload.systolic = note.systolic || '';
+      payload.diastoic = note.diastoic || '';
+      payload.pulse = note.pulse || '';
+      payload.respiration = note.respiration || '';
+      payload.physiotherapyNumber = note.physiotherapy || '';
 
       this.payload = payload;
     },
     backToPatients() {
-      this.$router.push("/patient");
+      this.$router.push('/patient');
     },
     goToNote(item) {
       this.noteStore.setCurrentNote(item);
@@ -393,44 +385,44 @@ export default {
     },
     formatDate(date, item) {
       if (isNaN(Date.parse(date))) {
-        return item.visitDateText || "Invalid date";
+        return item.visitDateText || 'Invalid date';
       }
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(new Date(date));
 
       return `${formattedDate}`;
     },
     formatVisitDate(date, item) {
       if (!date && !item.visitDateText) {
-        return "No Date Data";
+        return 'No Date Data';
       }
       if (!date || isNaN(Date.parse(date))) {
         return item.visitDateText;
       }
 
-      const formattedDate = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }).format(new Date(date));
 
       return `${formattedDate}`;
     },
     formatNextAppointment(date) {
       if (date) {
-        const formattedDate = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
         }).format(new Date(date));
 
         return `${formattedDate}`;
       } else {
-        return "No Appointment Scheduled";
+        return 'No Appointment Scheduled';
       }
     },
     async getCurrentPatient() {

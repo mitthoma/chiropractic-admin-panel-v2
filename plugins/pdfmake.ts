@@ -1,4 +1,4 @@
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async () => {
   // const pdfFonts = await import('pdfmake/build/vfs_fonts');
   // const pdfMake = await import('pdfmake/build/pdfmake');
   // pdfMake.default.vfs = pdfFonts.pdfMake.vfs;

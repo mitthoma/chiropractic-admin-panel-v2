@@ -44,8 +44,8 @@
         suffix="F"
         type="text"
         placeholder="Temperature"
-        @input="updatePhaseTwoTemperature"
         :rules="[rules.temperature]"
+        @input="updatePhaseTwoTemperature"
       ></v-text-field>
     </v-col>
     <v-col cols="4">
@@ -55,8 +55,8 @@
         suffix="Sys"
         type="number"
         placeholder="Systolic"
-        @input="updatePhaseTwoSystolic"
         :rules="[rules.systolic]"
+        @input="updatePhaseTwoSystolic"
       ></v-text-field>
     </v-col>
     <v-col cols="4">
@@ -66,8 +66,8 @@
         suffix="Dia"
         type="number"
         placeholder="Diastolic"
-        @input="updatePhaseTwoDiastolic"
         :rules="[rules.diastolic]"
+        @input="updatePhaseTwoDiastolic"
       ></v-text-field>
     </v-col>
   </v-row>
@@ -87,8 +87,8 @@
         suffix="ppm"
         type="number"
         placeholder="Pulse"
-        @input="updatePhaseTwoPulse"
         :rules="[rules.pulse]"
+        @input="updatePhaseTwoPulse"
       ></v-text-field>
     </v-col>
     <v-col cols="6">
@@ -98,16 +98,16 @@
         suffix="bpm"
         type="number"
         placeholder="Respiration"
-        @input="updatePhaseTwoRespiration"
         :rules="[rules.respiration]"
+        @input="updatePhaseTwoRespiration"
       ></v-text-field>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
   components: {
@@ -122,25 +122,20 @@ export default {
       type: Object,
     },
   },
-  async mounted() {
-    if (this.selectedItem && this.selectedItem.visitDate) {
-      this.visitDateTime = new Date(this.selectedItem.visitDate);
-    }
-  },
   data() {
     return {
       visitDateTime: null,
       visitDate: null,
       rules: {
-        required: (value) => !!value || "This field is required.",
+        required: (value) => !!value || 'This field is required.',
         temperature: (value) => {
-          if (value === "" || value === null || value === undefined) {
+          if (value === '' || value === null || value === undefined) {
             return true;
           }
 
           const pattern = /^\d+(\.\d{0,1})?$/;
           if (!pattern.test(value)) {
-            return "Temperature must be a number with at most one decimal place.";
+            return 'Temperature must be a number with at most one decimal place.';
           } else {
             const floatValue = parseFloat(value);
             if (isNaN(floatValue)) {
@@ -148,47 +143,47 @@ export default {
             }
             return (
               (floatValue >= 97 && floatValue <= 103) ||
-              "You would be dead by then! Temperature must be between 97°F and 103°F."
+              'You would be dead by then! Temperature must be between 97°F and 103°F.'
             );
           }
         },
         systolic: (value) => {
-          if (value === "" || value === null || value === undefined) {
+          if (value === '' || value === null || value === undefined) {
             return true;
           } else {
             return (
               (value >= 80 && value <= 240) ||
-              "You would be dead by then! Systolic must be between 80 and 240."
+              'You would be dead by then! Systolic must be between 80 and 240.'
             );
           }
         },
         diastolic: (value) => {
-          if (value === "" || value === null || value === undefined) {
+          if (value === '' || value === null || value === undefined) {
             return true;
           } else {
             return (
               (value >= 50 && value <= 130) ||
-              "You would be dead by then! Diastolic must be between 50 and 130."
+              'You would be dead by then! Diastolic must be between 50 and 130.'
             );
           }
         },
         pulse: (value) => {
-          if (value === "" || value === null || value === undefined) {
+          if (value === '' || value === null || value === undefined) {
             return true;
           } else {
             return (
               (value >= 40 && value <= 150) ||
-              "You would be dead by then! Pulse must be between 40 and 150."
+              'You would be dead by then! Pulse must be between 40 and 150.'
             );
           }
         },
         respiration: (value) => {
-          if (value === "" || value === null || value === undefined) {
+          if (value === '' || value === null || value === undefined) {
             return true;
           } else {
             return (
               (value >= 10 && value <= 30) ||
-              "You would be dead by then! Respiration must be between 10 and 30."
+              'You would be dead by then! Respiration must be between 10 and 30.'
             );
           }
         },
@@ -196,15 +191,20 @@ export default {
     };
   },
   watch: {
-    visitDateTime(newVal) {
-      this.updatePhaseTwoVisitDateTime(newVal);
+    visitDateTime() {
+      this.updatePhaseTwoVisitDateTime();
     },
+  },
+  mounted() {
+    if (this.selectedItem && this.selectedItem.visitDate) {
+      this.visitDateTime = new Date(this.selectedItem.visitDate);
+    }
   },
   methods: {
     updatePhaseTwoTemperature(event) {
       const value = event.target.value;
       if (this.rules.temperature(value)) {
-        this.$emit("update:phaseTwoForm", {
+        this.$emit('update:phaseTwoForm', {
           ...this.phaseTwoForm,
           temperature: value,
         });
@@ -213,7 +213,7 @@ export default {
     updatePhaseTwoSystolic(event) {
       const value = event.target.value;
       if (this.rules.systolic(value)) {
-        this.$emit("update:phaseTwoForm", {
+        this.$emit('update:phaseTwoForm', {
           ...this.phaseTwoForm,
           systolic: value,
         });
@@ -222,7 +222,7 @@ export default {
     updatePhaseTwoDiastolic(event) {
       const value = event.target.value;
       if (this.rules.diastolic(value)) {
-        this.$emit("update:phaseTwoForm", {
+        this.$emit('update:phaseTwoForm', {
           ...this.phaseTwoForm,
           diastolic: value,
         });
@@ -231,7 +231,7 @@ export default {
     updatePhaseTwoPulse(event) {
       const value = event.target.value;
       if (this.rules.pulse(value)) {
-        this.$emit("update:phaseTwoForm", {
+        this.$emit('update:phaseTwoForm', {
           ...this.phaseTwoForm,
           pulse: value,
         });
@@ -240,17 +240,17 @@ export default {
     updatePhaseTwoRespiration(event) {
       const value = event.target.value;
       if (this.rules.respiration(value)) {
-        this.$emit("update:phaseTwoForm", {
+        this.$emit('update:phaseTwoForm', {
           ...this.phaseTwoForm,
           respiration: value,
         });
       }
     },
-    updatePhaseTwoVisitDateTime(newVal) {
-      this.$emit("edit-visit-date-time", this.visitDateTime);
+    updatePhaseTwoVisitDateTime() {
+      this.$emit('edit-visit-date-time', this.visitDateTime);
     },
     updatePhaseTwoVisitDateText(newVal) {
-      this.$emit("update:phaseTwoForm", {
+      this.$emit('update:phaseTwoForm', {
         ...this.phaseTwoForm,
         visitDateText: newVal.target.value,
       });

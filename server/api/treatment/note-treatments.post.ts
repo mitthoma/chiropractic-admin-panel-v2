@@ -1,4 +1,4 @@
-import { getAllTreatmentsByNoteId } from "~/server/repositories/treatmentRepository";
+import { getAllTreatmentsByNoteId } from '~/server/repositories/treatmentRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
