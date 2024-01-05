@@ -52,22 +52,22 @@ export const updateReport = async (reportId: string, payload: Partial<any>) => {
   }
 };
 
-export const deleteReport = async (reportId: any) => {
+export const deleteReport = async (reportId: string) => {
   try {
-    // Fetch all relationships to this report
-    // const [entities] = await prisma.[enter entity].findMany({
-    //   where: { reportId },
-    // });
+    // Deleting related entities first
+    await prisma.posture.deleteMany({ where: { reportId } });
+    await prisma.lumbar.deleteMany({ where: { reportId } });
+    await prisma.orthoStanding.deleteMany({ where: { reportId } });
+    await prisma.cervical.deleteMany({ where: { reportId } });
+    await prisma.myoDerm.deleteMany({ where: { reportId } });
+    await prisma.reflexes.deleteMany({ where: { reportId } });
+    await prisma.orthoSeated.deleteMany({ where: { reportId } });
+    await prisma.orthoSupine.deleteMany({ where: { reportId } });
+    await prisma.orthoProne.deleteMany({ where: { reportId } });
 
-    // Delete all records in each entity related to the report
-    // if ([records of entity]) {
-    //   for (const record of [entity]) {
-    // delete the record
-    //   }
-    // }
-
-    // Delete the report
+    // Now, delete the report
     await prisma.report.delete({ where: { id: reportId } });
+
     return true;
   } catch (error) {
     return error;
