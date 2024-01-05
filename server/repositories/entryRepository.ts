@@ -58,7 +58,6 @@ export const addEntry = async (payload: EntryPayload) => {
 
     return newEntry;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
@@ -68,7 +67,6 @@ export const deleteEntry = async (entryId: string) => {
     await prisma.entry.delete({ where: { id: entryId } });
     return true;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
@@ -82,7 +80,6 @@ export const updateEntry = async (payload: Partial<any>) => {
     });
     return updatedEntry;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
@@ -92,7 +89,6 @@ export const getAllEntriesByNoteId = async (noteId: string) => {
     const entries = await prisma.entry.findMany({ where: { noteId } });
     return entries;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
@@ -105,7 +101,6 @@ export const getEntryById = async (id: string) => {
     }
     return entry;
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
