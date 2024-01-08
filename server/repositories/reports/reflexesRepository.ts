@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 interface ReflexesPayload {
   name: string;
   level?: string;
-  wnl?: number;
+  wnl?: string;
   lt?: string;
   rt?: string;
   notes?: string;
@@ -14,12 +14,23 @@ interface ReflexesPayload {
 
 export const addReflexes = async (payload: ReflexesPayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
     const newReflexes = await prisma.reflexes.create({
       data: {
-        ...payload,
+        name: payload.name,
+        level: payload.level,
+        wnl: payload.wnl,
+        lt: payload.lt,
+        rt: payload.rt,
+        notes: payload.notes,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },

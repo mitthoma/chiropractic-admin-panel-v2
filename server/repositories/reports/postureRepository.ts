@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 interface PosturePayload {
   name: string;
-  wnl?: number;
+  wnl?: string;
   tiltName?: string;
   tiltEst?: string;
   translationName?: string;
@@ -16,12 +16,26 @@ interface PosturePayload {
 
 export const addPosture = async (payload: PosturePayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
+
     const newPosture = await prisma.posture.create({
       data: {
-        ...payload,
+        name: payload.name,
+        wnl: payload.wnl,
+        tiltName: payload.tiltName,
+        tiltEst: payload.tiltEst,
+        translationName: payload.translationName,
+        translationEst: payload.translationEst,
+        rotation: payload.rotation,
+        lordKyph: payload.lordKyph,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },

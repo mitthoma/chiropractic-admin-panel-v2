@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 interface MyoDermPayload {
   name: string;
-  wnl?: number;
+  wnl?: string;
   lt?: string;
   rt?: string;
   notes?: string;
@@ -13,12 +13,22 @@ interface MyoDermPayload {
 
 export const addMyoDerm = async (payload: MyoDermPayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
     const newMyoDerm = await prisma.myoDerm.create({
       data: {
-        ...payload,
+        name: payload.name,
+        wnl: payload.wnl,
+        lt: payload.lt,
+        rt: payload.rt,
+        notes: payload.notes,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },

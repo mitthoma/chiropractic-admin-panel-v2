@@ -13,12 +13,23 @@ interface LumbarPayload {
 
 export const addLumbar = async (payload: LumbarPayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
+
     const newLumbar = await prisma.lumbar.create({
       data: {
-        ...payload,
+        name: payload.name,
+        norm: payload.norm,
+        pain: payload.pain,
+        arom: payload.arom,
+        notes: payload.notes,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },
