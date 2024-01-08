@@ -12,11 +12,14 @@ export const createLumbarService = (api: AxiosInstance) => ({
   },
 
   addLumbar: async (payload: any) => {
+    console.log('calling add ', payload);
+
     const { data } = await api.post('/lumbar/lumbar', payload);
     return data.data;
   },
 
   updateLumbar: async (payload: any) => {
+    console.log('calling update ', payload);
     const { data } = await api.post('/lumbar/update', payload);
     return data.data;
   },

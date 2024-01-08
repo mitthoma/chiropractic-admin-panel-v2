@@ -12,7 +12,7 @@ export const createReportService = (api: AxiosInstance) => ({
   },
 
   getReport: async (payload: any) => {
-    const { data } = await api.post('/report/report-id', payload);
+    const { data } = await api.post('/report/id', payload);
     return data.data;
   },
 
