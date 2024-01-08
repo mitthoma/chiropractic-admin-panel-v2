@@ -13,56 +13,74 @@
         <v-col cols="6">
           <Lumbar :report-id="$route.params.reportId" />
         </v-col>
+        <v-col cols="6">
+          <Reflexes :report-id="$route.params.reportId" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <OrthoStanding :report-id="$route.params.reportId" />
+        </v-col>
+        <v-col cols="6">
+          <OrthoSeated :report-id="$route.params.reportId" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <Cervical :report-id="$route.params.reportId" />
+        </v-col>
+        <v-col cols="6">
+          <OrthoSupine :report-id="$route.params.reportId" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <MyoDerm :report-id="$route.params.reportId" />
+        </v-col>
+        <v-col cols="6">
+          <OrthoProne :report-id="$route.params.reportId" />
+        </v-col>
       </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
-import Lumbar from '../../../../../components/report/Lumbar.vue';
+import Lumbar from '~~/components/report/Lumbar.vue';
+import OrthoStanding from '~~/components/report/OrthoStanding.vue';
+import OrthoSeated from '~~/components/report/OrthoSeated.vue';
+import OrthoSupine from '~~/components/report/OrthoSupine.vue';
+import OrthoProne from '~~/components/report/OrthoProne.vue';
+import Cervical from '~~/components/report/Cervical.vue';
+import MyoDerm from '~~/components/report/MyoDerm.vue';
+import Reflexes from '~~/components/report/Reflexes.vue';
 import { createPatientService } from '~~/services/patient';
-import { createMyoDermService } from '~~/services/myoDerm';
 import { createReportService } from '~~/services/report';
-import { createPostureService } from '~~/services/posture';
-import { createOrthoService } from '~~/services/ortho';
-import { createReflexesService } from '~~/services/reflexes';
-import { createCervicalService } from '~~/services/cervical';
 
 export default {
   name: 'PatientReport',
   components: {
     Lumbar,
+    OrthoStanding,
+    OrthoSeated,
+    OrthoSupine,
+    OrthoProne,
+    Cervical,
+    MyoDerm,
+    Reflexes,
   },
   data() {
     return {
       patientService: null,
       reportService: null,
-      cervicalService: null,
-      orthoService: null,
-      postureService: null,
-      reflexesService: null,
-      myoDermService: null,
       currentPatient: null,
       currentReport: null,
-      currentCervical: null,
-      currentReflexes: null,
-      currentOrthoSeated: null,
-      currentOrthoSupine: null,
-      currentOrthoStanding: null,
-      currentOrthoProne: null,
-      currentMyoDerm: null,
-      currentPosture: null,
     };
   },
   async mounted() {
     // load services
     this.patientService = await createPatientService(this.$api);
     this.reportService = await createReportService(this.$api);
-    this.myoDermService = await createMyoDermService(this.$api);
-    this.postureService = await createPostureService(this.$api);
-    this.reflexesService = await createReflexesService(this.$api);
-    this.orthoService = await createOrthoService(this.$api);
-    this.cervicalService = await createCervicalService(this.$api);
 
     // load patient from route
     const patientId = this.$route.params.id;
