@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 
 export const createReflexesService = (api: AxiosInstance) => ({
-  getReflexessForReport: async (payload: any) => {
+  getReflexesForReport: async (payload: any) => {
     const { data } = await api.post('/reflexes/report-reflexes', payload);
     return data.data;
   },

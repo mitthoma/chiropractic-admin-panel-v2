@@ -153,6 +153,55 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="8">
+          <v-card class="elevation-4 mx-5 my-5">
+            <div class="py-5 d-flex">
+              <v-card-title> Reports List </v-card-title>
+              <v-spacer></v-spacer>
+              <!-- Additional buttons or actions for Reports can go here -->
+              <v-row class="mx-2 pa-2" justify="end">
+                <!-- <v-btn color="primary" @click="addNewReport"
+                  >Add New Report</v-btn
+                > -->
+              </v-row>
+            </div>
+
+            <v-table>
+              <thead>
+                <tr>
+                  <th class="text-left">#</th>
+                  <th class="text-left">Exam Date</th>
+                  <th class="text-left">Date Added</th>
+                  <th class="text-right pr-8">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="">
+                <tr v-for="(item, index) in shownReports" :key="item.id">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                  <td>{{ formatDate(item.dateAdded, item) }}</td>
+                  <td class="d-flex justify-end">
+                    <v-icon class="ma-3" @click="goToReport(item)"
+                      >mdi-eye</v-icon
+                    >
+                    <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
+                      >mdi-delete</v-icon
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+            <v-pagination
+              v-model="currentReportPage"
+              :length="totalReportPages"
+              :total-visible="5"
+              color="primary"
+            ></v-pagination>
+          </v-card>
+        </v-col>
+        <!-- You can add additional columns or information here if needed -->
+      </v-row>
     </v-container>
     <v-dialog v-model="deleteDialog" max-width="500px">
       <v-card>
@@ -172,6 +221,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="deleteReportDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Delete Report</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this report? Deleting this report will
+          delete all associated data with it.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="deleteReportDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="darken-1" text @click="deleteReportConfirmed()"
+            >Delete Report</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -181,6 +248,7 @@ import { noteStore } from '~/store/note';
 import { createPatientService } from '~/services/patient';
 import { createNoteService } from '~/services/note';
 import { createEntryService } from '~/services/entry';
+import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV, generateXLSX } from '~/utils/csvExport';
 
@@ -198,6 +266,7 @@ export default {
       patientService: null,
       noteService: null,
       entryService: null,
+      reportService: null,
       complaintService: null,
       payload: null,
       exportItems: [
@@ -208,6 +277,7 @@ export default {
       currentPage: 1,
       totalPages: 1,
       displayedNotes: [],
+      displayedReports: [],
       complaints: [],
       complaintDialog: false,
       complaintCurrentPage: 1,
@@ -215,7 +285,17 @@ export default {
       displayedComplaints: [],
       selectedComplaintItem: null,
       deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
+      deleteReportDialog: false, // This is new, for managing the Delete Confirmation Dialog
+      reportToDelete: null,
       noteToDelete: null, // To hold the note object to be deleted
+      reports: [],
+      currentReportPage: 1,
+      totalReportPages: 1,
+      reportHeaders: [
+        { text: '#', value: 'number' },
+        { text: 'Exam Date', value: 'exam_date' },
+        { text: 'Date Created', value: 'dateAdded' },
+      ],
     };
   },
   computed: {
@@ -224,6 +304,9 @@ export default {
     },
     shownNotes() {
       return this.displayedNotes;
+    },
+    shownReports() {
+      return this.displayedReports;
     },
     shownComplaints() {
       return this.displayedComplaints;
@@ -238,14 +321,31 @@ export default {
     this.patientStore = patientStore();
     await this.getCurrentPatient();
     this.noteStore = noteStore();
+    this.reportService = createReportService(this.$api);
     this.noteService = createNoteService(this.$api);
     this.entryService = createEntryService(this.$api);
     this.notes = await this.noteService.getNotesForPatient({
       patientId: this.$route.params.id,
     });
     this.updateDisplayedNotes();
+    this.reports = await this.reportService.getReportsForPatient({
+      patientId: this.$route.params.id,
+    });
+    this.updateDisplayedReports();
+    console.log('reports are ', this.reports);
   },
   methods: {
+    async addNewReport() {
+      const res = await this.reportService.addReport(
+        {
+          exam_date: Date.now(),
+        },
+        this.currentPatient.id
+      );
+      if (res) {
+        this.goToReport(res);
+      }
+    },
     updateDisplayedNotes() {
       if (Array.isArray(this.notes)) {
         this.notes.sort((a, b) => {
@@ -264,15 +364,46 @@ export default {
         startIndex + this.itemsPerPage
       );
     },
+    updateDisplayedReports() {
+      if (Array.isArray(this.reports)) {
+        this.reports.sort((a, b) => {
+          return new Date(b.dateAdded) - new Date(a.dateAdded);
+        });
+      } else {
+        console.error('reports is not an array:', this.reports);
+      }
+      this.reports.sort((a, b) => {
+        return new Date(b.dateAdded) - new Date(a.dateAdded);
+      });
+      this.totalReportPages = Math.ceil(
+        this.reports.length / this.itemsPerPage
+      );
+
+      const startIndex = (this.currentReportPage - 1) * this.itemsPerPage;
+      this.displayedReports = this.reports.slice(
+        startIndex,
+        startIndex + this.itemsPerPage
+      );
+      console.log('displayed reports are ', this.displayedReports);
+    },
     // New methods for handling delete confirmation dialog
     openDeleteDialog(note) {
       this.noteToDelete = note;
       this.deleteDialog = true;
     },
+    openDeleteReportDialog(report) {
+      this.reportToDelete = report;
+      this.deleteReportDialog = true;
+    },
     async deleteConfirmed() {
       await this.deleteNote(this.noteToDelete);
       this.deleteDialog = false;
       this.noteToDelete = null;
+    },
+    async deleteReportConfirmed() {
+      await this.deleteReport(this.reportToDelete);
+      this.deleteReportDialog = false;
+      this.reportToDelete = null;
     },
     async deleteNote(item) {
       try {
@@ -280,6 +411,16 @@ export default {
           noteId: item.id,
         });
         this.refreshNotes();
+      } catch (error) {
+        console.error('Error deleting note:', error);
+      }
+    },
+    async deleteReport(item) {
+      try {
+        await this.reportService.deleteReport({
+          reportId: item.id,
+        });
+        this.refreshReports();
       } catch (error) {
         console.error('Error deleting note:', error);
       }
@@ -370,11 +511,20 @@ export default {
       this.noteStore.setCurrentNote(item);
       this.$router.push(`/patient/${this.$route.params.id}/note/${item.id}`);
     },
+    goToReport(item) {
+      this.$router.push(`/patient/${this.$route.params.id}/report/${item.id}`);
+    },
     async refreshNotes() {
       this.notes = await this.noteService.getNotesForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedNotes();
+    },
+    async refreshReports() {
+      this.reports = await this.reportService.getreportsForPatient({
+        patientId: this.$route.params.id,
+      });
+      this.updateDisplayedReports();
     },
     editComplaintItem(complaint) {
       this.complaintDialog = true;
@@ -455,6 +605,15 @@ export default {
     },
     closeComplaintDialog() {
       this.complaintDialog = false;
+    },
+
+    formatReportDate(date) {
+      if (!date || isNaN(Date.parse(date))) return 'Invalid date';
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date(date));
     },
   },
 };
