@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 interface OrthoStandingPayload {
   name: string;
-  wnl?: number;
+  wnl?: string;
   lt?: string;
   rt?: string;
   pain?: string;
@@ -13,12 +13,22 @@ interface OrthoStandingPayload {
 
 export const addOrthoStanding = async (payload: OrthoStandingPayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
     const newOrthoStanding = await prisma.orthoStanding.create({
       data: {
-        ...payload,
+        name: payload.name,
+        wnl: payload.wnl,
+        lt: payload.lt,
+        rt: payload.rt,
+        pain: payload.pain,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },

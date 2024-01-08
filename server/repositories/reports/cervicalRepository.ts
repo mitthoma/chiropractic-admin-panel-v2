@@ -13,12 +13,22 @@ interface CervicalPayload {
 
 export const addCervical = async (payload: CervicalPayload) => {
   try {
+    const reportId = payload.reportId;
+
+    const report = await prisma.report.findUnique({ where: { id: reportId } });
+    if (!report) {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
     const newCervical = await prisma.cervical.create({
       data: {
-        ...payload,
+        name: payload.name,
+        norm: payload.norm,
+        arom: payload.arom,
+        pain: payload.pain,
+        notes: payload.notes,
         report: {
           connect: {
-            id: payload.reportId,
+            id: reportId,
           },
         },
       },

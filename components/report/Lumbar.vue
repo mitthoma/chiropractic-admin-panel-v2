@@ -41,9 +41,7 @@
 </template>
 
 <script>
-import { createReportService } from '~~/services/report';
 import { createLumbarService } from '~~/services/lumbar';
-import { createPatientService } from '~~/services/patient';
 
 export default {
   name: 'LumbarInput',
@@ -51,11 +49,9 @@ export default {
   data() {
     return {
       editMode: false,
-      reportService: null,
-      patientService: null,
       lumbarService: null,
-      currentReport: null,
       existingLumbars: [],
+      lumbarsCopy: null,
       lumbars: [
         {
           name: 'Flexion',
@@ -71,17 +67,29 @@ export default {
           arom: null,
           notes: null,
         },
-      ],
-      lumbarsCopy: [
         {
-          name: 'Flexion',
-          norm: 90,
+          name: 'Lt Lat Flex',
+          norm: 30,
           pain: null,
           arom: null,
           notes: null,
         },
         {
-          name: 'Extension',
+          name: 'Rt Lat Flex',
+          norm: 30,
+          pain: null,
+          arom: null,
+          notes: null,
+        },
+        {
+          name: 'Lt Rotation',
+          norm: 30,
+          pain: null,
+          arom: null,
+          notes: null,
+        },
+        {
+          name: 'Rt Rotation',
           norm: 30,
           pain: null,
           arom: null,
@@ -91,8 +99,6 @@ export default {
     };
   },
   async mounted() {
-    this.patientService = createPatientService(this.$api);
-    this.reportService = createReportService(this.$api);
     this.lumbarService = createLumbarService(this.$api);
     await this.getExistingLumbars();
     this.lumbarsCopy = JSON.parse(JSON.stringify(this.lumbars));
@@ -132,10 +138,16 @@ export default {
               reportId: this.$route.params.reportId,
             });
           }
+        } else {
+          const lumbarToDelete = this.existingLumbars.find(
+            (el) => el.name === lumbar.name
+          );
+          if (lumbarToDelete) {
+            await this.lumbarService.deleteLumbar({ id: lumbarToDelete.id });
+          }
         }
       }
       this.lumbarsCopy = JSON.parse(JSON.stringify(this.lumbars));
-
       this.editMode = false;
     },
     async handleCancel() {
