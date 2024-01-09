@@ -15,7 +15,7 @@
           :title="item.title"
           :value="item.value"
           :prepend-icon="item.icon"
-          class="dashboard-item"
+          class="dashboard-item item"
         ></v-list-item>
       </v-list>
 
@@ -52,14 +52,6 @@
               <p class="text-caption mt-1">
                 {{ user.email }}
               </p>
-              <!-- <v-divider class="my-3"></v-divider>
-                  <v-btn
-                    rounded
-                    variant="text"
-                  >
-                    Edit Account
-                  </v-btn>
-                  <v-divider class="my-3"></v-divider> -->
             </div>
           </v-card-text>
         </v-card>
@@ -101,18 +93,18 @@ const items = [
     to: '/',
   },
   {
-    icon: 'mdi-chart-bubble',
+    icon: 'mdi-account-injury',
     title: 'Patients',
     to: '/patient',
   },
   {
-    icon: 'mdi-chart-bubble',
-    title: 'User Management',
+    icon: 'mdi-account-group',
+    title: 'Users',
     to: '/user',
   },
   {
-    icon: 'mdi-chart-bubble',
-    title: 'App Settings',
+    icon: 'mdi-cog',
+    title: 'Settings',
     to: '/settings',
   },
 ];
@@ -133,3 +125,10 @@ export default {
   // Other options like methods, computed properties, etc.
 };
 </script>
+
+<style scoped>
+.item {
+  font-weight: 800;
+  font-size: 16px;
+}
+</style>

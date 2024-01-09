@@ -114,6 +114,144 @@ model note {
   patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
 }
 
+model report {
+  id                String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  exam_date         DateTime       @db.Timestamp(6)
+  temp              Float?
+  sys               Int?
+  dia               Int?
+  pulse             Int?
+  resp              Int?
+  speech            String?
+  gait              String?
+  rhomberg          String?
+  demeanor          String?
+  dateAdded         DateTime       @default(now()) @db.Timestamp(6)
+  patientId         Int
+  patient           patient        @relation(fields: [patientId], references: [id])
+  posture           posture[]
+  lumbar            lumbar[]
+  orthoStanding     orthoStanding[]
+  cervical          cervical[]
+  myoDerm           myoDerm[]
+  reflexes          reflexes[]
+  orthoSeated       orthoSeated[]
+  orthoSupine       orthoSupine[]
+  orthoProne        orthoProne[]
+}
+
+model posture {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name            String
+  wnl             String?
+  dateAdded       DateTime @default(now()) @db.Timestamp(6)
+  tiltName        String?
+  tiltEst         String?
+  translationName String?
+  translationEst  String?
+  rotation        String?
+  lordKyph        String?
+  reportId        String   @db.Uuid
+  report          report   @relation(fields: [reportId], references: [id])
+}
+
+model lumbar {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  norm      Int?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  arom      String?
+  pain      String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model orthoStanding {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  wnl       String?
+  lt        String?
+  rt        String?
+  pain      String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model cervical {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  norm      Int?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  arom      String?
+  pain      String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model myoDerm {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  wnl       String?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  lt        String?
+  rt        String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model reflexes {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  level     String?
+  wnl       String?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  lt        String?
+  rt        String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model orthoSeated {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  wnl       String?
+  lt        String?
+  rt        String?
+  referral  String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model orthoSupine {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  wnl       String?
+  lt        String?
+  rt        String?
+  referral  String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
+model orthoProne {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  wnl       String?
+  lt        String?
+  rt        String?
+  referral  String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+}
+
 model patient {
   id              Int         @id(map: "PK_8dfa510bb29ad31ab2139fbfb99") @default(autoincrement())
   firstName       String
@@ -130,6 +268,7 @@ model patient {
   createdDate     DateTime    @default(now()) @db.Timestamp(6)
   note            note[]
   complaint       complaint[]
+  report          report[]
 }
 
 model user {

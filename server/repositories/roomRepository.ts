@@ -15,7 +15,6 @@ export const saveNewRoom = async (
     const savedRoom = await prisma.room.create({ data: payload });
     return { success: true, room: savedRoom };
   } catch (error: any) {
-    console.error(error);
     return { success: false, error: error.message };
   }
 };
@@ -31,7 +30,6 @@ export const updateRoom = async (
     });
     return updatedRoom;
   } catch (error) {
-    console.error(error);
     return null;
   }
 };
@@ -41,7 +39,6 @@ export const deleteRoom = async (id: number): Promise<boolean> => {
     const result = await prisma.room.delete({ where: { id } });
     return !!result;
   } catch (error) {
-    console.error(error);
     return false;
   }
 };
@@ -51,7 +48,6 @@ export const getRoom = async (id: number): Promise<room | null> => {
     const room = await prisma.room.findUnique({ where: { id } });
     return room;
   } catch (error) {
-    console.error(error);
     return null;
   }
 };
@@ -61,7 +57,6 @@ export const getAllRooms = async (): Promise<room[]> => {
     const rooms = await prisma.room.findMany();
     return rooms;
   } catch (error) {
-    console.error(error);
     return [];
   }
 };
