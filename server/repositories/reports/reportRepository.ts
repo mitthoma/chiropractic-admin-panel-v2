@@ -4,9 +4,6 @@ const prisma = new PrismaClient();
 // patient must exist for a report to be added so we don't need to add new patients here
 export const addNewReport = async (payload: any, patientId: number) => {
   try {
-    console.log('hitting');
-    console.log('payload is ', payload);
-    console.log('patientId is ', patientId);
     const patientsRepository = prisma.patient;
 
     // Fetch the patient from the database
@@ -14,23 +11,18 @@ export const addNewReport = async (payload: any, patientId: number) => {
       where: { id: patientId as number },
     });
 
-    console.log('PATIENT IS ', patient);
-
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
     const newReport = await prisma.report.create({
       data: {
         ...payload,
-        patient: patient.id as number,
+        patientId: patient.id as number,
       },
     });
 
-    console.log('NEW REPORT IS ', newReport);
-
     return newReport;
   } catch (error) {
-    console.log('error is ', error);
     return error;
   }
 };

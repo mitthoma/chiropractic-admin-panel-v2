@@ -9,6 +9,15 @@
           ></v-col
         >
       </v-row>
+      <GeneralInfo :patient="currentPatient" :report="currentReport" />
+      <Vitals :patient="currentPatient" :report="currentReport" />
+      <v-row>
+        <v-col class="text-center" cols="12">
+          <v-card>
+            <v-card-title>Posture (WORK IN PROGRESS)</v-card-title>
+          </v-card>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="6">
           <Lumbar :report-id="$route.params.reportId" />
@@ -54,6 +63,8 @@ import OrthoProne from '~~/components/report/OrthoProne.vue';
 import Cervical from '~~/components/report/Cervical.vue';
 import MyoDerm from '~~/components/report/MyoDerm.vue';
 import Reflexes from '~~/components/report/Reflexes.vue';
+import GeneralInfo from '~~/components/report/GeneralInfo.vue';
+import Vitals from '~~/components/report/Vitals.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 
@@ -68,14 +79,21 @@ export default {
     Cervical,
     MyoDerm,
     Reflexes,
+    GeneralInfo,
+    Vitals,
   },
   data() {
     return {
       patientService: null,
       reportService: null,
-      currentPatient: null,
+      patient: null,
       currentReport: null,
     };
+  },
+  computed: {
+    currentPatient() {
+      return this.patient;
+    },
   },
   async mounted() {
     // load services
@@ -84,7 +102,7 @@ export default {
 
     // load patient from route
     const patientId = this.$route.params.id;
-    this.currentPatient = await this.patientService.getPatient({
+    this.patient = await this.patientService.getPatient({
       id: patientId,
     });
 
@@ -97,11 +115,38 @@ export default {
         id: this.$route.params.reportId,
       });
     },
+
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
+    },
+    formatExamDate(date) {
+      return date ? new Date(date).toLocaleDateString() : 'N/A';
+    },
+    formatHeight(feet, inches) {
+      return `${feet}' ${inches}"` || 'N/A';
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.posture-option {
+  display: flex;
+  align-items: center;
+}
+.posture-option label {
+  margin-right: 10px;
+}
+.posture-option div {
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 5px;
+}
+.posture-option .active {
+  font-weight: bold;
+  background-color: lightgray; /* or any color that matches your theme */
+}
+.posture-option .inactive {
+  opacity: 0.6;
+}
+</style>
