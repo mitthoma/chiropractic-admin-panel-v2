@@ -11,8 +11,6 @@ export const addNewReport = async (payload: any, patientId: number) => {
       where: { id: patientId as number },
     });
 
-    console.log('PATIENT IS ', patient);
-
     if (!patient) {
       throw new Error(`Patient with id ${patientId} not found`);
     }
@@ -23,11 +21,8 @@ export const addNewReport = async (payload: any, patientId: number) => {
       },
     });
 
-    console.log('NEW REPORT IS ', newReport);
-
     return newReport;
   } catch (error) {
-    console.log('error is ', error);
     return error;
   }
 };
