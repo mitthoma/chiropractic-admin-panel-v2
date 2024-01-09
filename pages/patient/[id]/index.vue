@@ -161,9 +161,40 @@
               <v-spacer></v-spacer>
               <!-- Additional buttons or actions for Reports can go here -->
               <v-row class="mx-2 pa-2" justify="end">
-                <!-- <v-btn color="primary" @click="addNewReport"
+                <v-btn color="primary" @click="openNewReportDialog"
                   >Add New Report</v-btn
-                > -->
+                >
+                <v-dialog
+                  v-model="reportDialog"
+                  max-width="500px"
+                  max-height="600px"
+                >
+                  <v-card class="report-dialog-card">
+                    <v-card-title class="headline"
+                      >Select a Report Date</v-card-title
+                    >
+                    <v-card-text>
+                      <VueDatePicker
+                        v-model="selectedDate"
+                        type="date"
+                        class="datepicker"
+                        :enable-time-picker="false"
+                      />
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue darken-1" text @click="closeDialog"
+                        >Cancel</v-btn
+                      >
+                      <v-btn
+                        color="green darken-1"
+                        text
+                        @click="saveAndGoToReport"
+                        >Save & Go To Report</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-row>
             </div>
 
@@ -243,6 +274,7 @@
 </template>
 
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
 import { patientStore } from '~/store/patient';
 import { noteStore } from '~/store/note';
 import { createPatientService } from '~/services/patient';
@@ -251,11 +283,13 @@ import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV, generateXLSX } from '~/utils/csvExport';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
   name: 'PatientPage',
   components: {
     NoteDialog,
+    VueDatePicker,
   },
   data() {
     return {
@@ -296,6 +330,8 @@ export default {
         { text: 'Exam Date', value: 'exam_date' },
         { text: 'Date Created', value: 'dateAdded' },
       ],
+      reportDialog: false,
+      selectedDate: null,
     };
   },
   computed: {
@@ -335,16 +371,18 @@ export default {
     console.log('reports are ', this.reports);
   },
   methods: {
-    async addNewReport() {
-      const res = await this.reportService.addReport(
+    async saveAndGoToReport() {
+      const report = await this.reportService.addReport(
         {
-          exam_date: Date.now(),
+          exam_date: this.selectedDate,
         },
         this.currentPatient.id
       );
-      if (res) {
-        this.goToReport(res);
-      }
+      console.log('report id is ', report);
+      this.$router.push(
+        `/patient/${this.$route.params.id}/report/${report.id}`
+      );
+      this.dialog = false;
     },
     updateDisplayedNotes() {
       if (Array.isArray(this.notes)) {
@@ -521,7 +559,7 @@ export default {
       this.updateDisplayedNotes();
     },
     async refreshReports() {
-      this.reports = await this.reportService.getreportsForPatient({
+      this.reports = await this.reportService.getReportsForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedReports();
@@ -545,6 +583,12 @@ export default {
       }).format(new Date(date));
 
       return `${formattedDate}`;
+    },
+    openNewReportDialog() {
+      this.reportDialog = true;
+    },
+    closeDialog() {
+      this.reportDialog = false;
     },
     formatVisitDate(date, item) {
       if (!date && !item.visitDateText) {
@@ -622,5 +666,20 @@ export default {
 <style scoped>
 tbody tr {
   height: 50px;
+}
+.v-dialog {
+  overflow-y: auto;
+}
+
+.report-dialog-card {
+  min-height: 80vh;
+}
+
+.datepicker {
+  z-index: 9999;
+}
+
+.dp__menu {
+  position: inherit !important;
 }
 </style>
