@@ -1,51 +1,53 @@
 <template>
-  <v-container v-if="!isLoggedIn">
-    <div class="text-center mt-12">
-      <h3>Pynkerton Chiropractic Portal</h3>
-    </div>
-    <v-row class="pt-16">
-      <v-col cols="2"> </v-col>
-      <v-col cols="8">
-        <v-card class="w-full">
-          <v-card-title> Log In </v-card-title>
+  <v-container v-if="!isLoggedIn" fluid fill-height align-center justify-center>
+    <v-row align="center" justify="center" class="h-screen">
+      <v-col cols="12" sm="5" md="4">
+        <v-card class="w-full max-w-sm" variant="tonal">
+          <div class="text-center mt-6">
+            <v-icon icon="mdi-hospital-building" size="large"></v-icon>
+            <p class="font-weight-bold text-medium-emphasis mt-1">
+              Pynkerton Chiropractic
+            </p>
+          </div>
+          <v-card-title class="text-center mt-3"> Log In </v-card-title>
+          <p class="text-caption text-medium-emphasis text-center">
+            Enter your email and password below
+          </p>
           <v-card-text>
             <v-form ref="loginForm">
               <v-text-field
                 v-model="email"
                 label="Email"
                 variant="outlined"
-                dense
+                density="compact"
               ></v-text-field>
               <v-text-field
                 v-model="password"
                 :type="visible ? 'text' : 'password'"
                 label="Password"
-                dense
+                density="compact"
                 variant="outlined"
                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append-inner="visible = !visible"
               >
               </v-text-field>
-              <div class="d-flex">
+              <v-btn
+                block
+                color="primary"
+                :disabled="loading"
+                @click="signIn()"
+              >
+                Log In
+              </v-btn>
+              <div class="text-right mt-2">
                 <v-btn
-                  color="primary"
-                  :disabled="loading"
-                  class="justify-start"
-                  @click="signIn()"
-                >
-                  Log In
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  class="justify-end"
+                  variant="plain"
+                  size="x-small"
                   @click="showResetDialog = true"
                 >
                   Forgot password?
                 </v-btn>
               </div>
-
               <v-dialog
                 v-if="clientSide"
                 v-model="showResetDialog"
@@ -89,7 +91,6 @@
           </div>
         </v-card>
       </v-col>
-      <v-col cols="2"> </v-col>
     </v-row>
   </v-container>
 
