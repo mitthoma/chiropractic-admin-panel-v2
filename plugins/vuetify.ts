@@ -5,12 +5,10 @@ import * as directives from 'vuetify/directives';
 const customLight: ThemeDefinition = {
   dark: false,
   colors: {
-    background: '#f0f6fc',
+    background: '#e9eff5',
     surface: '#FFFFFF',
-    primary: '#466afa',
-    'primary-darken-1': '#3700B3',
-    secondary: '#03DAC6',
-    'secondary-darken-1': '#018786',
+    primary: '#5576fa',
+    secondary: '#3490d1',
     error: '#B00020',
     info: '#2196F3',
     success: '#4CAF50',
@@ -26,6 +24,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       defaultTheme: 'dark',
       themes: {
         customLight,
+      },
+      variations: {
+        colors: ['primary', 'secondary'],
+        lighten: 1,
+        darken: 1,
       },
     },
   });
