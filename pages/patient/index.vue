@@ -33,26 +33,33 @@
             </tr>
           </thead>
           <tbody class="">
-            <tr v-for="item in displayedPatients" :key="item.id">
-              <td>{{ item.acctNo }}</td>
-              <td>{{ item.firstName }}</td>
-              <td>{{ item.lastName }}</td>
-              <td>{{ item.email }}</td>
-              <td>{{ formatPhoneNumber(item.phoneNumber) }}</td>
-              <td>{{ formatDateTime(item.lastUpdated) }}</td>
-              <td class="d-flex justify-end">
-                <v-icon class="ma-2 pa-3 pt-5" @click="editPatientItem(item)"
-                  >mdi-pencil</v-icon
-                >
-                <v-icon class="ma-2 pa-3 pt-5" @click="deletePatient(item)"
-                  >mdi-delete</v-icon
-                >
-                <!-- Add delete button -->
-                <v-btn class="ma-2" color="primary" @click="goToPatient(item)"
-                  >See patient</v-btn
-                >
-              </td>
-            </tr>
+            <template v-for="(item, index) in displayedPatients" :key="item.id">
+              <tr :class="index % 2 == 0 ? 'bg-primary' : 'bg-secondary'">
+                <td>{{ item.acctNo }}</td>
+                <td>{{ item.firstName }}</td>
+                <td>{{ item.lastName }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ formatPhoneNumber(item.phoneNumber) }}</td>
+                <td>{{ formatDateTime(item.lastUpdated) }}</td>
+                <td class="d-flex justify-end">
+                  <v-icon class="ma-2 pa-3 pt-5" @click="editPatientItem(item)"
+                    >mdi-pencil</v-icon
+                  >
+                  <v-icon class="ma-2 pa-3 pt-5" @click="deletePatient(item)"
+                    >mdi-delete</v-icon
+                  >
+                  <!-- Add delete button -->
+                  <v-btn
+                    append-icon="mdi-arrow-right"
+                    class="ma-2"
+                    color="primary"
+                    @click="goToPatient(item)"
+                  >
+                    Select patient
+                  </v-btn>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </v-table>
         <v-pagination
