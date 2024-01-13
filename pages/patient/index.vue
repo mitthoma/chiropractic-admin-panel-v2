@@ -1,7 +1,14 @@
 <template>
   <div>
     <v-container>
-      <v-btn class="mb-4" @click="backToDashboard">Back to Dashboard</v-btn>
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 text-primary font-weight-bold"
+        @click="backToDashboard"
+      >
+        Back to Dashboard
+      </v-btn>
       <v-card class="elevation-4">
         <div class="py-5 d-flex">
           <v-card-title> Patient List </v-card-title>
