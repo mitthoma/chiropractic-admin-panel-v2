@@ -1,6 +1,6 @@
 <template>
-  <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer">
+  <div>
+    <v-navigation-drawer v-model="drawer" theme="dark">
       <v-list-item class="my-5" title="Pynkerton Chiropractic"></v-list-item>
 
       <v-divider></v-divider>
@@ -21,7 +21,14 @@
 
       <template #append>
         <div class="pa-2">
-          <v-btn color="primary" block @click="signOut()"> Logout </v-btn>
+          <v-btn
+            color="primary"
+            block
+            :theme="theme.global.name.value"
+            @click="signOut()"
+          >
+            Logout
+          </v-btn>
         </div>
       </template>
     </v-navigation-drawer>
@@ -61,7 +68,7 @@
     <v-main>
       <NuxtPage />
     </v-main>
-  </v-app>
+  </div>
 </template>
 
 <script></script>
@@ -114,7 +121,9 @@ const signOut = async () => {
   await signOutUser();
 };
 watch(themeToggler, () => {
-  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
+  theme.global.name.value = theme.global.current.value.dark
+    ? 'customLight'
+    : 'dark';
 });
 </script>
 
