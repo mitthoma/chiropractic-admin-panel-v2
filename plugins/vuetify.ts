@@ -26,7 +26,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         customLight,
       },
       variations: {
-        colors: ['primary', 'secondary'],
+        colors: ['primary', 'secondary', 'surface'],
         lighten: 1,
         darken: 1,
       },
