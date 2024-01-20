@@ -32,13 +32,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in displayedUsers" :key="user.id">
-              <td>{{ user.firstName }}</td>
-              <td>{{ user.lastName }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.role }}</td>
-              <td class="d-flex justify-end"></td>
-            </tr>
+            <template v-for="(user, index) in displayedUsers" :key="user.id">
+              <tr
+                :class="index % 2 == 0 ? 'bg-surface' : 'bg-surface-darken-1'"
+              >
+                <td>{{ user.firstName }}</td>
+                <td>{{ user.lastName }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td class="d-flex justify-end"></td>
+              </tr>
+            </template>
           </tbody>
         </v-table>
         <v-pagination
