@@ -1,61 +1,16 @@
 <template>
   <div>
     <v-container>
-      <v-btn class="mx-5 mb-4" @click="backToPatients()"
-        >Back to Patient List</v-btn
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 text-primary font-weight-bold"
+        @click="backToPatients()"
+      >
+        Back to Patient List</v-btn
       >
       <v-row>
-        <v-col cols="12">
-          <v-card class="mx-5 my-5 px-5 py-5">
-            <div class="d-flex justify-space-around py-4">
-              <v-avatar color="info" size="x-large">
-                {{ currentPatient?.firstName[0]
-                }}{{ currentPatient?.lastName[0] }}
-              </v-avatar>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Name</v-label>
-                <v-card-text
-                  >{{ currentPatient?.firstName }}
-                  {{ currentPatient?.lastName }}</v-card-text
-                >
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Account Number</v-label>
-                <v-card-text>{{ currentPatient?.acctNo }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Email</v-label>
-                <v-card-text>{{ currentPatient?.email }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Phone Number</v-label>
-                <v-card-text>{{
-                  formatPhoneNumber(currentPatient?.phoneNumber)
-                }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Height</v-label>
-                <v-card-text
-                  >{{ currentPatient?.heightFeet }}'
-                  {{ currentPatient?.heightInches }}"</v-card-text
-                >
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Weight</v-label>
-                <v-card-text>{{ currentPatient?.weight }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Next Appointment</v-label>
-                <v-card-text>{{
-                  formatNextAppointment(currentPatient?.nextAppointment)
-                }}</v-card-text>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="6">
+        <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
               <v-card-title> Notes List </v-card-title>
@@ -126,7 +81,57 @@
             ></v-pagination>
           </v-card>
         </v-col>
-        <v-col class="px-1" cols="6">
+        <v-col class="px-1" cols="5">
+          <v-card class="mx-5 my-5 px-5 py-5">
+            <div class="text-left">
+              <div class="d-flex align-center mb-3">
+                <v-avatar color="info" size="x-large">
+                  {{ currentPatient?.firstName[0]
+                  }}{{ currentPatient?.lastName[0] }}
+                </v-avatar>
+                <strong class="pl-3">{{
+                  `${currentPatient?.firstName} ${currentPatient?.lastName}`
+                }}</strong>
+              </div>
+              <div class="mb-2">
+                <p class="text-caption font-weight-light">Account number</p>
+                <p>{{ currentPatient?.acctNo }}</p>
+              </div>
+              <div class="mb-2">
+                <p class="text-caption font-weight-light">Email</p>
+                <p>{{ currentPatient?.email }}</p>
+              </div>
+              <div class="mb-2">
+                <p class="text-caption font-weight-light">Phone number</p>
+                <p>{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</p>
+              </div>
+              <div class="d-flex mb-2">
+                <div>
+                  <p class="text-caption font-weight-light">Height</p>
+                  <p>
+                    {{ currentPatient?.heightFeet }}'
+                    {{ currentPatient?.heightInches }}"
+                  </p>
+                </div>
+                <div class="pl-5">
+                  <p class="text-caption font-weight-light">Weight</p>
+                  <p>{{ `${currentPatient?.weight} lbs` }}</p>
+                </div>
+              </div>
+              <div class="d-flex justify-space-between">
+                <div>
+                  <p class="text-caption font-weight-light">Next appointment</p>
+                  <p>
+                    {{ formatNextAppointment(currentPatient?.nextAppointment) }}
+                  </p>
+                </div>
+                <v-btn color="primary" @click="patientDialog = true"
+                  >Edit Profile</v-btn
+                >
+              </div>
+            </div>
+          </v-card>
+
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
@@ -241,6 +246,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <PatientDialog
+      v-model="patientDialog"
+      :selected-item="currentPatient"
+      @close-dialog="closePatientDialog"
+      @patient-added="getCurrentPatient"
+    />
   </div>
 </template>
 
@@ -255,12 +266,14 @@ import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV, generateXLSX } from '~/utils/csvExport';
 import '@vuepic/vue-datepicker/dist/main.css';
+import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
 export default {
   name: 'PatientPage',
   components: {
     NoteDialog,
     VueDatePicker,
+    PatientDialog,
   },
   data() {
     return {
@@ -303,11 +316,14 @@ export default {
       ],
       reportDialog: false,
       selectedDate: null,
+      patientDialog: false,
     };
   },
   computed: {
     currentPatient() {
-      return this.patientStore?.getCurrentPatient;
+      const pat = this.patientStore?.getCurrentPatient;
+      console.log('current patient', pat);
+      return pat;
     },
     shownNotes() {
       return this.displayedNotes;
@@ -560,6 +576,9 @@ export default {
     },
     closeDialog() {
       this.reportDialog = false;
+    },
+    closePatientDialog() {
+      this.patientDialog = false;
     },
     formatVisitDate(date, item) {
       if (!date && !item.visitDateText) {
