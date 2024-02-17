@@ -12,10 +12,8 @@
       <GeneralInfo :patient="currentPatient" :report="currentReport" />
       <Vitals :patient="currentPatient" :report="currentReport" />
       <v-row>
-        <v-col class="text-center" cols="12">
-          <v-card>
-            <v-card-title>Posture (WORK IN PROGRESS)</v-card-title>
-          </v-card>
+        <v-col cols="12">
+          <Posture :report-id="$route.params.reportId" />
         </v-col>
       </v-row>
       <v-row>
@@ -65,6 +63,7 @@ import MyoDerm from '~~/components/report/MyoDerm.vue';
 import Reflexes from '~~/components/report/Reflexes.vue';
 import GeneralInfo from '~~/components/report/GeneralInfo.vue';
 import Vitals from '~~/components/report/Vitals.vue';
+import Posture from '~~/components/report/Posture.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 
@@ -81,6 +80,7 @@ export default {
     Reflexes,
     GeneralInfo,
     Vitals,
+    Posture,
   },
   data() {
     return {

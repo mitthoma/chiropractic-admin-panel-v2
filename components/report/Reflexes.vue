@@ -116,31 +116,42 @@ export default {
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
     },
+    // TODO: glorious, this works, now we need to add it to all other entities, including posture
     async handleSave() {
-      for (const reflexes of this.reflexes) {
-        if (reflexes.arom || reflexes.pain || reflexes.notes) {
-          const matchingReflexes = this.existingReflexes.find(
-            (el) => el.name === reflexes.name
-          );
+      for (const reflex of this.reflexes) {
+        const matchingReflex = this.existingReflexes.find(
+          (el) => el.name === reflex.name
+        );
 
-          if (matchingReflexes) {
-            await this.reflexesService.updateReflexes({
-              id: matchingReflexes.id,
-              ...reflexes,
-            });
+        // Determine if there are changes
+        const isChanged =
+          JSON.stringify(reflex) !==
+          JSON.stringify(this.reflexesCopy.find((r) => r.name === reflex.name));
+
+        if (isChanged) {
+          // If there's a match in existingReflexes, update
+          if (matchingReflex) {
+            const isEmpty = [
+              reflex.wnl,
+              reflex.lt,
+              reflex.rt,
+              reflex.notes,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.reflexesService.deleteReflexes({
+                id: matchingReflex.id,
+              });
+            } else {
+              await this.reflexesService.updateReflexes({
+                id: matchingReflex.id,
+                ...reflex,
+              });
+            }
           } else {
+            // If no match and there are changes, add new reflex
             await this.reflexesService.addReflexes({
-              ...reflexes,
+              ...reflex,
               reportId: this.$route.params.reportId,
-            });
-          }
-        } else {
-          const reflexesToDelete = this.existingReflexes.find(
-            (el) => el.name === reflexes.name
-          );
-          if (reflexesToDelete) {
-            await this.reflexesService.deleteReflexes({
-              id: reflexesToDelete.id,
             });
           }
         }

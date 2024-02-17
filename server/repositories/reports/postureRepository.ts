@@ -11,6 +11,8 @@ interface PosturePayload {
   translationEst?: string;
   rotation?: string;
   lordKyph?: string;
+  pronated?: string;
+  supinated?: string;
   reportId: string;
 }
 
@@ -33,6 +35,8 @@ export const addPosture = async (payload: PosturePayload) => {
         translationEst: payload.translationEst,
         rotation: payload.rotation,
         lordKyph: payload.lordKyph,
+        pronated: payload.pronated,
+        supinated: payload.supinated,
         report: {
           connect: {
             id: reportId,

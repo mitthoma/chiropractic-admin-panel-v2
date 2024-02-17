@@ -149,6 +149,8 @@ model posture {
   tiltEst         String?
   translationName String?
   translationEst  String?
+  pronated        String?
+  supinated       String?
   rotation        String?
   lordKyph        String?
   reportId        String   @db.Uuid
