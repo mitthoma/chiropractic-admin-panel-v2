@@ -28,6 +28,7 @@
                   label="Email"
                   variant="outlined"
                   density="compact"
+                  :disabled="loading"
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
@@ -37,6 +38,7 @@
                   variant="outlined"
                   :rules="rules"
                   :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                  :disabled="loading"
                   @click:append-inner="visible = !visible"
                 >
                 </v-text-field>
@@ -87,16 +89,26 @@
                 <!-- <GoogleLogin /> -->
               </v-form>
             </v-card-text>
-            <v-snackbar
-              v-model="loginUnsuccessful"
-              color="orange-lighten-1"
-              timeout="10000"
-              vertical
-              multi-line
-            >
-              <p>Login unsuccessful</p>
-              <p>{{ errorMessage }}</p>
-            </v-snackbar>
+            <!--
+              Apparently if you are rendering a tag with values that only exist on the client (i.e. not tied to server side values)
+              you can get "Hypdration completed but contains mismatches" errors. This is caused when html on server side rendering doesn't match client side.
+
+              You can use "client-only" wrapper to resolve this. I had to do this because it was causing other weird errors.
+              Anyway, just an FYI for what this client-only tag is for.
+              https://stackoverflow.com/questions/73394431/why-do-i-get-this-hydration-warning-when-using-usestate-in-nuxt-3
+            -->
+            <client-only>
+              <v-snackbar
+                v-model="loginUnsuccessful"
+                color="orange-lighten-1"
+                timeout="10000"
+                vertical
+                multi-line
+              >
+                <p>Login unsuccessful</p>
+                <p>{{ errorMessage }}</p>
+              </v-snackbar>
+            </client-only>
           </v-card>
         </v-col>
       </v-row>
@@ -105,6 +117,7 @@
     <NuxtLayout v-else name="default"> </NuxtLayout>
   </v-app>
 </template>
+
 <script>
 import { userStore } from './store/user';
 
@@ -161,6 +174,9 @@ export default {
   },
   methods: {
     async signIn() {
+      if (!this.email || !this.password) {
+        return;
+      }
       this.loading = true;
       try {
         const result = await signInUser(this.email, this.password);
