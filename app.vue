@@ -21,13 +21,13 @@
               Enter your email and password below
             </p>
             <v-card-text>
-              <v-form ref="loginForm">
+              <v-form ref="loginForm" @submit.prevent="signIn">
                 <v-text-field
                   v-model="email"
+                  :rules="rules"
                   label="Email"
                   variant="outlined"
                   density="compact"
-                  required
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
@@ -35,16 +35,12 @@
                   label="Password"
                   density="compact"
                   variant="outlined"
+                  :rules="rules"
                   :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                   @click:append-inner="visible = !visible"
                 >
                 </v-text-field>
-                <v-btn
-                  block
-                  color="primary"
-                  :disabled="loading"
-                  @click="signIn()"
-                >
+                <v-btn block color="primary" :disabled="loading" type="submit">
                   Log In
                 </v-btn>
                 <div class="text-right mt-2">
@@ -91,12 +87,16 @@
                 <!-- <GoogleLogin /> -->
               </v-form>
             </v-card-text>
-            <div v-if="loginUnsuccessful">
-              <v-card-text color="red">
-                Sign in unsuccessful. Please check your user credentials and try
-                again.
-              </v-card-text>
-            </div>
+            <v-snackbar
+              v-model="loginUnsuccessful"
+              color="orange-lighten-1"
+              timeout="10000"
+              vertical
+              multi-line
+            >
+              <p>Login unsuccessful</p>
+              <p>{{ errorMessage }}</p>
+            </v-snackbar>
           </v-card>
         </v-col>
       </v-row>
@@ -115,12 +115,19 @@ export default {
       email: '',
       password: '',
       loginUnsuccessful: false,
+      errorMessage: '',
       store: null,
       loading: false,
       passwordVisibility: false,
       showResetDialog: false,
       resetEmail: '',
       clientSide: false,
+      rules: [
+        (value) => {
+          if (value) return true;
+          return 'This field must not be blank.';
+        },
+      ],
     };
   },
   computed: {
@@ -157,16 +164,39 @@ export default {
       this.loading = true;
       try {
         const result = await signInUser(this.email, this.password);
-        if (result.error) {
-          this.loginUnsuccessful = true;
-        } else {
-          // login success
+        // success
+        if (result.success) {
+          this.loginUnsuccessful = false;
           this.email = '';
           this.password = '';
           this.passwordVisibility = false;
         }
+        // failure
+        else {
+          this.loginUnsuccessful = true;
+          if (result.error) {
+            // check for common errors, like user not found or bad credentials
+            const err = result.error;
+            if (err.includes('auth/user-not-found')) {
+              this.errorMessage =
+                'User not found. Please confirm the correct email is entered.';
+            } else if (err.includes('auth/wrong-password')) {
+              this.errorMessage =
+                'Incorrect email or password combination. Please confirm the correct credentials have been entered and try again.';
+            } else if (err.includes('auth/invalid-email')) {
+              this.errorMessage =
+                'Invalid email. Please confirm that a valid email has been entered and try again.';
+            } else {
+              this.errorMessage = result.error;
+            }
+          } else {
+            this.errorMessage = 'An unknown error occurred.';
+          }
+        }
       } catch (err) {
-        console.log('Sign in unsuccessful', err);
+        console.error('Sign in unsuccessful', err);
+        this.loginUnsuccessful = true;
+        this.errorMessage = 'An unexpected error has occurred.';
       } finally {
         this.loading = false;
       }
