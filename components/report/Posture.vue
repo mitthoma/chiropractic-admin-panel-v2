@@ -22,7 +22,10 @@
           <th>Rotation</th>
           <th>Lordosis / Kyphosis</th>
         </tr>
-        <tr v-for="(posture, index) in postures" :key="index">
+        <tr
+          v-for="(posture, index) in postures.slice(0, posturesLength - 1)"
+          :key="index"
+        >
           <td>{{ posture.name }}</td>
           <td v-if="!editMode">{{ posture.wnl || 'None' }}</td>
           <td v-else>
@@ -68,7 +71,7 @@
           <th>Pronated</th>
           <th>Supinated</th>
         </tr>
-        <tr v-for="(posture, index) in arches" :key="index">
+        <tr v-for="(posture, index) in postures.slice(-1)" :key="index">
           <td>{{ posture.name }}</td>
           <td v-if="!editMode">{{ posture.pronated || 'None' }}</td>
           <td v-else>
@@ -96,6 +99,7 @@ export default {
       postureService: null,
       existingPostures: [],
       posturesCopy: null,
+      posturesLength: 0,
       postures: [
         {
           name: 'Head / Cervical',
@@ -106,6 +110,8 @@ export default {
           translationEst: null,
           rotation: null,
           lordKyph: null,
+          pronated: null,
+          supinated: null,
         },
         {
           name: 'Shoulder / Thor',
@@ -116,6 +122,8 @@ export default {
           translationEst: null,
           rotation: null,
           lordKyph: null,
+          pronated: null,
+          supinated: null,
         },
         {
           name: 'Pelvis / Posture',
@@ -126,11 +134,18 @@ export default {
           translationEst: null,
           rotation: null,
           lordKyph: null,
+          pronated: null,
+          supinated: null,
         },
-      ],
-      arches: [
         {
           name: 'Arch',
+          wnl: null,
+          tiltEst: null,
+          tiltName: null,
+          translationName: null,
+          translationEst: null,
+          rotation: null,
+          lordKyph: null,
           pronated: null,
           supinated: null,
         },
@@ -141,6 +156,7 @@ export default {
     this.postureService = createPostureService(this.$api);
     await this.getExistingPostures();
     this.posturesCopy = JSON.parse(JSON.stringify(this.postures));
+    this.posturesLength = this.postures.length;
   },
   methods: {
     async getExistingPostures() {
@@ -197,6 +213,7 @@ export default {
               });
             }
           } else {
+            console.log('no match AND changes and posture is ', posture);
             // If no match and there are changes, add new posture
             await this.postureService.addPosture({
               ...posture,
@@ -207,6 +224,9 @@ export default {
       }
       this.posturesCopy = JSON.parse(JSON.stringify(this.postures));
       this.editMode = false;
+      await this.getExistingPostures();
+      this.posturesCopy = JSON.parse(JSON.stringify(this.postures));
+      this.posturesLength = this.postures.length;
     },
     async handleCancel() {
       this.editMode = false;
