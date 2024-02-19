@@ -104,33 +104,45 @@ export default {
     },
     async handleSave() {
       for (const myoDerm of this.myoDerms) {
-        if (myoDerm.arom || myoDerm.pain || myoDerm.notes) {
-          const matchingMyoDerm = this.existingMyoDerms.find(
-            (el) => el.name === myoDerm.name
+        const matchingMyoDerm = this.existingMyoDerms.find(
+          (el) => el.name === myoDerm.name
+        );
+
+        const isChanged =
+          JSON.stringify(myoDerm) !==
+          JSON.stringify(
+            this.myoDermsCopy.find((r) => r.name === myoDerm.name)
           );
 
+        if (isChanged) {
           if (matchingMyoDerm) {
-            await this.myoDermService.updateMyoDerm({
-              id: matchingMyoDerm.id,
-              ...myoDerm,
-            });
+            const isEmpty = [
+              myoDerm.wnl,
+              myoDerm.lt,
+              myoDerm.rt,
+              myoDerm.notes,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.myoDermService.deleteMyoDerm({
+                id: matchingMyoDerm.id,
+              });
+            } else {
+              await this.myoDermService.updateMyoDerm({
+                id: matchingMyoDerm.id,
+                ...myoDerm,
+              });
+            }
           } else {
             await this.myoDermService.addMyoDerm({
               ...myoDerm,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const myoDermToDelete = this.existingMyoDerms.find(
-            (el) => el.name === myoDerm.name
-          );
-          if (myoDermToDelete) {
-            await this.myoDermService.deleteMyoDerm({ id: myoDermToDelete.id });
-          }
         }
       }
-      this.myoDermsCopy = JSON.parse(JSON.stringify(this.myoDerms));
       this.editMode = false;
+      await this.getExistingMyoDerms();
+      this.myoDermsCopy = JSON.parse(JSON.stringify(this.myoDerms));
     },
     async handleCancel() {
       this.editMode = false;

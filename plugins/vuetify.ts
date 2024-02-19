@@ -21,12 +21,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     components,
     directives,
     theme: {
-      defaultTheme: 'light',
+      defaultTheme: 'customLight',
       themes: {
         customLight,
       },
       variations: {
-        colors: ['primary', 'secondary'],
+        colors: ['primary', 'secondary', 'surface'],
         lighten: 1,
         darken: 1,
       },
