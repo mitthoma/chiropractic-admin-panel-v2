@@ -115,40 +115,46 @@
                 </tr>
               </thead>
               <tbody class="">
-                <tr v-for="(item, index) in shownNotes" :key="item.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatVisitDate(item.visitDate, item) }}</td>
-                  <td>{{ formatDate(item.lastEdited, item) }}</td>
-                  <td class="d-flex justify-end">
-                    <v-menu transition="slide-x-transition">
-                      <template #activator="{ props }">
-                        <v-icon class="mt-3" v-bind="props"
-                          >mdi-export-variant</v-icon
-                        >
-                        <!-- Update button with export icon -->
-                      </template>
-                      <v-list>
-                        <v-list-item
-                          v-for="(exportItem, i) in exportItems"
-                          :key="i"
-                          @click="handleExport(exportItem.type, item)"
-                        >
-                          <v-list-item-title>{{
-                            exportItem.title
-                          }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                    <v-icon class="ma-3" @click="goToNote(item)"
-                      >mdi-eye</v-icon
-                    >
-                    <!-- Update button with eye icon -->
-                    <v-icon class="mt-3" @click="openDeleteDialog(item)"
-                      >mdi-delete</v-icon
-                    >
-                    <!-- Add delete button -->
-                  </td>
-                </tr>
+                <template v-for="(item, index) in shownNotes" :key="item.id">
+                  <tr
+                    :class="
+                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                    "
+                  >
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatVisitDate(item.visitDate, item) }}</td>
+                    <td>{{ formatDate(item.lastEdited, item) }}</td>
+                    <td class="d-flex justify-end">
+                      <v-menu transition="slide-x-transition">
+                        <template #activator="{ props }">
+                          <v-icon class="mt-3" v-bind="props"
+                            >mdi-export-variant</v-icon
+                          >
+                          <!-- Update button with export icon -->
+                        </template>
+                        <v-list>
+                          <v-list-item
+                            v-for="(exportItem, i) in exportItems"
+                            :key="i"
+                            @click="handleExport(exportItem.type, item)"
+                          >
+                            <v-list-item-title>{{
+                              exportItem.title
+                            }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                      <v-icon class="ma-3" @click="goToNote(item)"
+                        >mdi-eye</v-icon
+                      >
+                      <!-- Update button with eye icon -->
+                      <v-icon class="mt-3" @click="openDeleteDialog(item)"
+                        >mdi-delete</v-icon
+                      >
+                      <!-- Add delete button -->
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </v-table>
             <v-pagination
@@ -202,7 +208,6 @@
                 </v-dialog>
               </v-row>
             </div>
-
             <v-table>
               <thead>
                 <tr>
@@ -213,19 +218,25 @@
                 </tr>
               </thead>
               <tbody class="">
-                <tr v-for="(item, index) in shownReports" :key="item.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatVisitDate(item.examDate, item) }}</td>
-                  <td>{{ formatDate(item.dateAdded, item) }}</td>
-                  <td class="d-flex justify-end">
-                    <v-icon class="ma-3" @click="goToReport(item)"
-                      >mdi-eye</v-icon
-                    >
-                    <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
-                      >mdi-delete</v-icon
-                    >
-                  </td>
-                </tr>
+                <template v-for="(item, index) in shownReports" :key="item.id">
+                  <tr
+                    :class="
+                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                    "
+                  >
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                    <td>{{ formatDate(item.dateAdded, item) }}</td>
+                    <td class="d-flex justify-end">
+                      <v-icon class="ma-3" @click="goToReport(item)"
+                        >mdi-eye</v-icon
+                      >
+                      <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
+                        >mdi-delete</v-icon
+                      >
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </v-table>
             <v-pagination
