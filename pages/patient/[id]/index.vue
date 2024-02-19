@@ -10,6 +10,84 @@
         Back to Patient List</v-btn
       >
       <v-row>
+        <v-col class="px-1" cols="12">
+          <v-card class="mx-5 my-5 px-5 py-5">
+            <v-row>
+              <v-col cols="3">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar color="info" size="x-large">
+                    {{ currentPatient?.firstName[0]
+                    }}{{ currentPatient?.lastName[0] }}
+                  </v-avatar>
+                  <strong class="pl-3">{{
+                    `${currentPatient?.firstName} ${currentPatient?.lastName}`
+                  }}</strong>
+                </div>
+                <div class="mb-4">
+                  <p class="text-caption font-weight-light">Account number</p>
+                  <p>{{ currentPatient?.acctNo }}</p>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div class="ml-6">
+                  <div class="mb-6">
+                    <p class="text-caption font-weight-light">Email</p>
+                    <p>{{ currentPatient?.email }}</p>
+                  </div>
+                  <div>
+                    <p class="text-caption font-weight-light">Phone number</p>
+                    <p>{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</p>
+                  </div>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div class="mb-6">
+                  <p class="text-caption font-weight-light">Height</p>
+                  <p>
+                    {{ currentPatient?.heightFeet }}'
+                    {{ currentPatient?.heightInches }}"
+                  </p>
+                </div>
+                <div>
+                  <p class="text-caption font-weight-light">Weight</p>
+                  <p>{{ `${currentPatient?.weight} lbs` }}</p>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div
+                  class="d-flex flex-column justify-space-between h-100 align-end"
+                >
+                  <div class="d-flex align-center">
+                    <v-icon
+                      v-if="currentPatient?.nextAppointment"
+                      color="success"
+                      class="mr-3"
+                      icon="mdi-calendar-check"
+                    ></v-icon>
+                    <div>
+                      <p class="text-caption font-weight-light">
+                        Next appointment
+                      </p>
+                      <p>
+                        {{
+                          formatNextAppointment(currentPatient?.nextAppointment)
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                  <v-btn
+                    color="primary"
+                    prepend-icon="mdi-pencil"
+                    @click="patientDialog = true"
+                    >Edit Profile</v-btn
+                  >
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
@@ -82,56 +160,6 @@
           </v-card>
         </v-col>
         <v-col class="px-1" cols="5">
-          <v-card class="mx-5 my-5 px-5 py-5">
-            <div class="text-left">
-              <div class="d-flex align-center mb-3">
-                <v-avatar color="info" size="x-large">
-                  {{ currentPatient?.firstName[0]
-                  }}{{ currentPatient?.lastName[0] }}
-                </v-avatar>
-                <strong class="pl-3">{{
-                  `${currentPatient?.firstName} ${currentPatient?.lastName}`
-                }}</strong>
-              </div>
-              <div class="mb-2">
-                <p class="text-caption font-weight-light">Account number</p>
-                <p>{{ currentPatient?.acctNo }}</p>
-              </div>
-              <div class="mb-2">
-                <p class="text-caption font-weight-light">Email</p>
-                <p>{{ currentPatient?.email }}</p>
-              </div>
-              <div class="mb-2">
-                <p class="text-caption font-weight-light">Phone number</p>
-                <p>{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</p>
-              </div>
-              <div class="d-flex mb-2">
-                <div>
-                  <p class="text-caption font-weight-light">Height</p>
-                  <p>
-                    {{ currentPatient?.heightFeet }}'
-                    {{ currentPatient?.heightInches }}"
-                  </p>
-                </div>
-                <div class="pl-5">
-                  <p class="text-caption font-weight-light">Weight</p>
-                  <p>{{ `${currentPatient?.weight} lbs` }}</p>
-                </div>
-              </div>
-              <div class="d-flex justify-space-between">
-                <div>
-                  <p class="text-caption font-weight-light">Next appointment</p>
-                  <p>
-                    {{ formatNextAppointment(currentPatient?.nextAppointment) }}
-                  </p>
-                </div>
-                <v-btn color="primary" @click="patientDialog = true"
-                  >Edit Profile</v-btn
-                >
-              </div>
-            </div>
-          </v-card>
-
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
@@ -606,7 +634,7 @@ export default {
 
         return `${formattedDate}`;
       } else {
-        return 'No Appointment Scheduled';
+        return 'None scheduled';
       }
     },
     async getCurrentPatient() {
