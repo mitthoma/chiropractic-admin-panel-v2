@@ -122,33 +122,43 @@ export default {
     },
     async handleSave() {
       for (const lumbar of this.lumbars) {
-        if (lumbar.arom || lumbar.pain || lumbar.notes) {
-          const matchingLumbar = this.existingLumbars.find(
-            (el) => el.name === lumbar.name
-          );
+        const matchingLumbar = this.existingLumbars.find(
+          (el) => el.name === lumbar.name
+        );
 
+        const isChanged =
+          JSON.stringify(lumbar) !==
+          JSON.stringify(this.lumbarsCopy.find((r) => r.name === lumbar.name));
+
+        if (isChanged) {
           if (matchingLumbar) {
-            await this.lumbarService.updateLumbar({
-              id: matchingLumbar.id,
-              ...lumbar,
-            });
+            const isEmpty = [
+              lumbar.norm,
+              lumbar.pain,
+              lumbar.arom,
+              lumbar.notes,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.lumbarService.deleteLumbar({
+                id: matchingLumbar.id,
+              });
+            } else {
+              await this.lumbarService.updateLumbar({
+                id: matchingLumbar.id,
+                ...lumbar,
+              });
+            }
           } else {
             await this.lumbarService.addLumbar({
               ...lumbar,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const lumbarToDelete = this.existingLumbars.find(
-            (el) => el.name === lumbar.name
-          );
-          if (lumbarToDelete) {
-            await this.lumbarService.deleteLumbar({ id: lumbarToDelete.id });
-          }
         }
       }
-      this.lumbarsCopy = JSON.parse(JSON.stringify(this.lumbars));
       this.editMode = false;
+      await this.getExistingLumbars();
+      this.lumbarsCopy = JSON.parse(JSON.stringify(this.lumbars));
     },
     async handleCancel() {
       this.editMode = false;

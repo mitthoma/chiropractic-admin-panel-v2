@@ -105,35 +105,45 @@ export default {
     },
     async handleSave() {
       for (const orthoStanding of this.orthoStandings) {
-        if (orthoStanding.arom || orthoStanding.pain || orthoStanding.notes) {
-          const matchingLumbar = this.existingOrthoStandings.find(
-            (el) => el.name === orthoStanding.name
+        const matchingOrthoStanding = this.existingOrthoStandings.find(
+          (el) => el.name === orthoStanding.name
+        );
+
+        const isChanged =
+          JSON.stringify(orthoStanding) !==
+          JSON.stringify(
+            this.orthoStandingsCopy.find((r) => r.name === orthoStanding.name)
           );
 
-          if (matchingLumbar) {
-            await this.orthoService.updateLumbar({
-              id: matchingLumbar.id,
-              ...orthoStanding,
-            });
+        if (isChanged) {
+          if (matchingOrthoStanding) {
+            const isEmpty = [
+              orthoStanding.wnl,
+              orthoStanding.lt,
+              orthoStanding.rt,
+              orthoStanding.pain,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.orthoStandingService.deleteOrthoStanding({
+                id: matchingOrthoStanding.id,
+              });
+            } else {
+              await this.orthoStandingService.updateOrthoStanding({
+                id: matchingOrthoStanding.id,
+                ...orthoStanding,
+              });
+            }
           } else {
-            await this.orthoService.addLumbar({
+            await this.orthoStandingService.addOrthoStanding({
               ...orthoStanding,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const orthoStandingToDelete = this.existingOrthoStandings.find(
-            (el) => el.name === orthoStanding.name
-          );
-          if (orthoStandingToDelete) {
-            await this.orthoService.deleteLumbar({
-              id: orthoStandingToDelete.id,
-            });
-          }
         }
       }
-      this.orthoStandingsCopy = JSON.parse(JSON.stringify(this.orthoStandings));
       this.editMode = false;
+      await this.getExistingOrthoStandings();
+      this.orthoStandingsCopy = JSON.parse(JSON.stringify(this.orthoStandings));
     },
     async handleCancel() {
       this.editMode = false;

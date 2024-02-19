@@ -140,35 +140,45 @@ export default {
     },
     async handleSave() {
       for (const orthoSeated of this.orthoSeateds) {
-        if (orthoSeated.arom || orthoSeated.pain || orthoSeated.notes) {
-          const matchingLumbar = this.existingOrthoSeateds.find(
-            (el) => el.name === orthoSeated.name
+        const matchingOrthoSeated = this.existingOrthoSeateds.find(
+          (el) => el.name === orthoSeated.name
+        );
+
+        const isChanged =
+          JSON.stringify(orthoSeated) !==
+          JSON.stringify(
+            this.orthoSeatedsCopy.find((r) => r.name === orthoSeated.name)
           );
 
-          if (matchingLumbar) {
-            await this.orthoService.updateLumbar({
-              id: matchingLumbar.id,
-              ...orthoSeated,
-            });
+        if (isChanged) {
+          if (matchingOrthoSeated) {
+            const isEmpty = [
+              orthoSeated.wnl,
+              orthoSeated.lt,
+              orthoSeated.rt,
+              orthoSeated.referral,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.orthoSeatedService.deleteOrthoSeated({
+                id: matchingOrthoSeated.id,
+              });
+            } else {
+              await this.orthoSeatedService.updateOrthoSeated({
+                id: matchingOrthoSeated.id,
+                ...orthoSeated,
+              });
+            }
           } else {
-            await this.orthoService.addLumbar({
+            await this.orthoSeatedService.addOrthoSeated({
               ...orthoSeated,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const orthoSeatedToDelete = this.existingOrthoSeateds.find(
-            (el) => el.name === orthoSeated.name
-          );
-          if (orthoSeatedToDelete) {
-            await this.orthoService.deleteLumbar({
-              id: orthoSeatedToDelete.id,
-            });
-          }
         }
       }
-      this.orthoSeatedsCopy = JSON.parse(JSON.stringify(this.orthoSeateds));
       this.editMode = false;
+      await this.getExistingOrthoSeateds();
+      this.orthoSeatedsCopy = JSON.parse(JSON.stringify(this.orthoSeateds));
     },
     async handleCancel() {
       this.editMode = false;
