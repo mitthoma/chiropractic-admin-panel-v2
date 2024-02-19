@@ -27,6 +27,7 @@
                   label="Email"
                   variant="outlined"
                   density="compact"
+                  required
                 ></v-text-field>
                 <v-text-field
                   v-model="password"
@@ -159,7 +160,9 @@ export default {
         if (result.error) {
           this.loginUnsuccessful = true;
         } else {
-          this.$refs.loginForm?.reset();
+          // login success
+          this.email = '';
+          this.password = '';
           this.passwordVisibility = false;
         }
       } catch (err) {
