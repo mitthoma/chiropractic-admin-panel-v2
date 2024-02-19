@@ -124,35 +124,45 @@ export default {
     },
     async handleSave() {
       for (const cervical of this.cervicals) {
-        if (cervical.arom || cervical.pain || cervical.notes) {
-          const matchingCervical = this.existingCervicals.find(
-            (el) => el.name === cervical.name
+        const matchingCervical = this.existingCervicals.find(
+          (el) => el.name === cervical.name
+        );
+
+        const isChanged =
+          JSON.stringify(cervical) !==
+          JSON.stringify(
+            this.cervicalsCopy.find((r) => r.name === cervical.name)
           );
 
+        if (isChanged) {
           if (matchingCervical) {
-            await this.cervicalService.updateCervical({
-              id: matchingCervical.id,
-              ...cervical,
-            });
+            const isEmpty = [
+              cervical.norm,
+              cervical.pain,
+              cervical.arom,
+              cervical.notes,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.cervicalService.deleteCervical({
+                id: matchingCervical.id,
+              });
+            } else {
+              await this.cervicalService.updateCervical({
+                id: matchingCervical.id,
+                ...cervical,
+              });
+            }
           } else {
             await this.cervicalService.addCervical({
               ...cervical,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const cervicalToDelete = this.existingCervicals.find(
-            (el) => el.name === cervical.name
-          );
-          if (cervicalToDelete) {
-            await this.cervicalService.deleteCervical({
-              id: cervicalToDelete.id,
-            });
-          }
         }
       }
-      this.cervicalsCopy = JSON.parse(JSON.stringify(this.cervicals));
       this.editMode = false;
+      await this.getExistingCervicals();
+      this.cervicalsCopy = JSON.parse(JSON.stringify(this.cervicals));
     },
     async handleCancel() {
       this.editMode = false;

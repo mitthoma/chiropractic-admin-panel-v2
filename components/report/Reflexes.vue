@@ -156,8 +156,9 @@ export default {
           }
         }
       }
-      this.reflexesCopy = JSON.parse(JSON.stringify(this.reflexes));
       this.editMode = false;
+      await this.getExistingReflexes();
+      this.reflexesCopy = JSON.parse(JSON.stringify(this.reflexes));
     },
     async handleCancel() {
       this.editMode = false;

@@ -112,35 +112,45 @@ export default {
     },
     async handleSave() {
       for (const orthoProne of this.orthoPrones) {
-        if (orthoProne.arom || orthoProne.pain || orthoProne.notes) {
-          const matchingLumbar = this.existingOrthoPrones.find(
-            (el) => el.name === orthoProne.name
+        const matchingOrthoProne = this.existingOrthoPrones.find(
+          (el) => el.name === orthoProne.name
+        );
+
+        const isChanged =
+          JSON.stringify(orthoProne) !==
+          JSON.stringify(
+            this.orthoPronesCopy.find((r) => r.name === orthoProne.name)
           );
 
-          if (matchingLumbar) {
-            await this.orthoService.updateLumbar({
-              id: matchingLumbar.id,
-              ...orthoProne,
-            });
+        if (isChanged) {
+          if (matchingOrthoProne) {
+            const isEmpty = [
+              orthoProne.wnl,
+              orthoProne.lt,
+              orthoProne.rt,
+              orthoProne.referral,
+            ].every((field) => !field);
+            if (isEmpty) {
+              await this.orthoProneService.deleteOrthoProne({
+                id: matchingOrthoProne.id,
+              });
+            } else {
+              await this.orthoProneService.updateOrthoProne({
+                id: matchingOrthoProne.id,
+                ...orthoProne,
+              });
+            }
           } else {
-            await this.orthoService.addLumbar({
+            await this.orthoProneService.addOrthoProne({
               ...orthoProne,
               reportId: this.$route.params.reportId,
             });
           }
-        } else {
-          const orthoProneToDelete = this.existingOrthoPrones.find(
-            (el) => el.name === orthoProne.name
-          );
-          if (orthoProneToDelete) {
-            await this.orthoService.deleteLumbar({
-              id: orthoProneToDelete.id,
-            });
-          }
         }
       }
-      this.orthoPronesCopy = JSON.parse(JSON.stringify(this.orthoPrones));
       this.editMode = false;
+      await this.getExistingOrthoPrones();
+      this.orthoPronesCopy = JSON.parse(JSON.stringify(this.orthoPrones));
     },
     async handleCancel() {
       this.editMode = false;
