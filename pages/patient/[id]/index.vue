@@ -1,61 +1,94 @@
 <template>
   <div>
     <v-container>
-      <v-btn class="mx-5 mb-4" @click="backToPatients()"
-        >Back to Patient List</v-btn
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 text-primary font-weight-bold"
+        @click="backToPatients()"
+      >
+        Back to Patient List</v-btn
       >
       <v-row>
-        <v-col cols="12">
+        <v-col class="px-1" cols="12">
           <v-card class="mx-5 my-5 px-5 py-5">
-            <div class="d-flex justify-space-around py-4">
-              <v-avatar color="info" size="x-large">
-                {{ currentPatient?.firstName[0]
-                }}{{ currentPatient?.lastName[0] }}
-              </v-avatar>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Name</v-label>
-                <v-card-text
-                  >{{ currentPatient?.firstName }}
-                  {{ currentPatient?.lastName }}</v-card-text
+            <v-row>
+              <v-col cols="3">
+                <div class="d-flex align-center mb-3">
+                  <v-avatar color="info" size="x-large">
+                    {{ currentPatient?.firstName[0]
+                    }}{{ currentPatient?.lastName[0] }}
+                  </v-avatar>
+                  <strong class="pl-3">{{
+                    `${currentPatient?.firstName} ${currentPatient?.lastName}`
+                  }}</strong>
+                </div>
+                <div class="mb-4">
+                  <p class="text-caption font-weight-light">Account number</p>
+                  <p>{{ currentPatient?.acctNo }}</p>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div class="ml-6">
+                  <div class="mb-6">
+                    <p class="text-caption font-weight-light">Email</p>
+                    <p>{{ currentPatient?.email }}</p>
+                  </div>
+                  <div>
+                    <p class="text-caption font-weight-light">Phone number</p>
+                    <p>{{ formatPhoneNumber(currentPatient?.phoneNumber) }}</p>
+                  </div>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div class="mb-6">
+                  <p class="text-caption font-weight-light">Height</p>
+                  <p>
+                    {{ currentPatient?.heightFeet }}'
+                    {{ currentPatient?.heightInches }}"
+                  </p>
+                </div>
+                <div>
+                  <p class="text-caption font-weight-light">Weight</p>
+                  <p>{{ `${currentPatient?.weight} lbs` }}</p>
+                </div>
+              </v-col>
+              <v-col cols="3">
+                <div
+                  class="d-flex flex-column justify-space-between h-100 align-end"
                 >
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Account Number</v-label>
-                <v-card-text>{{ currentPatient?.acctNo }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Email</v-label>
-                <v-card-text>{{ currentPatient?.email }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Phone Number</v-label>
-                <v-card-text>{{
-                  formatPhoneNumber(currentPatient?.phoneNumber)
-                }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Height</v-label>
-                <v-card-text
-                  >{{ currentPatient?.heightFeet }}'
-                  {{ currentPatient?.heightInches }}"</v-card-text
-                >
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Weight</v-label>
-                <v-card-text>{{ currentPatient?.weight }}</v-card-text>
-              </div>
-              <div class="info-section">
-                <v-label class="pb-0 mb-0">Next Appointment</v-label>
-                <v-card-text>{{
-                  formatNextAppointment(currentPatient?.nextAppointment)
-                }}</v-card-text>
-              </div>
-            </div>
+                  <div class="d-flex align-center">
+                    <v-icon
+                      v-if="currentPatient?.nextAppointment"
+                      color="success"
+                      class="mr-3"
+                      icon="mdi-calendar-check"
+                    ></v-icon>
+                    <div>
+                      <p class="text-caption font-weight-light">
+                        Next appointment
+                      </p>
+                      <p>
+                        {{
+                          formatNextAppointment(currentPatient?.nextAppointment)
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                  <v-btn
+                    color="primary"
+                    prepend-icon="mdi-pencil"
+                    @click="patientDialog = true"
+                    >Edit Profile</v-btn
+                  >
+                </div>
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
               <v-card-title> Notes List </v-card-title>
@@ -82,40 +115,46 @@
                 </tr>
               </thead>
               <tbody class="">
-                <tr v-for="(item, index) in shownNotes" :key="item.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatVisitDate(item.visitDate, item) }}</td>
-                  <td>{{ formatDate(item.lastEdited, item) }}</td>
-                  <td class="d-flex justify-end">
-                    <v-menu transition="slide-x-transition">
-                      <template #activator="{ props }">
-                        <v-icon class="mt-3" v-bind="props"
-                          >mdi-export-variant</v-icon
-                        >
-                        <!-- Update button with export icon -->
-                      </template>
-                      <v-list>
-                        <v-list-item
-                          v-for="(exportItem, i) in exportItems"
-                          :key="i"
-                          @click="handleExport(exportItem.type, item)"
-                        >
-                          <v-list-item-title>{{
-                            exportItem.title
-                          }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                    <v-icon class="ma-3" @click="goToNote(item)"
-                      >mdi-eye</v-icon
-                    >
-                    <!-- Update button with eye icon -->
-                    <v-icon class="mt-3" @click="openDeleteDialog(item)"
-                      >mdi-delete</v-icon
-                    >
-                    <!-- Add delete button -->
-                  </td>
-                </tr>
+                <template v-for="(item, index) in shownNotes" :key="item.id">
+                  <tr
+                    :class="
+                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                    "
+                  >
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatVisitDate(item.visitDate, item) }}</td>
+                    <td>{{ formatDate(item.lastEdited, item) }}</td>
+                    <td class="d-flex justify-end">
+                      <v-menu transition="slide-x-transition">
+                        <template #activator="{ props }">
+                          <v-icon class="mt-3" v-bind="props"
+                            >mdi-export-variant</v-icon
+                          >
+                          <!-- Update button with export icon -->
+                        </template>
+                        <v-list>
+                          <v-list-item
+                            v-for="(exportItem, i) in exportItems"
+                            :key="i"
+                            @click="handleExport(exportItem.type, item)"
+                          >
+                            <v-list-item-title>{{
+                              exportItem.title
+                            }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                      <v-icon class="ma-3" @click="goToNote(item)"
+                        >mdi-eye</v-icon
+                      >
+                      <!-- Update button with eye icon -->
+                      <v-icon class="mt-3" @click="openDeleteDialog(item)"
+                        >mdi-delete</v-icon
+                      >
+                      <!-- Add delete button -->
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </v-table>
             <v-pagination
@@ -126,7 +165,7 @@
             ></v-pagination>
           </v-card>
         </v-col>
-        <v-col class="px-1" cols="6">
+        <v-col class="px-1" cols="5">
           <v-card class="elevation-4 mx-5 my-5">
             <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
@@ -169,7 +208,6 @@
                 </v-dialog>
               </v-row>
             </div>
-
             <v-table>
               <thead>
                 <tr>
@@ -180,19 +218,25 @@
                 </tr>
               </thead>
               <tbody class="">
-                <tr v-for="(item, index) in shownReports" :key="item.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatVisitDate(item.examDate, item) }}</td>
-                  <td>{{ formatDate(item.dateAdded, item) }}</td>
-                  <td class="d-flex justify-end">
-                    <v-icon class="ma-3" @click="goToReport(item)"
-                      >mdi-eye</v-icon
-                    >
-                    <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
-                      >mdi-delete</v-icon
-                    >
-                  </td>
-                </tr>
+                <template v-for="(item, index) in shownReports" :key="item.id">
+                  <tr
+                    :class="
+                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                    "
+                  >
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                    <td>{{ formatDate(item.dateAdded, item) }}</td>
+                    <td class="d-flex justify-end">
+                      <v-icon class="ma-3" @click="goToReport(item)"
+                        >mdi-eye</v-icon
+                      >
+                      <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
+                        >mdi-delete</v-icon
+                      >
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </v-table>
             <v-pagination
@@ -241,6 +285,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <PatientDialog
+      v-model="patientDialog"
+      :selected-item="currentPatient"
+      @close-dialog="closePatientDialog"
+      @patient-added="getCurrentPatient"
+    />
   </div>
 </template>
 
@@ -255,12 +305,14 @@ import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV, generateXLSX } from '~/utils/csvExport';
 import '@vuepic/vue-datepicker/dist/main.css';
+import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
 export default {
   name: 'PatientPage',
   components: {
     NoteDialog,
     VueDatePicker,
+    PatientDialog,
   },
   data() {
     return {
@@ -303,11 +355,14 @@ export default {
       ],
       reportDialog: false,
       selectedDate: null,
+      patientDialog: false,
     };
   },
   computed: {
     currentPatient() {
-      return this.patientStore?.getCurrentPatient;
+      const pat = this.patientStore?.getCurrentPatient;
+      console.log('current patient', pat);
+      return pat;
     },
     shownNotes() {
       return this.displayedNotes;
@@ -561,6 +616,9 @@ export default {
     closeDialog() {
       this.reportDialog = false;
     },
+    closePatientDialog() {
+      this.patientDialog = false;
+    },
     formatVisitDate(date, item) {
       if (!date && !item.visitDateText) {
         return 'No Date Data';
@@ -587,7 +645,7 @@ export default {
 
         return `${formattedDate}`;
       } else {
-        return 'No Appointment Scheduled';
+        return 'None scheduled';
       }
     },
     async getCurrentPatient() {

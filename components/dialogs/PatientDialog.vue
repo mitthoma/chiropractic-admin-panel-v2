@@ -162,18 +162,9 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('close-dialog');
-      this.resetForm();
     },
     populateFormData(item) {
       this.form = { ...item };
-    },
-    resetForm() {
-      this.form.acctNo = null;
-      this.form.firstName = '';
-      this.form.lastName = '';
-      this.form.email = '';
-      this.form.phoneNumber = '';
-      this.form.nextAppointment = null;
     },
     async submitPatientForm() {
       if (this.$refs.patientForm.validate()) {
