@@ -11,8 +11,7 @@ const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'
  */
 const COL_RANGES = {
   OF: [3, 13],
-  PHYS: [15, 23],
-  TREAT: [3, 14],
+  PHYS: [15, 23], // broke this into its own range since we skip a column to add space
 };
 
 /**
@@ -20,11 +19,11 @@ const COL_RANGES = {
  * This is because we want the actual row number shown in the spreadsheet.
  */
 const ROW_RANGES = {
-  C: [17, 24],
+  C: [17, 24], // spinal levels table
   T: [26, 37],
   L: [39, 43],
   S: [45, 49],
-  TREAT: [0, 0],
+  EXT: [56, 69], // extremities table
 };
 
 const LEVELS = {
@@ -34,6 +33,10 @@ const LEVELS = {
   L: ['l1', 'l2', 'l3', 'l4', 'l5'],
   S: ['s1', 's2', 's3', 's4', 's5'],
 };
+
+// eslint-disable-next-line prettier/prettier
+const EXTREMITIES = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
+
 
 /** objective findings (their key values) in the order they appear in the spreadsheet.
 make sure this matches the order of the columns in the spreadsheet. */
@@ -51,10 +54,25 @@ const OBJECTIVE_FINDINGS_ORDER = [
   'reducedMotion',
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TREATMENT_ORDER = [
+  'physioPositioning',
+  'coldPack',
+  'hotPack',
+  'electStim',
+  'traction',
+  'massage',
+  'positioning',
+  'technique',
+  'manipulation',
+];
+
 const pathMap = {
+  // sides
   left: 'sides.l',
   right: 'sides.r',
   both: 'sides.b',
+  // objective findings
   sublux: 'of.sublux',
   muscleSpasm: 'of.muscleSpasm',
   triggerPoints: 'of.triggerPoints',
@@ -63,6 +81,16 @@ const pathMap = {
   edema: 'of.edema',
   swelling: 'of.swelling',
   reducedMotion: 'of.reducedMotion',
+  // treatment
+  physioPositioning: 'physio.positioning',
+  coldPack: 'physio.coldPack',
+  hotPack: 'physio.hotPack',
+  electStim: 'physio.electStim',
+  traction: 'physio.traction',
+  massage: 'physio.massage',
+  positioning: 'treatment.positioning',
+  technique: 'treatment.technique',
+  manipulation: 'treatment.manipulation',
 };
 
 export async function createFormattedNoteExcel(
@@ -99,6 +127,9 @@ export async function createFormattedNoteExcel(
 
     // populate the note data into the excel file
     worksheet = populateLevelFindings(payload, worksheet);
+
+    // populate the extremities data
+    worksheet = populateExtremitiesData(payload, worksheet);
 
     // Save the modified Excel file
     const outputPath = `static/generated/${noteData.id}.xlsx`;
@@ -146,7 +177,7 @@ function populateLevelFindings(
       for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
         const curCol = colStart + col;
         const finding = OBJECTIVE_FINDINGS_ORDER[col];
-        const val = getLevelFinding(levelObj, finding);
+        const val = getFinding(levelObj, finding);
         if (!val) {
           continue;
         }
@@ -170,6 +201,54 @@ function populateLevelFindings(
   return worksheet;
 }
 
+function populateExtremitiesData(
+  payload: any,
+  worksheet: ExcelJS.Worksheet
+): ExcelJS.Worksheet {
+  for (let extNum = 0; extNum < EXTREMITIES.length; extNum++) {
+    const extremityObj = getExtremityObj(payload, EXTREMITIES[extNum]);
+    if (!extremityObj) {
+      continue;
+    }
+
+    // add findings data
+    process.stdout.write('adding findings ...');
+    const colStart = COL_RANGES.OF[0];
+    const rowStart = ROW_RANGES.EXT[0];
+    if (!colStart || !rowStart) {
+      console.error('failed to find row and column range.');
+      continue;
+    }
+
+    for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
+      const curCol = colStart + col;
+      const finding = OBJECTIVE_FINDINGS_ORDER[col];
+      const val = getFinding(extremityObj, finding);
+      if (!val) {
+        continue;
+      }
+      const rowNumber = rowStart + extNum;
+      if (!rowNumber) {
+        console.error(`no row number found!`);
+        continue;
+      }
+      const cellName = COL_LETTERS[curCol] + rowNumber;
+
+      // insert the value into the spreadsheet
+      try {
+        process.stdout.write(`writing value ${val} to cell ${cellName}`);
+        worksheet.getCell(cellName).value = 'x';
+      } catch {
+        console.error(`Failed to write to cell ${cellName}`);
+      }
+    }
+
+    // add treatment data
+  }
+
+  return worksheet;
+}
+
 /**
  * gets the specified level from the payload
  * @param payload payload object to extract from
@@ -188,22 +267,26 @@ function getLevelObj(payload: any, letter: string, level: number): any | null {
   return levelObj;
 }
 
+function getExtremityObj(payload: any, extremity: string): any | null {
+  return payload[extremity];
+}
+
 /**
- * gets a level-specific finding
+ * gets a specific finding from a level or extremity object
  * @param levelObj level object from payload
  * @param finding key of the finding we want to get
  * @returns finding if it exists, or null if unable to be found
  */
-function getLevelFinding(levelObj: any, finding: string): any | null {
-  if (!levelObj) {
-    console.warn('passed non-existent levelObj into getLevelFinding');
+function getFinding(groupObj: any, finding: string): any | null {
+  if (!groupObj) {
+    console.warn('passed non-existent object into getFinding');
   }
   const path = pathMap[finding as keyof typeof pathMap];
   if (!path) {
     console.error("path doesn't exist in path map!");
     return null;
   }
-  return getValueAtPath(levelObj, path);
+  return getValueAtPath(groupObj, path);
 }
 
 function getValueAtPath(obj: any, path: string): any | null {
