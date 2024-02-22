@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
+import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
 
 // eslint-disable-next-line prettier/prettier
 const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
@@ -27,11 +28,11 @@ const ROW_RANGES = {
 };
 
 const LEVELS = {
-  c: ['occ', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'],
+  C: ['occ', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'],
   // eslint-disable-next-line prettier/prettier
-  t: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'],
-  l: ['l1', 'l2', 'l3', 'l4', 'l5'],
-  s: ['s1', 's2', 's3', 's4', 's5'],
+  T: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'],
+  L: ['l1', 'l2', 'l3', 'l4', 'l5'],
+  S: ['s1', 's2', 's3', 's4', 's5'],
 };
 
 /** objective findings (their key values) in the order they appear in the spreadsheet.
@@ -86,12 +87,18 @@ export async function createFormattedNoteExcel(
 
     // load the note data
     const noteData = (await getNoteById(noteID)) as any;
-    console.log(noteData);
+    // console.log(noteData);
+    const payload = await getPayload(noteData.id);
+    // console.log('payload:', payload);
+    if (!payload) {
+      console.error('Failed to load note entries during excel export.');
+      return '';
+    }
 
     worksheet.getCell('A1').value = 'Ben was here!';
 
     // populate the note data into the excel file
-    worksheet = populateLevelFindings(noteData, worksheet);
+    worksheet = populateLevelFindings(payload, worksheet);
 
     // Save the modified Excel file
     const outputPath = `static/generated/${noteData.id}.xlsx`;
@@ -121,20 +128,25 @@ function populateLevelFindings(
       const levelObj = getLevelObj(payload, level, levelNum);
       if (!levelObj) {
         console.warn(
-          'failed to get level object during export. export data may be incomplete.'
+          `failed to get level object (${level}${levelNum}) during export. export data may be incomplete.`
         );
         break;
       }
 
       // get each finding for this level
+      console.log('adding findings...');
       for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
         const curCol = COL_RANGES.OF[0] + col;
         const finding = OBJECTIVE_FINDINGS_ORDER[col];
         const val = getLevelFinding(levelObj, finding);
+        if (!val) {
+          continue;
+        }
         const rowNumber =
           ROW_RANGES[level as keyof typeof ROW_RANGES][levelNum];
         const cellName = COL_LETTERS[curCol] + rowNumber;
-        worksheet.getCell(cellName).value = val;
+        console.log(`writing value ${val} to cell ${cellName}`);
+        worksheet.getCell(cellName).value = 'x';
       }
     }
   }
@@ -153,6 +165,7 @@ function getLevelObj(payload: any, letter: string, level: number): any | null {
   console.log('level', letter, 'number', level);
   const levelList = LEVELS[letter as keyof typeof LEVELS];
   if (!levelList) {
+    console.log(`level ${letter}${level} not found!`);
     return null;
   }
   const propStr = levelList[level];
@@ -168,12 +181,17 @@ function getLevelObj(payload: any, letter: string, level: number): any | null {
 function getLevelFinding(levelObj: any, finding: string): any | null {
   const path = pathMap[finding as keyof typeof pathMap];
   if (!path) {
+    console.warn("path doesn't exist in path map!");
     return null;
   }
   return getValueAtPath(levelObj, path);
 }
 
 function getValueAtPath(obj: any, path: string): any | null {
+  if (!obj) {
+    console.error('tried to get value from null object');
+    return null;
+  }
   const propList = path.split('.');
   let curVal = obj;
   for (const prop of propList) {
@@ -183,6 +201,47 @@ function getValueAtPath(obj: any, path: string): any | null {
     }
   }
   return curVal;
+}
+
+async function getPayload(noteID: string): Promise<any> {
+  const entries = (await getAllEntriesByNoteId(noteID)) as any[];
+
+  // get the data we want from entries into the format we use for exporting
+  const payload = entries.reduce((acc, entry) => {
+    let key = entry.spinalLevel || entry.extremityLevel;
+    key = key.split('_')[0];
+    if (!acc[key]) {
+      acc[key] = {
+        sides: {},
+        of: {},
+        physio: {},
+        treatment: {},
+      };
+    }
+
+    acc[key].sides[entry.side] = true;
+    acc[key].of.sublux = entry.sublux;
+    acc[key].of.muscleSpasm = entry.muscleSpasm;
+    acc[key].of.triggerPoints = entry.triggerPoints;
+    acc[key].of.tenderness = entry.tenderness;
+    acc[key].of.numbness = entry.numbness;
+    acc[key].of.edema = entry.edema;
+    acc[key].of.swelling = entry.swelling;
+    acc[key].of.reducedMotion = entry.reducedMotion;
+    acc[key].physio.positioning = entry.physioPositioning;
+    acc[key].physio.coldPack = entry.coldPack;
+    acc[key].physio.hotPack = entry.hotPack;
+    acc[key].physio.electStim = entry.electStim;
+    acc[key].physio.traction = entry.traction;
+    acc[key].physio.massage = entry.massage;
+    acc[key].treatment.positioning = entry.treatmentPositioning;
+    acc[key].treatment.technique = entry.technique;
+    acc[key].treatment.manipulation = entry.manipulation;
+
+    return acc;
+  }, {});
+
+  return payload;
 }
 
 /*
