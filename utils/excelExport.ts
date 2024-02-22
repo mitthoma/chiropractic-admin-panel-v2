@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
 
@@ -93,7 +94,11 @@ export async function createFormattedNoteExcel(
     worksheet = populateLevelFindings(noteData, worksheet);
 
     // Save the modified Excel file
-    const outputPath = `static/${noteData.id}.xlsx`;
+    const outputPath = `static/generated/${noteData.id}.xlsx`;
+    // create the 'generated' folder if it doesn't exist yet
+    if (!fs.existsSync('static/generated')) {
+      fs.mkdirSync('static/generated', { recursive: true });
+    }
     await workbook.xlsx.writeFile(outputPath);
     console.log(`note excel created at ${outputPath}`);
 
