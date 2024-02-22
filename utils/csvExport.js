@@ -1,7 +1,7 @@
 // Import the necessary dependencies
 import { saveAs } from 'file-saver';
-import { cellMappings } from './cellMappings';
 import * as XLSX from 'xlsx';
+import { cellMappings } from './cellMappings';
 
 // Helper function to convert an alphanumeric cell reference to row and column index
 function cellReferenceToIndex(ref) {
@@ -28,7 +28,10 @@ function cellReferenceToIndex(ref) {
 //     }
 //   }
 
-// Define the generateCSV function
+/**
+ * Creates a CSV file populated with fields from the payload
+ * @param {any} payload data to put in the csv.
+ */
 export function generateCSV(payload) {
   // Create a 2D array representing the cells of the CSV content
   const rows = 62; // Define the number of rows
@@ -65,7 +68,11 @@ export function generateCSV(payload) {
 }
 
 // Define the generateXLSX function
-export function generateXLSX(payload, exportAsPDF = false, getPdfMakeInstance) {
+export function generateXLSX(
+  payload,
+  exportAsPDF = false,
+  _getPdfMakeInstance
+) {
   // Create a 2D array representing the cells of the XLSX content
   const rows = 42; // Define the number of rows
   const cols = 29; // Define the number of columns (A to AC)
