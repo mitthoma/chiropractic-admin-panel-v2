@@ -26,9 +26,17 @@
           <td v-else>
             <input v-model="lumbar.arom" type="text" placeholder="None" />
           </td>
-          <td v-if="!editMode">{{ lumbar.pain || 'None' }}</td>
+          <td v-if="!editMode">
+            {{ lumbar.pain ? '+'.repeat(lumbar.pain) : 'None' }}
+          </td>
           <td v-else>
-            <input v-model="lumbar.pain" type="text" placeholder="None" />
+            <v-select
+              v-model="lumbar.pain"
+              :items="painOptions"
+              item-value="value"
+              item-title="text"
+              placeholder="None"
+            ></v-select>
           </td>
           <td v-if="!editMode">{{ lumbar.notes || 'None' }}</td>
           <td v-else>
@@ -52,6 +60,13 @@ export default {
       lumbarService: null,
       existingLumbars: [],
       lumbarsCopy: null,
+      painOptions: [
+        { text: '+', value: '1' },
+        { text: '++', value: '2' },
+        { text: '+++', value: '3' },
+        { text: '++++', value: '4' },
+        { text: '+++++', value: '5' },
+      ],
       lumbars: [
         {
           name: 'Flexion',

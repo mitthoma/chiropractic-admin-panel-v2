@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       editMode: false,
-      orthoService: null,
+      orthoProneService: null,
       existingOrthoPrones: [],
       orthoPronesCopy: null,
       orthoPrones: [
@@ -88,14 +88,14 @@ export default {
     };
   },
   async mounted() {
-    this.orthoService = createOrthoService(this.$api);
+    this.orthoProneService = createOrthoService(this.$api);
     await this.getExistingOrthoPrones();
     this.orthoPronesCopy = JSON.parse(JSON.stringify(this.orthoPrones));
   },
   methods: {
     async getExistingOrthoPrones() {
       this.existingOrthoPrones =
-        await this.orthoService.getOrthoPronesForReport({
+        await this.orthoProneService.getOrthoPronesForReport({
           id: this.$route.params.reportId,
         });
       if (this.existingOrthoPrones.length > 0) {

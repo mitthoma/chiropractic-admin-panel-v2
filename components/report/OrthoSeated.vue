@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       editMode: false,
-      orthoService: null,
+      orthoSeatedService: null,
       existingOrthoSeateds: [],
       orthoSeatedsCopy: null,
       orthoSeateds: [
@@ -116,14 +116,14 @@ export default {
     };
   },
   async mounted() {
-    this.orthoService = createOrthoService(this.$api);
+    this.orthoSeatedService = createOrthoService(this.$api);
     await this.getExistingOrthoSeateds();
     this.orthoSeatedsCopy = JSON.parse(JSON.stringify(this.orthoSeateds));
   },
   methods: {
     async getExistingOrthoSeateds() {
       this.existingOrthoSeateds =
-        await this.orthoService.getOrthoSeatedsForReport({
+        await this.orthoSeatedService.getOrthoSeatedsForReport({
           id: this.$route.params.reportId,
         });
       if (this.existingOrthoSeateds.length > 0) {

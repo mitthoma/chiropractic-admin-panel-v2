@@ -33,9 +33,17 @@
           <td v-else>
             <input v-model="ortho.rt" type="text" placeholder="None" />
           </td>
-          <td v-if="!editMode">{{ ortho.pain || 'None' }}</td>
+          <td v-if="!editMode">
+            {{ ortho.pain ? '+'.repeat(ortho.pain) : 'None' }}
+          </td>
           <td v-else>
-            <input v-model="ortho.pain" type="text" placeholder="None" />
+            <v-select
+              v-model="ortho.pain"
+              :items="painOptions"
+              item-value="value"
+              item-title="text"
+              placeholder="None"
+            ></v-select>
           </td>
         </tr>
       </table>
@@ -52,9 +60,16 @@ export default {
   data() {
     return {
       editMode: false,
-      orthoService: null,
+      orthoStandingService: null,
       existingOrthoStandings: [],
       orthoStandingsCopy: null,
+      painOptions: [
+        { text: '+', value: '1' },
+        { text: '++', value: '2' },
+        { text: '+++', value: '3' },
+        { text: '++++', value: '4' },
+        { text: '+++++', value: '5' },
+      ],
       orthoStandings: [
         {
           name: 'Heel / Toe Walking',
@@ -81,14 +96,14 @@ export default {
     };
   },
   async mounted() {
-    this.orthoService = createOrthoService(this.$api);
+    this.orthoStandingService = createOrthoService(this.$api);
     await this.getExistingOrthoStandings();
     this.orthoStandingsCopy = JSON.parse(JSON.stringify(this.orthoStandings));
   },
   methods: {
     async getExistingOrthoStandings() {
       this.existingOrthoStandings =
-        await this.orthoService.getOrthoStandingsForReport({
+        await this.orthoStandingService.getOrthoStandingsForReport({
           id: this.$route.params.reportId,
         });
       if (this.existingOrthoStandings.length > 0) {
