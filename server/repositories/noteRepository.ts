@@ -91,7 +91,6 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
-    console.log('noteid is ', noteId);
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

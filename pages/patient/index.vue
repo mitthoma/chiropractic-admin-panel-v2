@@ -18,11 +18,20 @@
         </div>
         <div v-else class="py-5 d-flex">
           <v-card-title> Patient List </v-card-title>
+          <v-text-field
+            v-model="searchQuery"
+            class="searchField"
+            prepend-icon="mdi-magnify"
+            label="Search Patients"
+            single-line
+            hide-details
+          ></v-text-field>
           <v-spacer></v-spacer>
+
           <v-btn
             prepend-icon="mdi-plus"
             color="primary"
-            class="mx-2 pa-2"
+            class="mx-2 pa-2 mr-5 my-2"
             @click="patientDialog = true"
             >Add New Patient</v-btn
           >
@@ -123,10 +132,31 @@ export default {
       totalPages: 1,
       selectedPatientItem: null,
       isLoading: false,
+      searchQuery: '',
     };
+  },
+  computed: {
+    filteredPatients() {
+      if (!this.searchQuery) {
+        return this.patients;
+      }
+      const searchLower = this.searchQuery.toLowerCase();
+      return this.patients.filter((patient) => {
+        return (
+          patient.acctNo.toLowerCase().includes(searchLower) ||
+          patient.firstName.toLowerCase().includes(searchLower) ||
+          patient.lastName.toLowerCase().includes(searchLower) ||
+          (patient.email && patient.email.toLowerCase().includes(searchLower)) // Assuming you have an email field
+        );
+      });
+    },
   },
   watch: {
     currentPage() {
+      this.updateDisplayedPatients();
+    },
+    searchQuery() {
+      this.currentPage = 1;
       this.updateDisplayedPatients();
     },
   },
@@ -171,9 +201,11 @@ export default {
       this.patientDialog = false;
     },
     updateDisplayedPatients() {
-      this.totalPages = Math.ceil(this.patients.length / this.itemsPerPage);
+      this.totalPages = Math.ceil(
+        this.filteredPatients.length / this.itemsPerPage
+      );
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      this.displayedPatients = this.patients.slice(
+      this.displayedPatients = this.filteredPatients.slice(
         startIndex,
         startIndex + this.itemsPerPage
       );
@@ -217,3 +249,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.searchField {
+  padding-left: 2vw;
+  padding-right: 10vw;
+
+  margin-bottom: 3vh;
+}
+</style>
