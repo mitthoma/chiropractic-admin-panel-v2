@@ -65,6 +65,18 @@
       </v-menu>
     </v-app-bar>
 
+    <v-dialog v-model="showDialog" persistent max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">Session Timeout</v-card-title>
+        <v-card-text>
+          Due to inactivity, you will be logged out in {{ countdown }} seconds.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-main>
       <NuxtPage />
     </v-main>
@@ -74,7 +86,7 @@
 <script></script>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTheme } from 'vuetify';
 import { userStore } from '~/store/user';
 
@@ -116,23 +128,69 @@ const items = [
   },
 ];
 
-// create method signoutuser that sets the isloggedin in user store to be false
+const TIMEOUT_DURATION = 60000 * 5; // 5 minutes of inactivity
+const TIMEOUT_WARNING_DURATION = 5000 * 4; // 20 seconds warning countdown
+const showDialog = ref(false);
+const countdown = ref(TIMEOUT_WARNING_DURATION / 1000);
+const countdownInterval = ref(null);
+
+const inactivityTimer = ref(null);
+
+function resetTimer() {
+  clearTimeout(inactivityTimer.value);
+  clearInterval(countdownInterval.value);
+  showDialog.value = false;
+  inactivityTimer.value = setTimeout(() => {
+    showDialog.value = true;
+    startCountdown();
+  }, TIMEOUT_DURATION - TIMEOUT_WARNING_DURATION);
+}
+
+function startCountdown() {
+  countdown.value = TIMEOUT_WARNING_DURATION / 1000;
+  clearInterval(countdownInterval.value);
+  countdownInterval.value = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(countdownInterval.value);
+      signOut();
+    }
+  }, 1000);
+}
+
+function onActivity() {
+  if (store.getIsLoggedIn) {
+    resetTimer();
+  }
+}
+
 const signOut = async () => {
   await signOutUser();
+  clearTimeout(inactivityTimer.value);
+  clearInterval(countdownInterval.value);
 };
+
+onMounted(() => {
+  document.addEventListener('mousemove', onActivity);
+  document.addEventListener('keypress', onActivity);
+  document.addEventListener('click', onActivity);
+
+  resetTimer();
+});
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', onActivity);
+  document.removeEventListener('keypress', onActivity);
+  document.removeEventListener('click', onActivity);
+
+  clearTimeout(inactivityTimer.value);
+});
+
 watch(themeToggler, () => {
   theme.global.name.value = theme.global.current.value.dark
     ? 'customLight'
     : 'dark';
 });
-</script>
-
-<script>
-// Define component options here
-export default {
-  name: 'DefaultLayout',
-  // Other options like methods, computed properties, etc.
-};
 </script>
 
 <style scoped>

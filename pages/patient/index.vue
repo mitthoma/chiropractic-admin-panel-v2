@@ -146,7 +146,7 @@ export default {
           patient.acctNo.toLowerCase().includes(searchLower) ||
           patient.firstName.toLowerCase().includes(searchLower) ||
           patient.lastName.toLowerCase().includes(searchLower) ||
-          (patient.email && patient.email.toLowerCase().includes(searchLower)) // Assuming you have an email field
+          (patient.email && patient.email.toLowerCase().includes(searchLower))
         );
       });
     },
@@ -229,12 +229,6 @@ export default {
         month: '2-digit',
         day: '2-digit',
       }).format(date);
-
-      // const formattedTime = new Intl.DateTimeFormat('en-US', {
-      //   hour: '2-digit',
-      //   minute: '2-digit',
-      //   hour12: true,
-      // }).format(date);
 
       return `${formattedDate}`;
     },
