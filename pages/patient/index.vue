@@ -10,7 +10,13 @@
         Back to Dashboard
       </v-btn>
       <v-card class="elevation-4">
-        <div class="py-5 d-flex">
+        <div v-if="isLoading" class="text-center py-5">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <div v-else class="py-5 d-flex">
           <v-card-title> Patient List </v-card-title>
           <v-spacer></v-spacer>
           <v-btn
@@ -116,6 +122,7 @@ export default {
       currentPage: 1,
       totalPages: 1,
       selectedPatientItem: null,
+      isLoading: false,
     };
   },
   watch: {
@@ -124,10 +131,12 @@ export default {
     },
   },
   async mounted() {
+    this.isLoading = true;
     this.patientStore = patientStore();
     this.patientService = createPatientService(this.$api);
     this.patients = await this.patientService.getPatients();
     this.updateDisplayedPatients();
+    this.isLoading = false;
   },
   methods: {
     async deletePatient(item) {
@@ -141,8 +150,10 @@ export default {
       }
     },
     async refreshPatientList() {
+      this.isLoading = true;
       this.patients = await this.patientService.getPatients();
       this.updateDisplayedPatients();
+      this.isLoading = false;
     },
     goToPatient(item) {
       this.patientStore.setCurrentPatient(item);

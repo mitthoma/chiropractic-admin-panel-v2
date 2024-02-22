@@ -90,7 +90,13 @@
       <v-row>
         <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
-            <div class="py-5 d-flex">
+            <div v-if="isLoading" class="text-center py-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+            <div v-else class="py-5 d-flex">
               <v-card-title> Notes List </v-card-title>
               <v-spacer></v-spacer>
               <v-row class="mx-2 pa-2" justify="end">
@@ -167,7 +173,13 @@
         </v-col>
         <v-col class="px-1" cols="5">
           <v-card class="elevation-4 mx-5 my-5">
-            <div class="py-5 d-flex">
+            <div v-if="isReportsLoading" class="text-center py-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+            <div v-else class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
               <v-spacer></v-spacer>
               <!-- Additional buttons or actions for Reports can go here -->
@@ -356,6 +368,8 @@ export default {
       reportDialog: false,
       selectedDate: null,
       patientDialog: false,
+      isLoading: false,
+      isReportsLoading: false,
     };
   },
   computed: {
@@ -380,6 +394,8 @@ export default {
     },
   },
   async mounted() {
+    this.isLoading = true;
+    this.isReportsLoading = true;
     this.patientStore = patientStore();
     await this.getCurrentPatient();
     this.noteStore = noteStore();
@@ -394,7 +410,8 @@ export default {
       patientId: this.$route.params.id,
     });
     this.updateDisplayedReports();
-    console.log('reports are ', this.reports);
+    this.isLoading = false;
+    this.isReportsLoading = false;
   },
   methods: {
     async saveAndGoToReport() {
@@ -411,6 +428,7 @@ export default {
       this.dialog = false;
     },
     updateDisplayedNotes() {
+      this.isLoading = true;
       if (Array.isArray(this.notes)) {
         this.notes.sort((a, b) => {
           return new Date(b.createdDate) - new Date(a.createdDate);
@@ -427,8 +445,10 @@ export default {
         startIndex,
         startIndex + this.itemsPerPage
       );
+      this.isLoading = false;
     },
     updateDisplayedReports() {
+      this.isReportsLoading = true;
       if (Array.isArray(this.reports)) {
         this.reports.sort((a, b) => {
           return new Date(b.dateAdded) - new Date(a.dateAdded);
@@ -448,7 +468,7 @@ export default {
         startIndex,
         startIndex + this.itemsPerPage
       );
-      console.log('displayed reports are ', this.displayedReports);
+      this.isReportsLoading = false;
     },
     // New methods for handling delete confirmation dialog
     openDeleteDialog(note) {
@@ -579,16 +599,20 @@ export default {
       this.$router.push(`/patient/${this.$route.params.id}/report/${item.id}`);
     },
     async refreshNotes() {
+      this.isLoading = true;
       this.notes = await this.noteService.getNotesForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedNotes();
+      this.isLoading = false;
     },
     async refreshReports() {
+      this.isReportsLoading = true;
       this.reports = await this.reportService.getReportsForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedReports();
+      this.isReportsLoading = false;
     },
     editComplaintItem(complaint) {
       this.complaintDialog = true;
