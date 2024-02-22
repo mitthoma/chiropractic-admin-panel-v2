@@ -21,9 +21,9 @@ const COL_RANGES = {
  */
 const ROW_RANGES = {
   C: [17, 24],
-  T: [0, 0],
-  L: [0, 0],
-  S: [0, 0],
+  T: [26, 37],
+  L: [39, 43],
+  S: [45, 49],
   TREAT: [0, 0],
 };
 
@@ -89,7 +89,7 @@ export async function createFormattedNoteExcel(
     const noteData = (await getNoteById(noteID)) as any;
     // console.log(noteData);
     const payload = await getPayload(noteData.id);
-    // console.log('payload:', payload);
+    console.log('payload:', payload);
     if (!payload) {
       console.error('Failed to load note entries during excel export.');
       return '';
@@ -124,29 +124,46 @@ function populateLevelFindings(
   // go through each level and populate the findings
   for (const level in LEVELS) {
     const levels = LEVELS[level as keyof typeof LEVELS];
+    process.stdout.write(
+      `populating ${level} levels (${levels.length} in total)`
+    );
     for (let levelNum = 0; levelNum < levels.length; levelNum++) {
       const levelObj = getLevelObj(payload, level, levelNum);
       if (!levelObj) {
-        console.warn(
-          `failed to get level object (${level}${levelNum}) during export. export data may be incomplete.`
-        );
-        break;
+        continue;
       }
+      process.stdout.write(`level: ${level}${levelNum}`);
 
       // get each finding for this level
-      console.log('adding findings...');
+      process.stdout.write('adding findings ...');
+      const colStart = COL_RANGES.OF[0];
+      const rowStart = ROW_RANGES[level as keyof typeof ROW_RANGES][0];
+      if (!colStart || !rowStart) {
+        console.error('failed to find row and column range.');
+        continue;
+      }
+
       for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
-        const curCol = COL_RANGES.OF[0] + col;
+        const curCol = colStart + col;
         const finding = OBJECTIVE_FINDINGS_ORDER[col];
         const val = getLevelFinding(levelObj, finding);
         if (!val) {
           continue;
         }
-        const rowNumber =
-          ROW_RANGES[level as keyof typeof ROW_RANGES][levelNum];
+        const rowNumber = rowStart + levelNum;
+        if (!rowNumber) {
+          console.error(`no row number found!`);
+          continue;
+        }
         const cellName = COL_LETTERS[curCol] + rowNumber;
-        console.log(`writing value ${val} to cell ${cellName}`);
-        worksheet.getCell(cellName).value = 'x';
+
+        // insert the value into the spreadsheet
+        try {
+          process.stdout.write(`writing value ${val} to cell ${cellName}`);
+          worksheet.getCell(cellName).value = 'x';
+        } catch {
+          console.error(`Failed to write to cell ${cellName}`);
+        }
       }
     }
   }
@@ -161,15 +178,14 @@ function populateLevelFindings(
  * @returns the object found at this level of the payload, or null if nonexistent
  */
 function getLevelObj(payload: any, letter: string, level: number): any | null {
-  console.log('getting level object');
-  console.log('level', letter, 'number', level);
   const levelList = LEVELS[letter as keyof typeof LEVELS];
   if (!levelList) {
     console.log(`level ${letter}${level} not found!`);
     return null;
   }
   const propStr = levelList[level];
-  return payload[propStr];
+  const levelObj = payload[propStr];
+  return levelObj;
 }
 
 /**
@@ -179,9 +195,12 @@ function getLevelObj(payload: any, letter: string, level: number): any | null {
  * @returns finding if it exists, or null if unable to be found
  */
 function getLevelFinding(levelObj: any, finding: string): any | null {
+  if (!levelObj) {
+    console.warn('passed non-existent levelObj into getLevelFinding');
+  }
   const path = pathMap[finding as keyof typeof pathMap];
   if (!path) {
-    console.warn("path doesn't exist in path map!");
+    console.error("path doesn't exist in path map!");
     return null;
   }
   return getValueAtPath(levelObj, path);
