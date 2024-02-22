@@ -179,7 +179,7 @@
                 color="primary"
               ></v-progress-circular>
             </div>
-            <div v-else class="py-5 d-flex">
+            <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
               <v-spacer></v-spacer>
               <!-- Additional buttons or actions for Reports can go here -->
@@ -229,7 +229,7 @@
                   <th class="text-right pr-8">Actions</th>
                 </tr>
               </thead>
-              <tbody class="">
+              <tbody>
                 <template v-for="(item, index) in shownReports" :key="item.id">
                   <tr
                     :class="
@@ -375,7 +375,6 @@ export default {
   computed: {
     currentPatient() {
       const pat = this.patientStore?.getCurrentPatient;
-      console.log('current patient', pat);
       return pat;
     },
     shownNotes() {
@@ -480,13 +479,17 @@ export default {
       this.deleteReportDialog = true;
     },
     async deleteConfirmed() {
-      await this.deleteNote(this.noteToDelete);
       this.deleteDialog = false;
+      this.isLoading = true;
+      await this.deleteNote(this.noteToDelete);
+      this.isLoading = false;
       this.noteToDelete = null;
     },
     async deleteReportConfirmed() {
-      await this.deleteReport(this.reportToDelete);
       this.deleteReportDialog = false;
+      this.isReportsLoading = true;
+      await this.deleteReport(this.reportToDelete);
+      this.isReportsLoading = false;
       this.reportToDelete = null;
     },
     async deleteNote(item) {
@@ -506,7 +509,7 @@ export default {
         });
         this.refreshReports();
       } catch (error) {
-        console.error('Error deleting note:', error);
+        console.error('Error deleting report:', error);
       }
     },
     async handleExport(type, item) {

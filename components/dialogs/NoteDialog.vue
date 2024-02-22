@@ -110,9 +110,23 @@
         <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{
           tab === 1 ? 'Back' : 'Cancel'
         }}</v-btn>
-        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{
-          tab === 5 ? saveButtonText : 'Next'
-        }}</v-btn>
+        <v-btn
+          v-if="!isLoading"
+          color="blue darken-1 justify-end"
+          text
+          @click="processPhase"
+          >{{ tab === 5 ? saveButtonText : 'Next' }}</v-btn
+        >
+        <v-btn
+          v-else
+          color="blue darken-1 justify-end"
+          text
+          @click="processPhase"
+          ><v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular
+        ></v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="exitConfirmDialog" max-width="300px">
@@ -177,6 +191,7 @@ export default {
       oldTreatments: null,
       currentNote: null,
       patient: null,
+      isLoading: false,
       form: {
         visitDate: null,
         visitDateText: null,
@@ -529,7 +544,6 @@ export default {
           const noteId = res.id;
           await this.processSaveOperations(noteId, this.currentPatient.id);
           this.$emit('note-added');
-          this.closeDialog();
         }
       } else {
         console.log('form is not valid');
@@ -583,7 +597,6 @@ export default {
       );
 
       this.$emit('note-updated');
-      this.closeDialog();
     },
 
     async updateAllGridEntries(
@@ -694,12 +707,16 @@ export default {
     async processPhase() {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
-          if (this.isUpdateMode) {
-            console.log('calling update note');
-            await this.updateNote();
-          } else {
-            this.submitNoteForm();
+          this.isLoading = true;
+          const res = this.isUpdateMode
+            ? await this.updateNote()
+            : await this.submitNoteForm();
+          if (res instanceof Error) {
+            console.error('note was not able to be submitted');
+            return;
           }
+          this.closeDialog();
+          this.isLoading = false;
         } else {
           this.tab++;
         }
