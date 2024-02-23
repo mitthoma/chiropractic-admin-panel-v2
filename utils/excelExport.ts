@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
 import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
+import { getAllTreatmentsByNoteId } from '~~/server/repositories/treatmentRepository';
+import { Treatment } from '~~/types/datamodel';
 
 // eslint-disable-next-line prettier/prettier
 const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
@@ -54,7 +56,6 @@ const OBJECTIVE_FINDINGS_ORDER = [
   'reducedMotion',
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TREATMENT_ORDER = [
   'physioPositioning',
   'coldPack',
@@ -82,15 +83,15 @@ const pathMap = {
   swelling: 'of.swelling',
   reducedMotion: 'of.reducedMotion',
   // treatment
-  physioPositioning: 'physio.positioning',
-  coldPack: 'physio.coldPack',
-  hotPack: 'physio.hotPack',
-  electStim: 'physio.electStim',
-  traction: 'physio.traction',
-  massage: 'physio.massage',
-  positioning: 'treatment.positioning',
-  technique: 'treatment.technique',
-  manipulation: 'treatment.manipulation',
+  physioPositioning: 'physioPositioning',
+  coldPack: 'coldPack',
+  hotPack: 'hotPack',
+  electStim: 'electStim',
+  traction: 'traction',
+  massage: 'massage',
+  positioning: 'treatmentPositioning',
+  technique: 'treatmentTechnique',
+  manipulation: 'treatmentManipulation',
 };
 
 export async function createFormattedNoteExcel(
@@ -108,7 +109,7 @@ export async function createFormattedNoteExcel(
     await workbook.xlsx.readFile(templatePath);
 
     // Access the desired worksheet
-    let worksheet = workbook.getWorksheet('Sheet1');
+    const worksheet = workbook.getWorksheet('Sheet1');
     if (!worksheet) {
       return '';
     }
@@ -116,20 +117,21 @@ export async function createFormattedNoteExcel(
     // load the note data
     const noteData = (await getNoteById(noteID)) as any;
     // console.log(noteData);
-    const payload = await getPayload(noteData.id);
-    console.log('payload:', payload);
-    if (!payload) {
+    const entriesData = await getEntriesData(noteData.id);
+    // console.log('payload:', payload);
+    if (!entriesData) {
       console.error('Failed to load note entries during excel export.');
       return '';
     }
+    const treatmentData = await getTreatmentData(noteID);
 
     worksheet.getCell('A1').value = 'Ben was here!';
 
     // populate the note data into the excel file
-    worksheet = populateLevelFindings(payload, worksheet);
+    populateLevelData(entriesData, treatmentData, worksheet);
 
     // populate the extremities data
-    worksheet = populateExtremitiesData(payload, worksheet);
+    populateExtremitiesData(entriesData, treatmentData, worksheet);
 
     // Save the modified Excel file
     const outputPath = `static/generated/${noteData.id}.xlsx`;
@@ -148,105 +150,152 @@ export async function createFormattedNoteExcel(
   }
 }
 
-function populateLevelFindings(
-  payload: any,
+/**
+ * populate date for spinal levels in the worksheet
+ * @param entriesData data for entries
+ * @param treatmentData data for treatments
+ * @param worksheet exceljs worksheet object to modify
+ */
+function populateLevelData(
+  entriesData: any,
+  treatmentData: any,
   worksheet: ExcelJS.Worksheet
-): ExcelJS.Worksheet {
+) {
   // go through each level and populate the findings
   for (const level in LEVELS) {
     const levels = LEVELS[level as keyof typeof LEVELS];
     process.stdout.write(
       `populating ${level} levels (${levels.length} in total)`
     );
+    const rowStart = ROW_RANGES[level as keyof typeof ROW_RANGES][0];
     for (let levelNum = 0; levelNum < levels.length; levelNum++) {
-      const levelObj = getLevelObj(payload, level, levelNum);
+      let levelObj = getLevelObj(entriesData, level, levelNum);
       if (!levelObj) {
         continue;
       }
       process.stdout.write(`level: ${level}${levelNum}`);
+      const rowNumber = rowStart + levelNum;
 
-      // get each finding for this level
-      process.stdout.write('adding findings ...');
-      const colStart = COL_RANGES.OF[0];
-      const rowStart = ROW_RANGES[level as keyof typeof ROW_RANGES][0];
+      // get each objective finding
+      process.stdout.write('adding objective findings ...');
+      let colStart = COL_RANGES.OF[0];
+
       if (!colStart || !rowStart) {
         console.error('failed to find row and column range.');
         continue;
       }
 
-      for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
-        const curCol = colStart + col;
-        const finding = OBJECTIVE_FINDINGS_ORDER[col];
-        const val = getFinding(levelObj, finding);
-        if (!val) {
-          continue;
-        }
-        const rowNumber = rowStart + levelNum;
-        if (!rowNumber) {
-          console.error(`no row number found!`);
-          continue;
-        }
-        const cellName = COL_LETTERS[curCol] + rowNumber;
+      fillOutTableRow(
+        colStart,
+        rowNumber,
+        levelObj,
+        OBJECTIVE_FINDINGS_ORDER,
+        worksheet
+      );
 
-        // insert the value into the spreadsheet
-        try {
-          process.stdout.write(`writing value ${val} to cell ${cellName}`);
-          worksheet.getCell(cellName).value = 'x';
-        } catch {
-          console.error(`Failed to write to cell ${cellName}`);
-        }
-      }
+      // get each treatment
+      levelObj = getLevelObj(treatmentData, level, levelNum);
+      colStart = COL_RANGES.PHYS[0];
+      process.stdout.write(
+        `adding treatments (${TREATMENT_ORDER.length} in total)`
+      );
+
+      fillOutTableRow(
+        colStart,
+        rowNumber,
+        levelObj,
+        TREATMENT_ORDER,
+        worksheet
+      );
     }
   }
-  return worksheet;
 }
 
+/**
+ * populates data in the worksheet for extremities
+ * @param entriesData data for entries
+ * @param treatmentData data for treatments
+ * @param worksheet exceljs worksheet object to modify
+ */
 function populateExtremitiesData(
-  payload: any,
+  entriesData: any,
+  treatmentData: any,
   worksheet: ExcelJS.Worksheet
-): ExcelJS.Worksheet {
+) {
   for (let extNum = 0; extNum < EXTREMITIES.length; extNum++) {
-    const extremityObj = getExtremityObj(payload, EXTREMITIES[extNum]);
+    let extremityObj = getExtremityObj(entriesData, EXTREMITIES[extNum]);
     if (!extremityObj) {
       continue;
     }
 
     // add findings data
     process.stdout.write('adding findings ...');
-    const colStart = COL_RANGES.OF[0];
+    let colStart = COL_RANGES.OF[0];
     const rowStart = ROW_RANGES.EXT[0];
+
     if (!colStart || !rowStart) {
       console.error('failed to find row and column range.');
       continue;
     }
 
-    for (let col = 0; col < OBJECTIVE_FINDINGS_ORDER.length; col++) {
-      const curCol = colStart + col;
-      const finding = OBJECTIVE_FINDINGS_ORDER[col];
-      const val = getFinding(extremityObj, finding);
-      if (!val) {
-        continue;
-      }
-      const rowNumber = rowStart + extNum;
-      if (!rowNumber) {
-        console.error(`no row number found!`);
-        continue;
-      }
-      const cellName = COL_LETTERS[curCol] + rowNumber;
+    const rowNumber = rowStart + extNum;
 
-      // insert the value into the spreadsheet
-      try {
-        process.stdout.write(`writing value ${val} to cell ${cellName}`);
-        worksheet.getCell(cellName).value = 'x';
-      } catch {
-        console.error(`Failed to write to cell ${cellName}`);
-      }
-    }
+    fillOutTableRow(
+      colStart,
+      rowNumber,
+      extremityObj,
+      OBJECTIVE_FINDINGS_ORDER,
+      worksheet
+    );
 
     // add treatment data
-  }
+    colStart = COL_RANGES.PHYS[0];
+    extremityObj = getExtremityObj(treatmentData, EXTREMITIES[extNum]);
 
-  return worksheet;
+    fillOutTableRow(
+      colStart,
+      rowNumber,
+      extremityObj,
+      TREATMENT_ORDER,
+      worksheet
+    );
+  }
+}
+
+/**
+ * Fills out a row of data for a table in the excel spreadsheet
+ * @param colStart column number to start at (an offset)
+ * @param rowNumber row number to insert data into
+ * @param dataObj object containing the data for entries or treatments
+ * @param dataOrderArray a list of the keys of values we want to put in this row; represents the true order of output in the spreadsheet
+ * @param worksheet the exceljs.worksheet object we are adding data to.
+ */
+function fillOutTableRow(
+  colStart: number,
+  rowNumber: number,
+  dataObj: any,
+  dataOrderArray: string[],
+  worksheet: ExcelJS.Worksheet
+) {
+  for (let col = 0; col < dataOrderArray.length; col++) {
+    const curCol = colStart + col;
+    const treatment = dataOrderArray[col];
+    const val = getFinding(dataObj, treatment);
+    if (!val) {
+      continue;
+    }
+    if (!rowNumber) {
+      console.error('no row number found!');
+      continue;
+    }
+    const cellName = COL_LETTERS[curCol] + rowNumber;
+    try {
+      process.stdout.write(`writing value ${val} to cell ${cellName}`);
+      worksheet.getCell(cellName).value = val === true ? 'x' : val;
+    } catch {
+      console.error(`Failed to write to cell ${cellName}`);
+    }
+  }
 }
 
 /**
@@ -305,11 +354,14 @@ function getValueAtPath(obj: any, path: string): any | null {
   return curVal;
 }
 
-async function getPayload(noteID: string): Promise<any> {
+async function getEntriesData(noteID: string): Promise<any> {
+  process.stdout.write('loading entries');
   const entries = (await getAllEntriesByNoteId(noteID)) as any[];
+  console.log('number of entries:', entries.length);
 
   // get the data we want from entries into the format we use for exporting
-  const payload = entries.reduce((acc, entry) => {
+  process.stdout.write('reducing payload data');
+  const entriesPayload = entries.reduce((acc, entry) => {
     let key = entry.spinalLevel || entry.extremityLevel;
     key = key.split('_')[0];
     if (!acc[key]) {
@@ -319,6 +371,10 @@ async function getPayload(noteID: string): Promise<any> {
         physio: {},
         treatment: {},
       };
+    }
+
+    if (entry.coldPack || entry.hotPack || entry.electStim) {
+      console.log('found a treatment!');
     }
 
     acc[key].sides[entry.side] = true;
@@ -343,67 +399,23 @@ async function getPayload(noteID: string): Promise<any> {
     return acc;
   }, {});
 
-  return payload;
+  return entriesPayload;
 }
 
-/*
+async function getTreatmentData(noteID: string): Promise<any> {
+  const treatments = (await getAllTreatmentsByNoteId(noteID)) as Treatment[];
+  console.log('treatments:', treatments);
 
-const entries = await this.entryService.getEntriesForNote({
-        noteId: note.id,
-      });
+  const treatmentsPayload: any = {};
 
-      // 2. construct the payload
-      const payload = entries.reduce((acc, entry) => {
-        const key = entry.spinalLevel || entry.extremityLevel;
-        if (!acc[key]) {
-          acc[key] = {
-            sides: {},
-            of: {},
-            physio: {},
-            treatment: {},
-          };
-        }
+  for (const treatment of treatments) {
+    let key = treatment.spinalLevel || treatment.extremityLevel;
+    key = key.split('_')[0];
 
-        acc[key].sides[entry.side] = true;
-        acc[key].of.sublux = entry.sublux;
-        acc[key].of.muscleSpasm = entry.muscleSpasm;
-        acc[key].of.triggerPoints = entry.triggerPoints;
-        acc[key].of.tenderness = entry.tenderness;
-        acc[key].of.numbness = entry.numbness;
-        acc[key].of.edema = entry.edema;
-        acc[key].of.swelling = entry.swelling;
-        acc[key].of.reducedMotion = entry.reducedMotion;
-        acc[key].physio.positioning = entry.physioPositioning;
-        acc[key].physio.coldPack = entry.coldPack;
-        acc[key].physio.hotPack = entry.hotPack;
-        acc[key].physio.electStim = entry.electStim;
-        acc[key].physio.traction = entry.traction;
-        acc[key].physio.massage = entry.massage;
-        acc[key].treatment.positioning = entry.treatmentPositioning;
-        acc[key].treatment.technique = entry.technique;
-        acc[key].treatment.manipulation = entry.manipulation;
+    treatmentsPayload[key] = { ...treatment };
+  }
 
-        return acc;
-      }, {});
-      payload.phaseOneRoomAssignments = {
-        physio: '',
-        tx: '',
-      };
-      const currentPatient = await this.getCurrentPatient();
+  console.log('treatment payload:', treatmentsPayload);
 
-      payload.patientFirstName = currentPatient.firstName;
-      payload.patientLastName = currentPatient.lastName;
-      payload.noteVisitDate = note.visitDate || note.visitDateText || '';
-      payload.height =
-        `${currentPatient.heightFeet || ''}'${
-          currentPatient.heightInches || ''
-        }"` || '';
-      payload.weight = `${currentPatient.weight || ''} lbs`;
-      payload.temperature = `${note.temperature} F` || '';
-      payload.systolic = note.systolic || '';
-      payload.diastoic = note.diastoic || '';
-      payload.pulse = note.pulse || '';
-      payload.respiration = note.respiration || '';
-      payload.physiotherapyNumber = note.physiotherapy || '';
-
-*/
+  return treatmentsPayload;
+}
