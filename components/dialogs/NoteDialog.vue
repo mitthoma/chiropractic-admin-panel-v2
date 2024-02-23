@@ -427,7 +427,6 @@ export default {
           let existing = null;
 
           if (type === 'spinal' && pastRecords) {
-            console.log('pastRecords are ', pastRecords);
             existing = pastRecords.find(
               (entry) =>
                 entry.spinalLevel === levels[i] && entry.category === type
@@ -465,9 +464,6 @@ export default {
     async processSaveOperations(noteId, patientId) {
       // Handle complaints
       await this.handleComplaints(patientId, this.complaints);
-
-      console.log('this spinal grid is ', this.spinalGrid);
-      console.log('this spinal treatment grid is ', this.spinalTreatmentGrid);
 
       // Save or update spinal entries and treatments
       await this.saveEntriesAndTreatments(
@@ -530,13 +526,16 @@ export default {
     },
     async submitNoteForm() {
       const patientId = this.$route.params.id;
-      const visitDateTime = new Date(this.form.visitDate);
+      const visitDateTime = this.form.visitDate
+        ? new Date(this.form.visitDate)
+        : null;
       if (this.isFormValid) {
         const formData = {
           ...this.form,
           temperature: parseFloat(this.form.temperature),
           visitDate: visitDateTime ? formatISO(visitDateTime) : null,
         };
+
         const res = await this.noteService.addNote(formData, patientId);
         if ((await res) instanceof Error) {
           return res;
@@ -544,13 +543,13 @@ export default {
           const noteId = res.id;
           await this.processSaveOperations(noteId, this.currentPatient.id);
           this.$emit('note-added');
+          this.closeDialog();
         }
       } else {
         console.log('form is not valid');
       }
     },
     async updateNote() {
-      console.log('in update note');
       // format the date
       try {
         formattedDate = parseISO(this.form.visitDate);
@@ -564,8 +563,6 @@ export default {
         temperature: parseFloat(this.form.temperature),
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
-
-      console.log('this form is ', formData);
 
       // save the spinal and extremity entries -- SELECTED ITEM IS YOUR NOTE associated
       // I believe each of these functions populates the extremityGrid and spinalGrid as needed
@@ -597,6 +594,7 @@ export default {
       );
 
       this.$emit('note-updated');
+      this.closeDialog();
     },
 
     async updateAllGridEntries(
@@ -715,7 +713,6 @@ export default {
             console.error('note was not able to be submitted');
             return;
           }
-          this.closeDialog();
           this.isLoading = false;
         } else {
           this.tab++;

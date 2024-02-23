@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma, patient } from '@prisma/client';
 import { deleteNote } from './noteRepository';
 import { deleteComplaint } from './complaintRepository';
+import { deleteReport } from './reports/reportRepository';
 const prisma = new PrismaClient();
 
 export const saveNewPatient = async (
@@ -60,6 +61,18 @@ export const deletePatient = async (id: number): Promise<boolean> => {
     if (notes) {
       for (const note of notes) {
         await deleteNote(note.id);
+      }
+    }
+
+    // Fetch all exam summaries related to the patient
+    const reports = await prisma.report.findMany({
+      where: { patientId: id },
+    });
+
+    // Delete all notes related to the patient
+    if (reports) {
+      for (const report of reports) {
+        await deleteReport(report.id);
       }
     }
 

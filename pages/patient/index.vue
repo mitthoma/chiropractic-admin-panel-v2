@@ -77,7 +77,7 @@
                   <v-icon
                     class="ma-2 pa-3 pt-5"
                     title="Delete patient"
-                    @click="deletePatient(item)"
+                    @click="openDeletePatientDialog(item)"
                     >mdi-delete</v-icon
                   >
                   <!-- Add delete button -->
@@ -108,6 +108,25 @@
       @close-dialog="closePatientDialog"
       @patient-added="refreshPatientList"
     />
+
+    <v-dialog v-model="deletePatientDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Delete Patient</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this patient? Deleting this patient
+          will delete all notes, exam summaries, and data associated with it.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="deletePatientDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="darken-1" text @click="deletePatientConfirmed()"
+            >Delete Patient</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -133,6 +152,8 @@ export default {
       selectedPatientItem: null,
       isLoading: false,
       searchQuery: '',
+      deletePatientDialog: false,
+      patientToDelete: null,
     };
   },
   computed: {
@@ -196,6 +217,13 @@ export default {
     backToDashboard() {
       this.$router.push('/');
     },
+    async deletePatientConfirmed() {
+      this.deletePatientDialog = false;
+      this.isLoading = true;
+      await this.deletePatient(this.patientToDelete);
+      this.isLoading = false;
+      this.patientToDelete = null;
+    },
     closePatientDialog() {
       this.selectedPatientItem = null;
       this.patientDialog = false;
@@ -209,6 +237,11 @@ export default {
         startIndex,
         startIndex + this.itemsPerPage
       );
+    },
+
+    openDeletePatientDialog(patient) {
+      this.patientToDelete = patient;
+      this.deletePatientDialog = true;
     },
     sortPatients(field) {
       this.patients = this.patients.sort((a, b) => {

@@ -247,7 +247,14 @@ export default {
       }
     },
     updatePhaseTwoVisitDateTime() {
-      this.$emit('edit-visit-date-time', this.visitDateTime);
+      const adjustedDate = this.adjustDateToUTC(this.visitDateTime);
+      this.$emit('edit-visit-date-time', adjustedDate);
+    },
+
+    adjustDateToUTC(localDate) {
+      if (!localDate) return null;
+      const estOffset = 5;
+      return new Date(localDate.getTime() - estOffset * 60 * 60 * 1000);
     },
     updatePhaseTwoVisitDateText(newVal) {
       this.$emit('update:phaseTwoForm', {

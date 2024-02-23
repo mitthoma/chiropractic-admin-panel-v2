@@ -237,7 +237,7 @@
                     "
                   >
                     <td>{{ index + 1 }}</td>
-                    <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                    <td>{{ formatVisitDate(item.exam_date, item) }}</td>
                     <td>{{ formatDate(item.dateAdded, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-icon class="ma-3" @click="goToReport(item)"
@@ -353,10 +353,10 @@ export default {
       complaintTotalPages: 1,
       displayedComplaints: [],
       selectedComplaintItem: null,
-      deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
-      deleteReportDialog: false, // This is new, for managing the Delete Confirmation Dialog
+      deleteDialog: false,
+      deleteReportDialog: false,
       reportToDelete: null,
-      noteToDelete: null, // To hold the note object to be deleted
+      noteToDelete: null,
       reports: [],
       currentReportPage: 1,
       totalReportPages: 1,
@@ -414,17 +414,22 @@ export default {
   },
   methods: {
     async saveAndGoToReport() {
+      const adjustedDate = this.adjustDateToUTC(this.selectedDate);
       const report = await this.reportService.addReport(
         {
-          exam_date: this.selectedDate,
+          exam_date: adjustedDate,
         },
         this.currentPatient.id
       );
-      console.log('report id is ', report);
       this.$router.push(
         `/patient/${this.$route.params.id}/report/${report.id}`
       );
       this.dialog = false;
+    },
+    adjustDateToUTC(localDate) {
+      if (!localDate) return null;
+      const estOffset = 5;
+      return new Date(localDate.getTime() - estOffset * 60 * 60 * 1000);
     },
     updateDisplayedNotes() {
       this.isLoading = true;
