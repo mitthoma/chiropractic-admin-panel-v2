@@ -35,4 +35,8 @@ export const createNoteService = (api: AxiosInstance) => ({
     const { data } = await api.post('/notes/delete-note', payload);
     return data.data;
   },
+  exportNote: async (payload: any) => {
+    const { data } = await api.post('/notes/export-note', payload);
+    return data;
+  },
 });

@@ -315,7 +315,8 @@ import { createNoteService } from '~/services/note';
 import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
-import { generateCSV, generateXLSX } from '~/utils/csvExport';
+import { generateCSV } from '~/utils/csvExport';
+import { base64toBlob, downloadFile } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
@@ -518,11 +519,37 @@ export default {
       }
     },
     async handleExport(type, item) {
-      await this.assignPayload(item);
       if (type === 'csv') {
+        await this.assignPayload(item);
         generateCSV(this.payload);
       } else if (type === 'excel') {
-        generateXLSX(this.payload);
+        console.log(`exporting note ${item.id} to excel`);
+        const response = await this.noteService.exportNote({
+          noteId: item.id,
+        });
+
+        if (!response.success) {
+          console.error(
+            'failed to export note to excel.',
+            `statusCode: ${response.statusCode}`
+          );
+        } else {
+          console.log('downloading note as excel file');
+          // decode blob from response body
+          const blob = base64toBlob(
+            response.body,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          );
+
+          // download the blob
+          const visitDate = this.formatDate(item.visitDate, item);
+          const filename = makeFilenameExcelNote(
+            visitDate,
+            this.currentPatient?.firstName,
+            this.currentPatient?.lastName
+          );
+          downloadFile(blob, filename);
+        }
       }
     },
     formatPhoneNumber(number) {
