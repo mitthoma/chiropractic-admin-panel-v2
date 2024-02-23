@@ -179,7 +179,7 @@
                 color="primary"
               ></v-progress-circular>
             </div>
-            <div v-else class="py-5 d-flex">
+            <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
               <v-spacer></v-spacer>
               <!-- Additional buttons or actions for Reports can go here -->
@@ -229,7 +229,7 @@
                   <th class="text-right pr-8">Actions</th>
                 </tr>
               </thead>
-              <tbody class="">
+              <tbody>
                 <template v-for="(item, index) in shownReports" :key="item.id">
                   <tr
                     :class="
@@ -237,7 +237,7 @@
                     "
                   >
                     <td>{{ index + 1 }}</td>
-                    <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                    <td>{{ formatVisitDate(item.exam_date, item) }}</td>
                     <td>{{ formatDate(item.dateAdded, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-icon class="ma-3" @click="goToReport(item)"
@@ -354,10 +354,10 @@ export default {
       complaintTotalPages: 1,
       displayedComplaints: [],
       selectedComplaintItem: null,
-      deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
-      deleteReportDialog: false, // This is new, for managing the Delete Confirmation Dialog
+      deleteDialog: false,
+      deleteReportDialog: false,
       reportToDelete: null,
-      noteToDelete: null, // To hold the note object to be deleted
+      noteToDelete: null,
       reports: [],
       currentReportPage: 1,
       totalReportPages: 1,
@@ -376,7 +376,6 @@ export default {
   computed: {
     currentPatient() {
       const pat = this.patientStore?.getCurrentPatient;
-      console.log('current patient', pat);
       return pat;
     },
     shownNotes() {
@@ -416,17 +415,22 @@ export default {
   },
   methods: {
     async saveAndGoToReport() {
+      const adjustedDate = this.adjustDateToUTC(this.selectedDate);
       const report = await this.reportService.addReport(
         {
-          exam_date: this.selectedDate,
+          exam_date: adjustedDate,
         },
         this.currentPatient.id
       );
-      console.log('report id is ', report);
       this.$router.push(
         `/patient/${this.$route.params.id}/report/${report.id}`
       );
       this.dialog = false;
+    },
+    adjustDateToUTC(localDate) {
+      if (!localDate) return null;
+      const estOffset = 5;
+      return new Date(localDate.getTime() - estOffset * 60 * 60 * 1000);
     },
     updateDisplayedNotes() {
       this.isLoading = true;
@@ -481,13 +485,17 @@ export default {
       this.deleteReportDialog = true;
     },
     async deleteConfirmed() {
-      await this.deleteNote(this.noteToDelete);
       this.deleteDialog = false;
+      this.isLoading = true;
+      await this.deleteNote(this.noteToDelete);
+      this.isLoading = false;
       this.noteToDelete = null;
     },
     async deleteReportConfirmed() {
-      await this.deleteReport(this.reportToDelete);
       this.deleteReportDialog = false;
+      this.isReportsLoading = true;
+      await this.deleteReport(this.reportToDelete);
+      this.isReportsLoading = false;
       this.reportToDelete = null;
     },
     async deleteNote(item) {
@@ -507,7 +515,7 @@ export default {
         });
         this.refreshReports();
       } catch (error) {
-        console.error('Error deleting note:', error);
+        console.error('Error deleting report:', error);
       }
     },
     async handleExport(type, item) {

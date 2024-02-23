@@ -18,11 +18,20 @@
         </div>
         <div v-else class="py-5 d-flex">
           <v-card-title> Patient List </v-card-title>
+          <v-text-field
+            v-model="searchQuery"
+            class="searchField"
+            prepend-icon="mdi-magnify"
+            label="Search Patients"
+            single-line
+            hide-details
+          ></v-text-field>
           <v-spacer></v-spacer>
+
           <v-btn
             prepend-icon="mdi-plus"
             color="primary"
-            class="mx-2 pa-2"
+            class="mx-2 pa-2 mr-5 my-2"
             @click="patientDialog = true"
             >Add New Patient</v-btn
           >
@@ -68,7 +77,7 @@
                   <v-icon
                     class="ma-2 pa-3 pt-5"
                     title="Delete patient"
-                    @click="deletePatient(item)"
+                    @click="openDeletePatientDialog(item)"
                     >mdi-delete</v-icon
                   >
                   <!-- Add delete button -->
@@ -99,6 +108,25 @@
       @close-dialog="closePatientDialog"
       @patient-added="refreshPatientList"
     />
+
+    <v-dialog v-model="deletePatientDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Delete Patient</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this patient? Deleting this patient
+          will delete all notes, exam summaries, and data associated with it.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="deletePatientDialog = false"
+            >Cancel</v-btn
+          >
+          <v-btn color="darken-1" text @click="deletePatientConfirmed()"
+            >Delete Patient</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -123,10 +151,33 @@ export default {
       totalPages: 1,
       selectedPatientItem: null,
       isLoading: false,
+      searchQuery: '',
+      deletePatientDialog: false,
+      patientToDelete: null,
     };
+  },
+  computed: {
+    filteredPatients() {
+      if (!this.searchQuery) {
+        return this.patients;
+      }
+      const searchLower = this.searchQuery.toLowerCase();
+      return this.patients.filter((patient) => {
+        return (
+          patient.acctNo.toLowerCase().includes(searchLower) ||
+          patient.firstName.toLowerCase().includes(searchLower) ||
+          patient.lastName.toLowerCase().includes(searchLower) ||
+          (patient.email && patient.email.toLowerCase().includes(searchLower))
+        );
+      });
+    },
   },
   watch: {
     currentPage() {
+      this.updateDisplayedPatients();
+    },
+    searchQuery() {
+      this.currentPage = 1;
       this.updateDisplayedPatients();
     },
   },
@@ -166,17 +217,31 @@ export default {
     backToDashboard() {
       this.$router.push('/');
     },
+    async deletePatientConfirmed() {
+      this.deletePatientDialog = false;
+      this.isLoading = true;
+      await this.deletePatient(this.patientToDelete);
+      this.isLoading = false;
+      this.patientToDelete = null;
+    },
     closePatientDialog() {
       this.selectedPatientItem = null;
       this.patientDialog = false;
     },
     updateDisplayedPatients() {
-      this.totalPages = Math.ceil(this.patients.length / this.itemsPerPage);
+      this.totalPages = Math.ceil(
+        this.filteredPatients.length / this.itemsPerPage
+      );
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      this.displayedPatients = this.patients.slice(
+      this.displayedPatients = this.filteredPatients.slice(
         startIndex,
         startIndex + this.itemsPerPage
       );
+    },
+
+    openDeletePatientDialog(patient) {
+      this.patientToDelete = patient;
+      this.deletePatientDialog = true;
     },
     sortPatients(field) {
       this.patients = this.patients.sort((a, b) => {
@@ -198,12 +263,6 @@ export default {
         day: '2-digit',
       }).format(date);
 
-      // const formattedTime = new Intl.DateTimeFormat('en-US', {
-      //   hour: '2-digit',
-      //   minute: '2-digit',
-      //   hour12: true,
-      // }).format(date);
-
       return `${formattedDate}`;
     },
     formatPhoneNumber(phoneNumber) {
@@ -217,3 +276,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.searchField {
+  padding-left: 2vw;
+  padding-right: 10vw;
+
+  margin-bottom: 3vh;
+}
+</style>

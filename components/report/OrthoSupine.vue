@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       editMode: false,
-      orthoService: null,
+      orthoSupineService: null,
       existingOrthoSupines: [],
       orthoSupinesCopy: null,
       orthoSupines: [
@@ -95,14 +95,14 @@ export default {
     };
   },
   async mounted() {
-    this.orthoService = createOrthoService(this.$api);
+    this.orthoSupineService = createOrthoService(this.$api);
     await this.getExistingOrthoSupines();
     this.orthoSupinesCopy = JSON.parse(JSON.stringify(this.orthoSupines));
   },
   methods: {
     async getExistingOrthoSupines() {
       this.existingOrthoSupines =
-        await this.orthoService.getOrthoSupinesForReport({
+        await this.orthoSupineService.getOrthoSupinesForReport({
           id: this.$route.params.reportId,
         });
       if (this.existingOrthoSupines.length > 0) {

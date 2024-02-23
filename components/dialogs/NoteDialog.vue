@@ -110,9 +110,23 @@
         <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{
           tab === 1 ? 'Back' : 'Cancel'
         }}</v-btn>
-        <v-btn color="blue darken-1 justify-end" text @click="processPhase">{{
-          tab === 5 ? saveButtonText : 'Next'
-        }}</v-btn>
+        <v-btn
+          v-if="!isLoading"
+          color="blue darken-1 justify-end"
+          text
+          @click="processPhase"
+          >{{ tab === 5 ? saveButtonText : 'Next' }}</v-btn
+        >
+        <v-btn
+          v-else
+          color="blue darken-1 justify-end"
+          text
+          @click="processPhase"
+          ><v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular
+        ></v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="exitConfirmDialog" max-width="300px">
@@ -177,6 +191,7 @@ export default {
       oldTreatments: null,
       currentNote: null,
       patient: null,
+      isLoading: false,
       form: {
         visitDate: null,
         visitDateText: null,
@@ -412,7 +427,6 @@ export default {
           let existing = null;
 
           if (type === 'spinal' && pastRecords) {
-            console.log('pastRecords are ', pastRecords);
             existing = pastRecords.find(
               (entry) =>
                 entry.spinalLevel === levels[i] && entry.category === type
@@ -450,9 +464,6 @@ export default {
     async processSaveOperations(noteId, patientId) {
       // Handle complaints
       await this.handleComplaints(patientId, this.complaints);
-
-      console.log('this spinal grid is ', this.spinalGrid);
-      console.log('this spinal treatment grid is ', this.spinalTreatmentGrid);
 
       // Save or update spinal entries and treatments
       await this.saveEntriesAndTreatments(
@@ -515,13 +526,16 @@ export default {
     },
     async submitNoteForm() {
       const patientId = this.$route.params.id;
-      const visitDateTime = new Date(this.form.visitDate);
+      const visitDateTime = this.form.visitDate
+        ? new Date(this.form.visitDate)
+        : null;
       if (this.isFormValid) {
         const formData = {
           ...this.form,
           temperature: parseFloat(this.form.temperature),
           visitDate: visitDateTime ? formatISO(visitDateTime) : null,
         };
+
         const res = await this.noteService.addNote(formData, patientId);
         if ((await res) instanceof Error) {
           return res;
@@ -536,7 +550,6 @@ export default {
       }
     },
     async updateNote() {
-      console.log('in update note');
       // format the date
       try {
         formattedDate = parseISO(this.form.visitDate);
@@ -550,8 +563,6 @@ export default {
         temperature: parseFloat(this.form.temperature),
         visitDate: this.form.visitDate ? parseISO(this.form.visitDate) : null,
       };
-
-      console.log('this form is ', formData);
 
       // save the spinal and extremity entries -- SELECTED ITEM IS YOUR NOTE associated
       // I believe each of these functions populates the extremityGrid and spinalGrid as needed
@@ -694,12 +705,15 @@ export default {
     async processPhase() {
       if (await this.validateForm(this.tab)) {
         if (this.tab === 5) {
-          if (this.isUpdateMode) {
-            console.log('calling update note');
-            await this.updateNote();
-          } else {
-            this.submitNoteForm();
+          this.isLoading = true;
+          const res = this.isUpdateMode
+            ? await this.updateNote()
+            : await this.submitNoteForm();
+          if (res instanceof Error) {
+            console.error('note was not able to be submitted');
+            return;
           }
+          this.isLoading = false;
         } else {
           this.tab++;
         }
