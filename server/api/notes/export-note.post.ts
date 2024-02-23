@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import * as fs from 'fs';
-import { createFormattedNoteExcel } from '~~/utils/excelExport';
+import { createFormattedNoteExcel } from '~~/server/repositories/excelExport/exportNote';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -13,9 +13,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
       };
     }
-    console.log('formatting excel file...');
     const exportXlsxPath = await createFormattedNoteExcel(noteID);
-    console.log(`excel file written to ${exportXlsxPath}`);
     const fileContent = await fs.promises.readFile(exportXlsxPath);
 
     // delete the generated file so we don't clutter things

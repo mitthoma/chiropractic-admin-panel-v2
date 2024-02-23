@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as fs from 'fs';
 import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
@@ -38,7 +39,6 @@ const LEVELS = {
 
 // eslint-disable-next-line prettier/prettier
 const EXTREMITIES = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
-
 
 /** objective findings (their key values) in the order they appear in the spreadsheet.
 make sure this matches the order of the columns in the spreadsheet. */
@@ -94,6 +94,21 @@ const pathMap = {
   manipulation: 'treatmentManipulation',
 };
 
+/**
+ * map values to individual cells here. mostly for values that aren't part of a large set of data in a predictable order.
+ */
+const individualCellMappings: any = {
+  patientName: 'B2',
+  visitDate: 'B3',
+  height: 'G2',
+  weight: 'G3',
+  temperature: 'G4',
+  systolic: 'G5',
+  diastolic: 'G6',
+  respiration: 'G7',
+  pulse: 'G8',
+};
+
 export async function createFormattedNoteExcel(
   noteID: string
 ): Promise<string> {
@@ -115,17 +130,9 @@ export async function createFormattedNoteExcel(
     }
 
     // load the note data
-    const noteData = (await getNoteById(noteID)) as any;
-    // console.log(noteData);
-    const entriesData = await getEntriesData(noteData.id);
-    // console.log('payload:', payload);
-    if (!entriesData) {
-      console.error('Failed to load note entries during excel export.');
-      return '';
-    }
+    const generalData = await getGeneralData(noteID);
+    const entriesData = await getEntriesData(noteID);
     const treatmentData = await getTreatmentData(noteID);
-
-    worksheet.getCell('A1').value = 'Ben was here!';
 
     // populate the note data into the excel file
     populateLevelData(entriesData, treatmentData, worksheet);
@@ -133,18 +140,19 @@ export async function createFormattedNoteExcel(
     // populate the extremities data
     populateExtremitiesData(entriesData, treatmentData, worksheet);
 
+    // populate general data
+    fillOutIndividualCellMappings(worksheet, generalData);
+
     // Save the modified Excel file
-    const outputPath = `static/generated/${noteData.id}.xlsx`;
+    const outputPath = `static/generated/${noteID}.xlsx`;
     // create the 'generated' folder if it doesn't exist yet
     if (!fs.existsSync('static/generated')) {
       fs.mkdirSync('static/generated', { recursive: true });
     }
     await workbook.xlsx.writeFile(outputPath);
-    console.log(`note excel created at ${outputPath}`);
 
     return outputPath;
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Error modifying Excel file:', error);
     throw new Error('Failed to modify Excel file.');
   }
@@ -289,12 +297,41 @@ function fillOutTableRow(
       continue;
     }
     const cellName = COL_LETTERS[curCol] + rowNumber;
-    try {
-      process.stdout.write(`writing value ${val} to cell ${cellName}`);
-      worksheet.getCell(cellName).value = val === true ? 'x' : val;
-    } catch {
-      console.error(`Failed to write to cell ${cellName}`);
-    }
+    writeValuetoCell(worksheet, cellName, val);
+  }
+}
+
+/**
+ * fills out all the data in the individual mappings
+ * @param worksheet worksheet object to modify
+ * @param data data object to get values from
+ */
+function fillOutIndividualCellMappings(
+  worksheet: ExcelJS.Worksheet,
+  data: any
+) {
+  for (const key in individualCellMappings) {
+    const value = data[key];
+    const cell = individualCellMappings[key];
+    writeValuetoCell(worksheet, cell, value);
+  }
+}
+
+/**
+ * Writes a value to the given cell of the worksheet
+ * @param worksheet worksheet obj to modify
+ * @param cellName cell to write to (e.g. "A1")
+ * @param val value to write. if it's a boolean, it will be an 'x' if true
+ */
+function writeValuetoCell(
+  worksheet: ExcelJS.Worksheet,
+  cellName: string,
+  val: any
+) {
+  try {
+    worksheet.getCell(cellName).value = val === true ? 'x' : val;
+  } catch {
+    console.error(`Failed to write to cell ${cellName}`);
   }
 }
 
@@ -308,7 +345,7 @@ function fillOutTableRow(
 function getLevelObj(payload: any, letter: string, level: number): any | null {
   const levelList = LEVELS[letter as keyof typeof LEVELS];
   if (!levelList) {
-    console.log(`level ${letter}${level} not found!`);
+    console.warn(`level ${letter}${level} not found!`);
     return null;
   }
   const propStr = levelList[level];
@@ -357,7 +394,6 @@ function getValueAtPath(obj: any, path: string): any | null {
 async function getEntriesData(noteID: string): Promise<any> {
   process.stdout.write('loading entries');
   const entries = (await getAllEntriesByNoteId(noteID)) as any[];
-  console.log('number of entries:', entries.length);
 
   // get the data we want from entries into the format we use for exporting
   process.stdout.write('reducing payload data');
@@ -373,10 +409,6 @@ async function getEntriesData(noteID: string): Promise<any> {
       };
     }
 
-    if (entry.coldPack || entry.hotPack || entry.electStim) {
-      console.log('found a treatment!');
-    }
-
     acc[key].sides[entry.side] = true;
     acc[key].of.sublux = entry.sublux;
     acc[key].of.muscleSpasm = entry.muscleSpasm;
@@ -386,16 +418,6 @@ async function getEntriesData(noteID: string): Promise<any> {
     acc[key].of.edema = entry.edema;
     acc[key].of.swelling = entry.swelling;
     acc[key].of.reducedMotion = entry.reducedMotion;
-    acc[key].physio.positioning = entry.physioPositioning;
-    acc[key].physio.coldPack = entry.coldPack;
-    acc[key].physio.hotPack = entry.hotPack;
-    acc[key].physio.electStim = entry.electStim;
-    acc[key].physio.traction = entry.traction;
-    acc[key].physio.massage = entry.massage;
-    acc[key].treatment.positioning = entry.treatmentPositioning;
-    acc[key].treatment.technique = entry.technique;
-    acc[key].treatment.manipulation = entry.manipulation;
-
     return acc;
   }, {});
 
@@ -404,8 +426,6 @@ async function getEntriesData(noteID: string): Promise<any> {
 
 async function getTreatmentData(noteID: string): Promise<any> {
   const treatments = (await getAllTreatmentsByNoteId(noteID)) as Treatment[];
-  console.log('treatments:', treatments);
-
   const treatmentsPayload: any = {};
 
   for (const treatment of treatments) {
@@ -415,7 +435,30 @@ async function getTreatmentData(noteID: string): Promise<any> {
     treatmentsPayload[key] = { ...treatment };
   }
 
-  console.log('treatment payload:', treatmentsPayload);
-
   return treatmentsPayload;
+}
+
+async function getGeneralData(noteID: string): Promise<any> {
+  const noteData = (await getNoteById(noteID)) as any;
+  const output: any = {
+    patientFirstName: noteData.patient.firstName,
+    patientLastName: noteData.patient.lastName,
+    acctNo: noteData.patient.acctNo,
+    heightFeet: noteData.patient.heightFeet,
+    heightInches: noteData.patient.heightInches,
+    weight: noteData.patient.weight,
+    // vitals
+    temperature: noteData.temperature,
+    respiration: noteData.respiration,
+    systolic: noteData.systolic,
+    diastolic: noteData.diastolic,
+    pulse: noteData.pulse,
+  };
+  output.patientName = `${output.patientLastName}, ${output.patientFirstName}`;
+  output.visitDate = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(noteData.visitDate);
+  return output;
 }
