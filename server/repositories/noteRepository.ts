@@ -44,9 +44,13 @@ export const getAllNotes = async () => {
 
 export const updateNote = async (noteId: string, payload: Partial<any>) => {
   try {
+    const updatedPayload = {
+      ...payload,
+      lastEdited: new Date(),
+    };
     const updatedNote = await prisma.note.update({
       where: { id: noteId },
-      data: payload,
+      data: updatedPayload,
     });
 
     return updatedNote;
@@ -91,7 +95,6 @@ export const getNotesByPatientId = async (patientId: number) => {
 
 export const getNoteById = async (noteId: string) => {
   try {
-    console.log('noteid is ', noteId);
     const note = await prisma.note.findUnique({
       where: { id: noteId },
       include: { patient: true }, // Include the related Patient entity

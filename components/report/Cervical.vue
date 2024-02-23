@@ -26,9 +26,17 @@
           <td v-else>
             <input v-model="cervical.arom" type="text" placeholder="None" />
           </td>
-          <td v-if="!editMode">{{ cervical.pain || 'None' }}</td>
+          <td v-if="!editMode">
+            {{ cervical.pain ? '+'.repeat(cervical.pain) : 'None' }}
+          </td>
           <td v-else>
-            <input v-model="cervical.pain" type="text" placeholder="None" />
+            <v-select
+              v-model="cervical.pain"
+              :items="painOptions"
+              item-value="value"
+              item-title="text"
+              placeholder="None"
+            ></v-select>
           </td>
           <td v-if="!editMode">{{ cervical.notes || 'None' }}</td>
           <td v-else>
@@ -52,6 +60,13 @@ export default {
       cervicalService: null,
       existingCervicals: [],
       cervicalsCopy: null,
+      painOptions: [
+        { text: '+', value: '1' },
+        { text: '++', value: '2' },
+        { text: '+++', value: '3' },
+        { text: '++++', value: '4' },
+        { text: '+++++', value: '5' },
+      ],
       cervicals: [
         {
           name: 'Flexion',

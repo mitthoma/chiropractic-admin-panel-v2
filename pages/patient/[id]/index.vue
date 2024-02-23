@@ -90,7 +90,13 @@
       <v-row>
         <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
-            <div class="py-5 d-flex">
+            <div v-if="isLoading" class="text-center py-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
+            <div v-else class="py-5 d-flex">
               <v-card-title> Notes List </v-card-title>
               <v-spacer></v-spacer>
               <v-row class="mx-2 pa-2" justify="end">
@@ -167,6 +173,12 @@
         </v-col>
         <v-col class="px-1" cols="5">
           <v-card class="elevation-4 mx-5 my-5">
+            <div v-if="isReportsLoading" class="text-center py-5">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              ></v-progress-circular>
+            </div>
             <div class="py-5 d-flex">
               <v-card-title> Reports List </v-card-title>
               <v-spacer></v-spacer>
@@ -217,7 +229,7 @@
                   <th class="text-right pr-8">Actions</th>
                 </tr>
               </thead>
-              <tbody class="">
+              <tbody>
                 <template v-for="(item, index) in shownReports" :key="item.id">
                   <tr
                     :class="
@@ -225,7 +237,7 @@
                     "
                   >
                     <td>{{ index + 1 }}</td>
-                    <td>{{ formatVisitDate(item.examDate, item) }}</td>
+                    <td>{{ formatVisitDate(item.exam_date, item) }}</td>
                     <td>{{ formatDate(item.dateAdded, item) }}</td>
                     <td class="d-flex justify-end">
                       <v-icon class="ma-3" @click="goToReport(item)"
@@ -303,7 +315,8 @@ import { createNoteService } from '~/services/note';
 import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
-import { generateCSV, generateXLSX } from '~/utils/csvExport';
+import { generateCSV } from '~/utils/csvExport';
+import { base64toBlob, downloadFile } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
@@ -341,10 +354,10 @@ export default {
       complaintTotalPages: 1,
       displayedComplaints: [],
       selectedComplaintItem: null,
-      deleteDialog: false, // This is new, for managing the Delete Confirmation Dialog
-      deleteReportDialog: false, // This is new, for managing the Delete Confirmation Dialog
+      deleteDialog: false,
+      deleteReportDialog: false,
       reportToDelete: null,
-      noteToDelete: null, // To hold the note object to be deleted
+      noteToDelete: null,
       reports: [],
       currentReportPage: 1,
       totalReportPages: 1,
@@ -356,12 +369,13 @@ export default {
       reportDialog: false,
       selectedDate: null,
       patientDialog: false,
+      isLoading: false,
+      isReportsLoading: false,
     };
   },
   computed: {
     currentPatient() {
       const pat = this.patientStore?.getCurrentPatient;
-      console.log('current patient', pat);
       return pat;
     },
     shownNotes() {
@@ -380,6 +394,8 @@ export default {
     },
   },
   async mounted() {
+    this.isLoading = true;
+    this.isReportsLoading = true;
     this.patientStore = patientStore();
     await this.getCurrentPatient();
     this.noteStore = noteStore();
@@ -394,23 +410,30 @@ export default {
       patientId: this.$route.params.id,
     });
     this.updateDisplayedReports();
-    console.log('reports are ', this.reports);
+    this.isLoading = false;
+    this.isReportsLoading = false;
   },
   methods: {
     async saveAndGoToReport() {
+      const adjustedDate = this.adjustDateToUTC(this.selectedDate);
       const report = await this.reportService.addReport(
         {
-          exam_date: this.selectedDate,
+          exam_date: adjustedDate,
         },
         this.currentPatient.id
       );
-      console.log('report id is ', report);
       this.$router.push(
         `/patient/${this.$route.params.id}/report/${report.id}`
       );
       this.dialog = false;
     },
+    adjustDateToUTC(localDate) {
+      if (!localDate) return null;
+      const estOffset = 5;
+      return new Date(localDate.getTime() - estOffset * 60 * 60 * 1000);
+    },
     updateDisplayedNotes() {
+      this.isLoading = true;
       if (Array.isArray(this.notes)) {
         this.notes.sort((a, b) => {
           return new Date(b.createdDate) - new Date(a.createdDate);
@@ -427,8 +450,10 @@ export default {
         startIndex,
         startIndex + this.itemsPerPage
       );
+      this.isLoading = false;
     },
     updateDisplayedReports() {
+      this.isReportsLoading = true;
       if (Array.isArray(this.reports)) {
         this.reports.sort((a, b) => {
           return new Date(b.dateAdded) - new Date(a.dateAdded);
@@ -448,7 +473,7 @@ export default {
         startIndex,
         startIndex + this.itemsPerPage
       );
-      console.log('displayed reports are ', this.displayedReports);
+      this.isReportsLoading = false;
     },
     // New methods for handling delete confirmation dialog
     openDeleteDialog(note) {
@@ -460,13 +485,17 @@ export default {
       this.deleteReportDialog = true;
     },
     async deleteConfirmed() {
-      await this.deleteNote(this.noteToDelete);
       this.deleteDialog = false;
+      this.isLoading = true;
+      await this.deleteNote(this.noteToDelete);
+      this.isLoading = false;
       this.noteToDelete = null;
     },
     async deleteReportConfirmed() {
-      await this.deleteReport(this.reportToDelete);
       this.deleteReportDialog = false;
+      this.isReportsLoading = true;
+      await this.deleteReport(this.reportToDelete);
+      this.isReportsLoading = false;
       this.reportToDelete = null;
     },
     async deleteNote(item) {
@@ -486,15 +515,41 @@ export default {
         });
         this.refreshReports();
       } catch (error) {
-        console.error('Error deleting note:', error);
+        console.error('Error deleting report:', error);
       }
     },
     async handleExport(type, item) {
-      await this.assignPayload(item);
       if (type === 'csv') {
+        await this.assignPayload(item);
         generateCSV(this.payload);
       } else if (type === 'excel') {
-        generateXLSX(this.payload);
+        console.log(`exporting note ${item.id} to excel`);
+        const response = await this.noteService.exportNote({
+          noteId: item.id,
+        });
+
+        if (!response.success) {
+          console.error(
+            'failed to export note to excel.',
+            `statusCode: ${response.statusCode}`
+          );
+        } else {
+          console.log('downloading note as excel file');
+          // decode blob from response body
+          const blob = base64toBlob(
+            response.body,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          );
+
+          // download the blob
+          const visitDate = this.formatDate(item.visitDate, item);
+          const filename = makeFilenameExcelNote(
+            visitDate,
+            this.currentPatient?.firstName,
+            this.currentPatient?.lastName
+          );
+          downloadFile(blob, filename);
+        }
       }
     },
     formatPhoneNumber(number) {
@@ -579,16 +634,20 @@ export default {
       this.$router.push(`/patient/${this.$route.params.id}/report/${item.id}`);
     },
     async refreshNotes() {
+      this.isLoading = true;
       this.notes = await this.noteService.getNotesForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedNotes();
+      this.isLoading = false;
     },
     async refreshReports() {
+      this.isReportsLoading = true;
       this.reports = await this.reportService.getReportsForPatient({
         patientId: this.$route.params.id,
       });
       this.updateDisplayedReports();
+      this.isReportsLoading = false;
     },
     editComplaintItem(complaint) {
       this.complaintDialog = true;
