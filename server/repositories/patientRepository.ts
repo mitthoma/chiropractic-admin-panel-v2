@@ -28,9 +28,13 @@ export const updatePatient = async (
   payload: Prisma.patientUpdateInput
 ): Promise<patient | null> => {
   try {
+    const updatedPayload = {
+      ...payload,
+      lastUpdated: new Date(),
+    };
     const updatedPatient = await prisma.patient.update({
       where: { id },
-      data: payload,
+      data: updatedPayload,
     });
     return updatedPatient;
   } catch (error) {
