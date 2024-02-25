@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import * as fs from 'fs';
+import path from 'path';
 import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
 import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
@@ -116,10 +116,16 @@ export async function createFormattedNoteExcel(
   // basically the constructor is defined incorrectly for Workbook, and needs to be called as default.Workbook().
   // but, good ol' typescript doesn't let me do that since default isn't part of the type Workbook. so hacky workaround lol.
   const exceljs = ExcelJS as any;
+  console.log('creating note excel document');
 
   try {
     // Load the existing Excel template
-    const templatePath = 'static/spreadsheet_template/note_export.xlsx';
+    const templatePath = path.join(
+      process.cwd(),
+      'static',
+      'spreadsheet_template',
+      'note_export.xlsx'
+    );
     const workbook = new exceljs.default.Workbook();
     await workbook.xlsx.readFile(templatePath);
 
@@ -130,9 +136,12 @@ export async function createFormattedNoteExcel(
     }
 
     // load the note data
+    console.log('loading data for export');
     const generalData = await getGeneralData(noteID);
     const entriesData = await getEntriesData(noteID);
     const treatmentData = await getTreatmentData(noteID);
+
+    console.log('populating data into excel document');
 
     // populate the note data into the excel file
     populateLevelData(entriesData, treatmentData, worksheet);
@@ -144,11 +153,8 @@ export async function createFormattedNoteExcel(
     fillOutIndividualCellMappings(worksheet, generalData);
 
     // Save the modified Excel file
-    const outputPath = `static/generated/${noteID}.xlsx`;
-    // create the 'generated' folder if it doesn't exist yet
-    if (!fs.existsSync('static/generated')) {
-      fs.mkdirSync('static/generated', { recursive: true });
-    }
+    const outputPath = `/tmp/${noteID}.xlsx`;
+    console.log(`writing excel document to ${outputPath}`);
     await workbook.xlsx.writeFile(outputPath);
 
     return outputPath;
@@ -181,11 +187,9 @@ function populateLevelData(
       if (!levelObj) {
         continue;
       }
-      process.stdout.write(`level: ${level}${levelNum}`);
       const rowNumber = rowStart + levelNum;
 
       // get each objective finding
-      process.stdout.write('adding objective findings ...');
       let colStart = COL_RANGES.OF[0];
 
       if (!colStart || !rowStart) {
@@ -204,9 +208,6 @@ function populateLevelData(
       // get each treatment
       levelObj = getLevelObj(treatmentData, level, levelNum);
       colStart = COL_RANGES.PHYS[0];
-      process.stdout.write(
-        `adding treatments (${TREATMENT_ORDER.length} in total)`
-      );
 
       fillOutTableRow(
         colStart,
@@ -237,7 +238,6 @@ function populateExtremitiesData(
     }
 
     // add findings data
-    process.stdout.write('adding findings ...');
     let colStart = COL_RANGES.OF[0];
     const rowStart = ROW_RANGES.EXT[0];
 
@@ -392,11 +392,9 @@ function getValueAtPath(obj: any, path: string): any | null {
 }
 
 async function getEntriesData(noteID: string): Promise<any> {
-  process.stdout.write('loading entries');
   const entries = (await getAllEntriesByNoteId(noteID)) as any[];
 
   // get the data we want from entries into the format we use for exporting
-  process.stdout.write('reducing payload data');
   const entriesPayload = entries.reduce((acc, entry) => {
     let key = entry.spinalLevel || entry.extremityLevel;
     key = key.split('_')[0];
