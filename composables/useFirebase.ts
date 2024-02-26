@@ -33,6 +33,9 @@ export const signInUser = async (email: string, password: string) => {
   try {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
     if (credentials) {
+      // get a token from the credentials
+      const user = credentials.user;
+      const token = await user.getIdToken();
       const res = await authService.signInUserWithAPI(credentials.user.uid);
       if (res instanceof Error) {
         // console.log(res.message);
@@ -40,6 +43,7 @@ export const signInUser = async (email: string, password: string) => {
       } else if (res) {
         store.setUser(res);
         store.setIsLoggedIn(true);
+        store.setToken(token);
         return { success: true };
       } else {
         return { success: false, error: 'Error signing user in.' };

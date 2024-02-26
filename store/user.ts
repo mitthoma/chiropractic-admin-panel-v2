@@ -5,6 +5,7 @@ interface UserState {
   user: user;
   isLoggedIn: boolean;
   authInitialized: boolean;
+  token: string;
 }
 
 export const userStore = defineStore('user', {
@@ -12,6 +13,7 @@ export const userStore = defineStore('user', {
     user: {} as user,
     isLoggedIn: false,
     authInitialized: false,
+    token: '',
   }),
 
   getters: {
@@ -20,6 +22,7 @@ export const userStore = defineStore('user', {
       Object.keys(state.user).length > 0 ? state.user : null,
     getIsLoggedIn: (state: UserState): boolean => state.isLoggedIn,
     getAuthInitialized: (state: UserState): boolean => state.authInitialized,
+    getToken: (state: UserState): string => state.token,
   },
   actions: {
     setIsLoggedIn(value: boolean) {
@@ -30,6 +33,9 @@ export const userStore = defineStore('user', {
     },
     setAuthInitialized(value: boolean) {
       this.authInitialized = value;
+    },
+    setToken(token: string) {
+      this.token = token;
     },
   },
 });

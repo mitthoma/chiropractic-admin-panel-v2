@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { userStore } from '~~/store/user';
 
 // TODO: give payload typings
 export const createPatientService = (api: AxiosInstance) => ({
@@ -23,7 +24,12 @@ export const createPatientService = (api: AxiosInstance) => ({
   },
 
   deletePatient: async (payload: object) => {
-    const { data } = await api.post('/patient/delete-patient', payload);
+    const token = userStore().getToken;
+    const { data } = await api.post('/patient/delete-patient', payload, {
+      headers: {
+        Authorization: token,
+      },
+    });
     return data.data;
   },
 });
