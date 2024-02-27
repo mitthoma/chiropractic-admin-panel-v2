@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { setApiInstance } from '@/utils/apiInstance';
+import { userStore } from '~~/store/user';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -8,6 +9,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     headers: {
       common: {},
     },
+  });
+
+  // attach a auth token to every request
+  api.interceptors.request.use((config) => {
+    const token = userStore().getToken;
+    if (token !== '') {
+      config.headers.Authorization = token;
+    }
+    return config;
   });
 
   // Set the api instance
