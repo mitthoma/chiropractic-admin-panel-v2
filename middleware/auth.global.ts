@@ -1,8 +1,15 @@
+import { userStore } from '~~/store/user';
+
+interface RouteMeta {
+  auth?: boolean;
+}
+
 export default defineNuxtRouteMiddleware((to, _from) => {
-  if (to.path.includes('/patient')) {
-    // const user = userStore();
-    // const token = user.getToken;
-    // attempt to add auth header
-    console.log('going to a patient route:', to.path);
+  const store = userStore();
+  const meta = to.meta as RouteMeta;
+
+  if (meta && meta.auth !== false && !store.getIsLoggedIn && to.path !== '/') {
+    console.log('redirecting to login page');
+    return { path: '/' };
   }
 });

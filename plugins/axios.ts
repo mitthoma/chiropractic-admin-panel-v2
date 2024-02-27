@@ -16,6 +16,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     const token = userStore().getToken;
     if (token !== '') {
       config.headers.Authorization = token;
+    } else {
+      console.warn('axios: no auth token available - are you logged in?');
     }
     return config;
   });

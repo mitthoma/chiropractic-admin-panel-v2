@@ -36,7 +36,10 @@ export default defineEventHandler(async (event) => {
           `path: ${event.path}\n`
         );
         event.node.res.statusCode = 401;
-        return 'UNAUTHORIZED';
+        event.node.res.statusMessage = 'Unauthorized :(';
+        // if you return something like text, it seems to cause the client to get stuck on a blank screen with that text.
+        // just return and it seems to sort itself out and redirect to the login screen.
+        return;
       }
       try {
         const auth = getAuth();
@@ -49,7 +52,9 @@ export default defineEventHandler(async (event) => {
           `path: ${event.path}`
         );
         event.node.res.statusCode = 401;
-        return 'UNAUTHORIZED';
+        event.node.res.statusMessage = 'Unauthorized :(';
+        // eslint-disable-next-line no-useless-return
+        return;
       }
     }
   }
