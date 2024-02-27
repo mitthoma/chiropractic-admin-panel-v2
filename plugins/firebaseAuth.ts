@@ -14,6 +14,6 @@ export default defineNuxtPlugin(() => {
     appId: config.public.FIREBASE_APP_ID,
   };
 
-  // Initialize Firebase
+  // Initialize Firebase client
   initializeApp(firebaseConfig);
 });
