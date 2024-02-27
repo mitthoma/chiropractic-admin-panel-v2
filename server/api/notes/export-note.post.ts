@@ -14,17 +14,14 @@ export default defineEventHandler(async (event) => {
       };
     }
     const exportXlsxPath = await createFormattedNoteExcel(noteID);
-    console.log('reading excel file to export');
     const fileContent = await fs.promises.readFile(exportXlsxPath);
 
-    /*
     // delete the generated file so we don't clutter things
     fs.unlink(exportXlsxPath, (err) => {
       if (err) {
         console.error('error deleting generated excel after use:', err);
       }
     });
-    */
 
     const headers = {
       'Content-Type':

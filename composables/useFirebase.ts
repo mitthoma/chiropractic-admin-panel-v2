@@ -33,16 +33,13 @@ export const signInUser = async (email: string, password: string) => {
   try {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
     if (credentials) {
-      // get auth token from the credentials
-      const user = credentials.user;
-      const token = await user.getIdToken();
       const res = await authService.signInUserWithAPI(credentials.user.uid);
       if (res instanceof Error) {
+        // console.log(res.message);
         return { success: false, error: res.message };
       } else if (res) {
         store.setUser(res);
         store.setIsLoggedIn(true);
-        store.setToken(token);
         return { success: true };
       } else {
         return { success: false, error: 'Error signing user in.' };
@@ -74,11 +71,6 @@ export const initUser = () => {
         if (response instanceof Error) {
           console.log('Invalid response from getUserByFirebaseUID');
         } else {
-          // add the auth token if it's not there already
-          if (store.getToken === '') {
-            const token = await user.getIdToken();
-            store.setToken(token);
-          }
           store.setUser(response);
           store.setIsLoggedIn(true);
         }
