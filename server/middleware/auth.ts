@@ -25,8 +25,20 @@ if (!apps || apps.length === 0) {
   console.log('firebase apps already initialized:', apps);
 }
 
+// if a path includes one of these paths, it will be excluded from auth
+const excludePaths = ['/auth', '/favicon.ico'];
+
+function isPathExcluded(requestPath: string): boolean {
+  for (const path of excludePaths) {
+    if (requestPath.includes(path)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export default defineEventHandler(async (event) => {
-  if (event.path.includes('/patient')) {
+  if (event.path !== '/' && !isPathExcluded(event.path)) {
     if (getMethod(event) !== 'OPTIONS') {
       const authHeader = event.node.req.headers.authorization;
       if (!authHeader) {
