@@ -52,13 +52,17 @@ export const createNoteService = (api: AxiosInstance) => ({
 
     // make the request to our service
     try {
-      const response = await fetch('http://localhost:3001/api/export-excel', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(exportNotePayload),
-      });
+      const response = await fetch(
+        process.env.EXPORT_EXCEL_API_URL ||
+          'http://localhost:3001/api/export-excel',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(exportNotePayload),
+        }
+      );
 
       if (!response.ok) {
         console.error('excel export service failed to export note');
