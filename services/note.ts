@@ -1,6 +1,8 @@
 import { AxiosInstance } from 'axios';
 import { ExportExcelRequest } from '~~/types/datamodel';
 
+const config = useRuntimeConfig();
+
 // TODO: give payload typings
 export const createNoteService = (api: AxiosInstance) => ({
   getNotes: async () => {
@@ -53,8 +55,7 @@ export const createNoteService = (api: AxiosInstance) => ({
     // make the request to our service
     try {
       const response = await fetch(
-        process.env.EXPORT_EXCEL_API_URL ||
-          'http://localhost:3001/api/export-excel',
+        config.EXPORT_EXCEL_API_URL || 'http://localhost:3001/api/export-excel',
         {
           method: 'POST',
           headers: {
