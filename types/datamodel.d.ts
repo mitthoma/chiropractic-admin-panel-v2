@@ -17,3 +17,11 @@ export interface Treatment {
   treatmentManipulation: boolean;
   noteId: string;
 }
+
+export type DataMappings = Record<string, any>;
+
+export interface ExportExcelRequest {
+    dataMappings: DataMappings,
+    noteID: string,
+    templateName: string
+}

@@ -1,4 +1,7 @@
 import { AxiosInstance } from 'axios';
+import { ExportExcelRequest } from '~~/types/datamodel';
+
+// const config = useRuntimeConfig();
 
 // TODO: give payload typings
 export const createNoteService = (api: AxiosInstance) => ({
@@ -36,7 +39,40 @@ export const createNoteService = (api: AxiosInstance) => ({
     return data.data;
   },
   exportNote: async (payload: any) => {
+    // first, load the data we need
     const { data } = await api.post('/notes/export-note', payload);
-    return data;
+    if (!data.success || !data.body) {
+      console.error('failed to load note data mappings for export:', data);
+      return;
+    }
+
+    const exportNotePayload: ExportExcelRequest = {
+      dataMappings: data.body,
+      noteID: payload,
+      templateName: 'export-note',
+    };
+
+    // make the request to our service
+    try {
+      const response = await fetch(
+        'http://excel-export-service.fly.dev/api/export-excel/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(exportNotePayload),
+        }
+      );
+
+      if (!response.ok) {
+        console.error('excel export service failed to export note');
+        return;
+      }
+      const blob = await response.blob();
+      downloadFile(blob, 'export-note-result.xlsx');
+    } catch (error) {
+      console.error('Error exporting note to excel:', error);
+    }
   },
 });
