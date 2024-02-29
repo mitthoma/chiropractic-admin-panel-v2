@@ -64,10 +64,17 @@ export const createNoteService = (api: AxiosInstance) => ({
 
     // make the request to our service
     try {
-      const exportServiceURL = config.EXPORT_EXCEL_API_URL
-        ? `${config.EXPORT_EXCEL_API_URL}/api/export-excel`
-        : 'https://excel-export-service.fly.dev/api/export-excel';
-      const response = await fetch(exportServiceURL, {
+      let serverURL = '';
+      if (!config.EXPORT_EXCEL_API_URL || config.EXPORT_EXCEL_API_URL === '') {
+        console.warn(
+          'EXPORT_EXCEL_API_URL env variable is undefined. Using hard-coded URL.'
+        );
+        serverURL = 'https://excel-export-service.fly.dev/api/export-excel';
+      } else {
+        serverURL = `${config.EXPORT_EXCEL_API_URL}/api/export-excel`;
+      }
+
+      const response = await fetch(serverURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
