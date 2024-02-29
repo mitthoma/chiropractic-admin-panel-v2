@@ -316,6 +316,7 @@ import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV } from '~/utils/csvExport';
+import { makeFilenameExcelNote } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
@@ -523,8 +524,15 @@ export default {
         generateCSV(this.payload);
       } else if (type === 'excel') {
         console.log(`exporting note ${item.id} to excel`);
+        const visitDate = this.formatDate(item.visitDate, item);
+        const filename = makeFilenameExcelNote(
+          visitDate,
+          this.currentPatient?.firstName,
+          this.currentPatient?.lastName
+        );
         await this.noteService.exportNote({
           noteId: item.id,
+          filename,
         });
       }
     },
