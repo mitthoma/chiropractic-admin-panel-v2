@@ -64,17 +64,16 @@ export const createNoteService = (api: AxiosInstance) => ({
 
     // make the request to our service
     try {
-      const response = await fetch(
-        `${config.EXPORT_EXCEL_API_URL}/api/export-excel` ||
-          'https://excel-export-service.fly.dev/api/export-excel',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(exportNotePayload),
-        }
-      );
+      const exportServiceURL = config.EXPORT_EXCEL_API_URL
+        ? `${config.EXPORT_EXCEL_API_URL}/api/export-excel`
+        : 'https://excel-export-service.fly.dev/api/export-excel';
+      const response = await fetch(exportServiceURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(exportNotePayload),
+      });
 
       if (!response.ok) {
         console.error('excel export service failed to export note');
