@@ -1,4 +1,14 @@
 import { AxiosInstance } from 'axios';
+import { ExportExcelRequest } from '~~/types/datamodel';
+
+const config = useRuntimeConfig();
+
+interface ExportNotePayload {
+  /** ID of note to export */
+  noteId: string;
+  /** filename to give the excel file we download */
+  filename: string;
+}
 
 // TODO: give payload typings
 export const createNoteService = (api: AxiosInstance) => ({
@@ -35,8 +45,51 @@ export const createNoteService = (api: AxiosInstance) => ({
     const { data } = await api.post('/notes/delete-note', payload);
     return data.data;
   },
-  exportNote: async (payload: any) => {
-    const { data } = await api.post('/notes/export-note', payload);
-    return data;
+  exportNote: async (payload: ExportNotePayload) => {
+    // first, load the data we need
+    const { noteId, filename } = payload;
+    const { data } = await api.post('/notes/export-note', {
+      noteId,
+    });
+    if (!data.success || !data.body) {
+      console.error('failed to load note data mappings for export:', data);
+      return;
+    }
+
+    const exportNotePayload: ExportExcelRequest = {
+      dataMappings: data.body,
+      noteID: noteId,
+      templateName: 'export-note',
+    };
+
+    // make the request to our service
+    try {
+      let serverURL = '';
+      if (!config.EXPORT_EXCEL_API_URL || config.EXPORT_EXCEL_API_URL === '') {
+        console.warn(
+          'EXPORT_EXCEL_API_URL env variable is undefined. Using hard-coded URL.'
+        );
+        serverURL = 'https://excel-export-service.fly.dev/api/export-excel';
+      } else {
+        serverURL = `${config.EXPORT_EXCEL_API_URL}/api/export-excel`;
+      }
+
+      const response = await fetch(serverURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(exportNotePayload),
+      });
+
+      if (!response.ok) {
+        console.error('excel export service failed to export note');
+        return;
+      }
+      const blob = await response.blob();
+      downloadFile(blob, filename);
+    } catch (error) {
+      console.error('Error exporting note to excel:', error);
+    }
   },
 });

@@ -1,10 +1,8 @@
 /* eslint-disable no-console */
-import * as fs from 'fs';
-import * as ExcelJS from 'exceljs';
 import { getNoteById } from '~~/server/repositories/noteRepository';
 import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
 import { getAllTreatmentsByNoteId } from '~~/server/repositories/treatmentRepository';
-import { Treatment } from '~~/types/datamodel';
+import { DataMappings, Treatment } from '~~/types/datamodel';
 
 // eslint-disable-next-line prettier/prettier
 const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
@@ -111,51 +109,28 @@ const individualCellMappings: any = {
 
 export async function createFormattedNoteExcel(
   noteID: string
-): Promise<string> {
-  // exceljs is fun - https://github.com/mui/mui-x/issues/5035
-  // basically the constructor is defined incorrectly for Workbook, and needs to be called as default.Workbook().
-  // but, good ol' typescript doesn't let me do that since default isn't part of the type Workbook. so hacky workaround lol.
-  const exceljs = ExcelJS as any;
-
-  try {
-    // Load the existing Excel template
-    const templatePath = 'static/spreadsheet_template/note_export.xlsx';
-    const workbook = new exceljs.default.Workbook();
-    await workbook.xlsx.readFile(templatePath);
-
-    // Access the desired worksheet
-    const worksheet = workbook.getWorksheet('Sheet1');
-    if (!worksheet) {
-      return '';
-    }
-
-    // load the note data
-    const generalData = await getGeneralData(noteID);
-    const entriesData = await getEntriesData(noteID);
-    const treatmentData = await getTreatmentData(noteID);
-
-    // populate the note data into the excel file
-    populateLevelData(entriesData, treatmentData, worksheet);
-
-    // populate the extremities data
-    populateExtremitiesData(entriesData, treatmentData, worksheet);
-
-    // populate general data
-    fillOutIndividualCellMappings(worksheet, generalData);
-
-    // Save the modified Excel file
-    const outputPath = `static/generated/${noteID}.xlsx`;
-    // create the 'generated' folder if it doesn't exist yet
-    if (!fs.existsSync('static/generated')) {
-      fs.mkdirSync('static/generated', { recursive: true });
-    }
-    await workbook.xlsx.writeFile(outputPath);
-
-    return outputPath;
-  } catch (error) {
-    console.error('Error modifying Excel file:', error);
-    throw new Error('Failed to modify Excel file.');
+): Promise<DataMappings | null> {
+  // Access the desired worksheet
+  if (!noteID || noteID === '') {
+    console.error('no note ID passed');
+    return null;
   }
+
+  // load the note data
+  console.log('loading data for export');
+  const generalData = await getGeneralData(noteID);
+  const entriesData = await getEntriesData(noteID);
+  const treatmentData = await getTreatmentData(noteID);
+  const noteDataMappings: DataMappings = {};
+
+  // populate the level data
+  populateLevelData(entriesData, treatmentData, noteDataMappings);
+  // populate the extremities data
+  populateExtremitiesData(entriesData, treatmentData, noteDataMappings);
+  // populate general data
+  fillOutIndividualCellMappings(noteDataMappings, generalData);
+
+  return noteDataMappings;
 }
 
 /**
@@ -167,7 +142,7 @@ export async function createFormattedNoteExcel(
 function populateLevelData(
   entriesData: any,
   treatmentData: any,
-  worksheet: ExcelJS.Worksheet
+  dataMappings: DataMappings
 ) {
   // go through each level and populate the findings
   for (const level in LEVELS) {
@@ -198,7 +173,7 @@ function populateLevelData(
         rowNumber,
         levelObj,
         OBJECTIVE_FINDINGS_ORDER,
-        worksheet
+        dataMappings
       );
 
       // get each treatment
@@ -213,7 +188,7 @@ function populateLevelData(
         rowNumber,
         levelObj,
         TREATMENT_ORDER,
-        worksheet
+        dataMappings
       );
     }
   }
@@ -228,7 +203,7 @@ function populateLevelData(
 function populateExtremitiesData(
   entriesData: any,
   treatmentData: any,
-  worksheet: ExcelJS.Worksheet
+  dataMappings: DataMappings
 ) {
   for (let extNum = 0; extNum < EXTREMITIES.length; extNum++) {
     let extremityObj = getExtremityObj(entriesData, EXTREMITIES[extNum]);
@@ -253,7 +228,7 @@ function populateExtremitiesData(
       rowNumber,
       extremityObj,
       OBJECTIVE_FINDINGS_ORDER,
-      worksheet
+      dataMappings
     );
 
     // add treatment data
@@ -265,7 +240,7 @@ function populateExtremitiesData(
       rowNumber,
       extremityObj,
       TREATMENT_ORDER,
-      worksheet
+      dataMappings
     );
   }
 }
@@ -283,7 +258,7 @@ function fillOutTableRow(
   rowNumber: number,
   dataObj: any,
   dataOrderArray: string[],
-  worksheet: ExcelJS.Worksheet
+  dataMappings: DataMappings
 ) {
   for (let col = 0; col < dataOrderArray.length; col++) {
     const curCol = colStart + col;
@@ -297,7 +272,7 @@ function fillOutTableRow(
       continue;
     }
     const cellName = COL_LETTERS[curCol] + rowNumber;
-    writeValuetoCell(worksheet, cellName, val);
+    dataMappings[cellName] = val;
   }
 }
 
@@ -306,32 +281,11 @@ function fillOutTableRow(
  * @param worksheet worksheet object to modify
  * @param data data object to get values from
  */
-function fillOutIndividualCellMappings(
-  worksheet: ExcelJS.Worksheet,
-  data: any
-) {
+function fillOutIndividualCellMappings(dataMappings: DataMappings, data: any) {
   for (const key in individualCellMappings) {
     const value = data[key];
     const cell = individualCellMappings[key];
-    writeValuetoCell(worksheet, cell, value);
-  }
-}
-
-/**
- * Writes a value to the given cell of the worksheet
- * @param worksheet worksheet obj to modify
- * @param cellName cell to write to (e.g. "A1")
- * @param val value to write. if it's a boolean, it will be an 'x' if true
- */
-function writeValuetoCell(
-  worksheet: ExcelJS.Worksheet,
-  cellName: string,
-  val: any
-) {
-  try {
-    worksheet.getCell(cellName).value = val === true ? 'x' : val;
-  } catch {
-    console.error(`Failed to write to cell ${cellName}`);
+    dataMappings[cell] = value;
   }
 }
 

@@ -167,7 +167,8 @@ export default {
       this.form = { ...item };
     },
     async submitPatientForm() {
-      if (this.$refs.patientForm.validate()) {
+      const { valid } = await this.$refs.patientForm.validate();
+      if (valid) {
         const res = this.isUpdateMode
           ? await this.patientService.updatePatient(this.form)
           : await this.patientService.addPatient(this.form);

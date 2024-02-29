@@ -141,7 +141,8 @@ export default {
       this.form.email = '';
     },
     async submitUserForm() {
-      if (this.$refs.userForm.validate()) {
+      const { valid } = await this.$refs.userForm.validate();
+      if (valid) {
         const res = this.isUpdateMode
           ? await this.userService.updateUser(this.form)
           : await this.userService.addUser({

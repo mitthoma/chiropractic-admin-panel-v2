@@ -43,6 +43,7 @@ export default defineNuxtConfig({
       DB_SYNCHRONIZE: process.env.DB_SYNCHRONIZE,
       DB_LOGGING: process.env.DB_LOGGING,
       PORT: process.env.PORT,
+      EXPORT_EXCEL_API_URL: process.env.EXPORT_EXCEL_API_URL,
     },
   },
 
