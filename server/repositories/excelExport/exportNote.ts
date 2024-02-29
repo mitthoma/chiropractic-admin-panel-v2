@@ -156,9 +156,11 @@ function populateLevelData(
       if (!levelObj) {
         continue;
       }
+      process.stdout.write(`level: ${level}${levelNum}`);
       const rowNumber = rowStart + levelNum;
 
       // get each objective finding
+      process.stdout.write('adding objective findings ...');
       let colStart = COL_RANGES.OF[0];
 
       if (!colStart || !rowStart) {
@@ -177,6 +179,9 @@ function populateLevelData(
       // get each treatment
       levelObj = getLevelObj(treatmentData, level, levelNum);
       colStart = COL_RANGES.PHYS[0];
+      process.stdout.write(
+        `adding treatments (${TREATMENT_ORDER.length} in total)`
+      );
 
       fillOutTableRow(
         colStart,
@@ -207,6 +212,7 @@ function populateExtremitiesData(
     }
 
     // add findings data
+    process.stdout.write('adding findings ...');
     let colStart = COL_RANGES.OF[0];
     const rowStart = ROW_RANGES.EXT[0];
 
@@ -340,9 +346,11 @@ function getValueAtPath(obj: any, path: string): any | null {
 }
 
 async function getEntriesData(noteID: string): Promise<any> {
+  process.stdout.write('loading entries');
   const entries = (await getAllEntriesByNoteId(noteID)) as any[];
 
   // get the data we want from entries into the format we use for exporting
+  process.stdout.write('reducing payload data');
   const entriesPayload = entries.reduce((acc, entry) => {
     let key = entry.spinalLevel || entry.extremityLevel;
     key = key.split('_')[0];
