@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { deleteEntry } from './entryRepository';
+import { deleteTreatment } from './treatmentRepository';
 const prisma = new PrismaClient();
 
 // patient must exist for a note to be added so we don't need to add new patients here
@@ -59,6 +60,8 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
     return error;
   }
 };
+// test commit
+// test again
 
 export const deleteNote = async (noteId: any) => {
   try {
@@ -71,6 +74,17 @@ export const deleteNote = async (noteId: any) => {
     if (entries) {
       for (const entry of entries) {
         await deleteEntry(entry.id);
+      }
+    }
+
+    const treatments = await prisma.treatment.findMany({
+      where: { noteId },
+    });
+
+    // Delete all entries related to the note
+    if (treatments) {
+      for (const treatment of treatments) {
+        await deleteTreatment(treatment.id);
       }
     }
 
