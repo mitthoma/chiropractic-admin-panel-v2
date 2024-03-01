@@ -20,24 +20,17 @@ export interface Treatment {
   noteId: string;
 }
 
-// Report types
-
-export interface Posture {
-  id: string
-  name: string
-  wnl: string
-  dateAdded: DateTime
-  tiltName: string
-  tiltEst: string
-  translationName: string
-  translationEst: string
-  pronated: string
-  supinated: string
-  rotation: string
-  lordKyph: string
-  reportId: string
-  report: report
-}
+/*
+id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  norm      Int?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  arom      String?
+  pain      String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+*/
 
 // excel export types
 

@@ -1,4 +1,4 @@
-import { getExamSummaryDataMappings } from '~~/server/repositories/excelExport/exportExamSummary';
+import { getReportDataMappings } from '~~/server/repositories/excelExport/exportReport';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // get the data mappings we want to send to the excel export service
-    const excelDataMappings = await getExamSummaryDataMappings(reportID);
+    const excelDataMappings = await getReportDataMappings(reportID);
     if (!excelDataMappings) {
       console.error('Failed to load data mappings');
       return {

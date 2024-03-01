@@ -1,4 +1,7 @@
 import { AxiosInstance } from 'axios';
+import { ExportExcelRequest } from '~~/types/datamodel';
+
+const config = useRuntimeConfig();
 
 export const createReportService = (api: AxiosInstance) => ({
   getReports: async () => {
@@ -37,6 +40,42 @@ export const createReportService = (api: AxiosInstance) => ({
   exportReport: async (payload: any) => {
     console.log('fetching report data from server...');
     const { data } = await api.post('/report/export-report', payload);
-    console.log(data);
+
+    const exportNotePayload: ExportExcelRequest = {
+      dataMappings: data.body,
+      noteID: payload.reportID,
+      templateName: 'export-report',
+    };
+
+    // make the request to our service
+    try {
+      let serverURL = '';
+      if (!config.EXPORT_EXCEL_API_URL || config.EXPORT_EXCEL_API_URL === '') {
+        console.warn(
+          'EXPORT_EXCEL_API_URL env variable is undefined. Using hard-coded URL.'
+        );
+        serverURL = 'https://excel-export-service.fly.dev/api/export-excel';
+      } else {
+        serverURL = `${config.EXPORT_EXCEL_API_URL}/api/export-excel`;
+      }
+
+      console.log('sending to export service...');
+      const response = await fetch(serverURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(exportNotePayload),
+      });
+
+      if (!response.ok) {
+        console.error('excel export service failed to export report');
+        return;
+      }
+      const blob = await response.blob();
+      downloadFile(blob, 'report-export.xlsx');
+    } catch (error) {
+      console.error('Error exporting report to excel:', error);
+    }
   },
 });
