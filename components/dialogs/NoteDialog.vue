@@ -427,7 +427,7 @@ export default {
 
         let hasNonNullField = false;
 
-        for (let j = 0; j < grid[i].length; j++) {
+        for (let j = 0; j < grid[i]?.length; j++) {
           if (grid[i][j] !== null && grid[i][j] !== undefined) {
             data[fields[j]] = grid[i][j];
             hasNonNullField = true;
