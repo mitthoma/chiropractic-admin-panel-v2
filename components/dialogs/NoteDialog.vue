@@ -35,6 +35,7 @@
                 :add-complaint="addComplaint"
                 @update-complaint-text="updateComplaintText"
                 @update-complaint-pain-level="updateComplaintPainLevel"
+                @delete-complaint="deleteComplaint"
               />
             </v-form>
           </v-container>
@@ -324,6 +325,17 @@ export default {
         text: '',
         painLevel: 0,
       });
+    },
+
+    async deleteComplaint(complaintId) {
+      try {
+        await this.complaintService.deleteComplaint({ id: complaintId });
+        // After deletion, remove the complaint from the complaints array
+        this.complaints = this.complaints.filter((c) => c.id !== complaintId);
+      } catch (error) {
+        console.error('Failed to delete complaint:', error);
+        // Handle error (e.g., show an error message)
+      }
     },
 
     hasAnyField(entryData, entryFields) {
