@@ -1,4 +1,6 @@
 
+
+// Note types
 export interface Treatment {
   id: string;
   category: string;
@@ -17,6 +19,27 @@ export interface Treatment {
   treatmentManipulation: boolean;
   noteId: string;
 }
+
+// Report types
+
+export interface Posture {
+  id: string
+  name: string
+  wnl: string
+  dateAdded: DateTime
+  tiltName: string
+  tiltEst: string
+  translationName: string
+  translationEst: string
+  pronated: string
+  supinated: string
+  rotation: string
+  lordKyph: string
+  reportId: string
+  report: report
+}
+
+// excel export types
 
 export type DataMappings = Record<string, any>;
 

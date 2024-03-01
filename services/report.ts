@@ -34,4 +34,9 @@ export const createReportService = (api: AxiosInstance) => ({
     const { data } = await api.post('/report/delete', payload);
     return data.data;
   },
+  exportReport: async (payload: any) => {
+    console.log('fetching report data from server...');
+    const { data } = await api.post('/report/export-report', payload);
+    console.log(data);
+  },
 });
