@@ -61,6 +61,7 @@ export const updateNote = async (noteId: string, payload: Partial<any>) => {
   }
 };
 // test commit
+// test again
 
 export const deleteNote = async (noteId: any) => {
   try {
