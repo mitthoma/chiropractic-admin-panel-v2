@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="noteDialog" class="dialog" max-width="1600px">
+  <v-dialog class="dialog" max-width="1600px">
     <v-card>
       <v-card-title class="d-flex">
         <span class="justify-start text-h5 pa-4">{{ title }}</span>
@@ -179,12 +179,6 @@ export default {
     SpinalTreatment,
     ExtremityTreatment,
   },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-  },
   emits: ['input', 'note-added', 'note-updated', 'close-dialog'],
   data() {
     return {
@@ -231,14 +225,15 @@ export default {
     };
   },
   computed: {
-    noteDialog: {
-      get() {
-        return this.value;
-      },
-      set(val) {
-        this.$emit('input', val);
-      },
-    },
+    // noteDialog: {
+    //   get() {
+    //     return this.dialog;
+    //   },
+    //   set() {
+    //     console.log('CALLING THE EMIT');
+    //     this.$emit('close-dialog');
+    //   },
+    // },
     isUpdateMode() {
       return !!this.currentNote;
     },
@@ -274,40 +269,7 @@ export default {
     this.entryService = createEntryService(this.$api);
     this.treatmentService = createTreatmentService(this.$api);
     this.patientService = createPatientService(this.$api);
-    this.complaints = await this.complaintService.getComplaintsForPatient({
-      patientId: this.$route.params.id,
-    });
-
-    if (this.$route.params.id) {
-      this.patient = await this.patientService.getPatient({
-        id: this.$route.params.id,
-      });
-    }
-
-    if (this.$route.params.noteId) {
-      this.currentNote = await this.noteService.getNote({
-        id: this.$route.params.noteId,
-      });
-      if (this.isUpdateMode) {
-        this.form = {
-          ...this.currentNote,
-        };
-        // retrieve the old entries for this selected note
-        const entries = await this.entryService.getEntriesForNote({
-          noteId: this.currentNote.id,
-        });
-        if (entries) {
-          this.oldEntries = entries;
-        }
-        const treatments = await this.treatmentService.getTreatmentsForNote({
-          noteId: this.currentNote.id,
-        });
-        if (treatments) {
-          this.oldTreatments = treatments;
-        }
-        await this.loadGrids(this.oldEntries, this.oldTreatments);
-      }
-    }
+    await this.fetchNoteDetails();
   },
   beforeUnmount() {
     this.resetForm();
@@ -325,6 +287,43 @@ export default {
         text: '',
         painLevel: 0,
       });
+    },
+
+    async fetchNoteDetails() {
+      this.complaints = await this.complaintService.getComplaintsForPatient({
+        patientId: this.$route.params.id,
+      });
+
+      if (this.$route.params.id) {
+        this.patient = await this.patientService.getPatient({
+          id: this.$route.params.id,
+        });
+      }
+
+      if (this.$route.params.noteId) {
+        this.currentNote = await this.noteService.getNote({
+          id: this.$route.params.noteId,
+        });
+        if (this.isUpdateMode) {
+          this.form = {
+            ...this.currentNote,
+          };
+          // retrieve the old entries for this selected note
+          const entries = await this.entryService.getEntriesForNote({
+            noteId: this.currentNote.id,
+          });
+          if (entries) {
+            this.oldEntries = entries;
+          }
+          const treatments = await this.treatmentService.getTreatmentsForNote({
+            noteId: this.currentNote.id,
+          });
+          if (treatments) {
+            this.oldTreatments = treatments;
+          }
+          await this.loadGrids(this.oldEntries, this.oldTreatments);
+        }
+      }
     },
 
     async deleteComplaint(complaintId) {
@@ -555,7 +554,7 @@ export default {
           const noteId = res.id;
           await this.processSaveOperations(noteId, this.currentPatient.id);
           this.$emit('note-added');
-          this.closeDialog();
+          await this.closeDialog();
         }
       } else {
         console.log('form is not valid');
@@ -606,7 +605,7 @@ export default {
       );
 
       this.$emit('note-updated');
-      this.closeDialog();
+      await this.closeDialog();
     },
 
     async updateAllGridEntries(
@@ -754,10 +753,11 @@ export default {
     confirmExit() {
       this.exitConfirmDialog = true;
     },
-    closeDialog() {
+    async closeDialog() {
       this.$emit('close-dialog');
       this.resetForm();
       this.populateFormData();
+      await this.fetchNoteDetails();
     },
   },
 };
