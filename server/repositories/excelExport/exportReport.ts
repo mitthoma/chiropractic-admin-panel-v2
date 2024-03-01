@@ -10,6 +10,7 @@ import {
   orthoSupine,
   posture,
   reflexes,
+  report,
 } from '@prisma/client';
 import { getAllLumbarsByReportId } from '../reports/lumbarRepository';
 import { getAllPosturesByReportId } from '../reports/postureRepository';
@@ -22,7 +23,22 @@ import { getAllOrthoPronesByReportId } from '../reports/orthoProneRepository';
 import { getAllCervicalsByReportId } from '../reports/cervicalRepository';
 import { getAllMyoDermsByReportId } from '../reports/myoDermRepository';
 
+import { getPatient } from '../patientRepository';
+import { getReportById } from '../reports/reportRepository';
 import { DataMappings } from '~~/types/datamodel';
+
+interface ReportGeneralData {
+  height: string;
+  weight: number;
+  temp: number;
+  sys: number;
+  dia: number;
+  pulse: number;
+  resp: number;
+  patientName: string;
+  exam_date: Date;
+  acctNo: string;
+}
 
 // define the patterns for mapping different values
  
@@ -75,15 +91,37 @@ const orthoProneOrder = ['name', 'wnl', 'lt', 'rt', 'referral'];
 const orthoProneColStart = 6;
 const orthoProneRowStart = 58;
 
+const generalDataMappings = {
+  patientName: "B4",
+  acctNo: "B5",
+  examDate: "B6",
+  height: "B8",
+  weight: "B9",
+  temp: "B10",
+  sys: "C8",
+  dia: "C9",
+  pulse: "E8",
+  resp: "E9"
+};
+
 export async function getReportDataMappings(
   reportID: string
 ): Promise<DataMappings | null> {
   // load all the data we need to export
-  console.log(`loading data for report ${reportID}`);
   const reportData = await loadReportData(reportID);
+  if (!reportData) {
+    return null;
+  }
+  const reportGeneral = await loadReportGeneralData(reportID);
+  if (!reportGeneral) {
+    return null;
+  }
 
   // put all the data into a DataMappings object
   const dataMappings: DataMappings = {};
+
+  populateGeneralData(dataMappings, reportGeneral);
+
   // populatePosture(dataMappings, reportData.postures);
   populateTable(dataMappings, lumbarOrder, lumbarColStart, lumbarRowStart, reportData.lumbar);
   populateTable(dataMappings, reflexesOrder, reflexesColStart, reflexesRowStart, reportData.reflexes);
@@ -108,6 +146,13 @@ function populateTable(dataMappings: DataMappings, propOrder: string[], colStart
         }
         curRow++;
     }
+}
+
+function populateGeneralData(dataMappings: DataMappings, generalData: ReportGeneralData) {
+  for (const prop in generalDataMappings) {
+    const cellName = (generalDataMappings as any)[prop]; // ah, typescript...
+    dataMappings[cellName] = (generalData as any)[prop];
+  }
 }
 
 interface ReportData {
@@ -143,6 +188,34 @@ async function loadReportData(reportID: string): Promise<ReportData> {
     cervical,
     myoDerm,
   };
-  console.log('report data:', data);
   return data;
+}
+
+
+
+async function loadReportGeneralData(reportID: string): Promise<ReportGeneralData | null> {
+  const reportData = await getReportById(reportID) as report;
+  if (!reportData) {
+    console.error('failed to load report data during report export.');
+    return null;
+  }
+  const patient = await getPatient(reportData.patientId);
+  if (!patient) {
+    console.error('failed to load patient data during report export.');
+    return null;
+  }
+  const height = `${patient.heightFeet}'${patient.heightInches}`;
+  const patientName = `${patient.lastName}, ${patient.firstName}`;
+  return {
+    temp: reportData.temp || 0,
+    sys: reportData.sys || 0,
+    dia: reportData.dia || 0,
+    pulse: reportData.pulse || 0,
+    resp: reportData.resp || 0,
+    patientName,
+    height,
+    weight: patient.weight || 0,
+    exam_date: reportData.exam_date,
+    acctNo: patient.acctNo
+  }
 }
