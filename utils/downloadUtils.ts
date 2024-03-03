@@ -1,26 +1,6 @@
-// Function to convert base64 to Blob
-export function base64toBlob(base64Data: string, contentType: string): Blob {
-  const byteCharacters = atob(base64Data);
-  // const byteCharacters = Buffer.from(base64Data, 'base64');
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-    const slice = byteCharacters.slice(offset, offset + 512);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  return new Blob(byteArrays, { type: contentType });
-}
-
-export function makeFilenameExcelNote(
+export function makeFilenameExcel(
   dateStr: string,
+  typeOfData: string,
   patientFirstName: string,
   patientLastName: string
 ) {
@@ -36,7 +16,7 @@ export function makeFilenameExcelNote(
     // remove forward slashes so the date is just MMDDYYYY
     dateStr = '_' + dateStr.replace(/\//g, '');
   }
-  return `${patientFirstName}_${patientLastName}_note${dateStr}.xlsx`;
+  return `${patientFirstName}_${patientLastName}_${typeOfData}${dateStr}.xlsx`;
 }
 
 /**

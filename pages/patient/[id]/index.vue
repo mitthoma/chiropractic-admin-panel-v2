@@ -240,6 +240,21 @@
                     <td>{{ formatVisitDate(item.exam_date, item) }}</td>
                     <td>{{ formatDate(item.dateAdded, item) }}</td>
                     <td class="d-flex justify-end">
+                      <v-menu transition="slide-x-transition">
+                        <template #activator="{ props }">
+                          <v-icon class="mt-3" v-bind="props"
+                            >mdi-export-variant</v-icon
+                          >
+                          <!-- Update button with export icon -->
+                        </template>
+                        <v-list>
+                          <v-list-item @click="handleExportReport(item)">
+                            <v-list-item-title
+                              >Export to Excel</v-list-item-title
+                            >
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
                       <v-icon class="ma-3" @click="goToReport(item)"
                         >mdi-eye</v-icon
                       >
@@ -316,7 +331,7 @@ import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { generateCSV } from '~/utils/csvExport';
-import { makeFilenameExcelNote } from '~~/utils/downloadUtils';
+import { makeFilenameExcel } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 
@@ -518,15 +533,16 @@ export default {
         console.error('Error deleting report:', error);
       }
     },
-    async handleExport(type, item) {
+    async handleExportNote(type, item) {
       if (type === 'csv') {
         await this.assignPayload(item);
         generateCSV(this.payload);
       } else if (type === 'excel') {
         console.log(`exporting note ${item.id} to excel`);
         const visitDate = this.formatDate(item.visitDate, item);
-        const filename = makeFilenameExcelNote(
+        const filename = makeFilenameExcel(
           visitDate,
+          'Note',
           this.currentPatient?.firstName,
           this.currentPatient?.lastName
         );
@@ -535,6 +551,27 @@ export default {
           filename,
         });
       }
+    },
+    async handleExportReport(item) {
+      if (!item || !item.id) {
+        console.error(
+          'required report information not provided; export aborted.'
+        );
+        return;
+      }
+      const reportID = item.id;
+      const examDate = this.formatDate(item.exam_date, item);
+
+      const filename = makeFilenameExcel(
+        examDate,
+        'report',
+        this.currentPatient?.firstName,
+        this.currentPatient?.lastName
+      );
+      await this.reportService.exportReport({
+        reportID,
+        filename,
+      });
     },
     formatPhoneNumber(number) {
       if (!number) return '';

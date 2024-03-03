@@ -3,6 +3,11 @@ import { ExportExcelRequest } from '~~/types/datamodel';
 
 const config = useRuntimeConfig();
 
+interface ExportReportPayload {
+  reportID: string;
+  filename: string;
+}
+
 export const createReportService = (api: AxiosInstance) => ({
   getReports: async () => {
     const { data } = await api.get('/report/reports');
@@ -37,9 +42,11 @@ export const createReportService = (api: AxiosInstance) => ({
     const { data } = await api.post('/report/delete', payload);
     return data.data;
   },
-  exportReport: async (payload: any) => {
+  exportReport: async (payload: ExportReportPayload) => {
     console.log('fetching report data from server...');
-    const { data } = await api.post('/report/export-report', payload);
+    const { data } = await api.post('/report/export-report', {
+      reportID: payload.reportID,
+    });
 
     const exportNotePayload: ExportExcelRequest = {
       dataMappings: data.body,
@@ -73,7 +80,7 @@ export const createReportService = (api: AxiosInstance) => ({
         return;
       }
       const blob = await response.blob();
-      downloadFile(blob, 'report-export.xlsx');
+      downloadFile(blob, payload.filename);
     } catch (error) {
       console.error('Error exporting report to excel:', error);
     }

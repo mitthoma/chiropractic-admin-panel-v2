@@ -1,8 +1,13 @@
 <template>
   <div>
     <v-container>
-      <v-btn class="mb-4" @click="backToPatient">Back to Patient</v-btn>
-      <v-btn class="mb-4" @click="exportToExcel">Export to Excel</v-btn>
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 text-primary font-weight-bold"
+        @click="backToPatient"
+        >Back to Patient</v-btn
+      >
       <v-row>
         <v-col cols="12" class="text-center"
           ><v-card-title class="flex flex-start"
@@ -119,16 +124,6 @@ export default {
 
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
-    },
-    exportToExcel() {
-      const reportID = this.$route.params.reportId;
-      if (!reportID) {
-        console.error('failed to export to excel: couldnt get report ID.');
-        return;
-      }
-      this.reportService.exportReport({
-        reportID,
-      });
     },
     formatExamDate(date) {
       return date ? new Date(date).toLocaleDateString() : 'N/A';
