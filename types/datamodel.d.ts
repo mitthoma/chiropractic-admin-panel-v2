@@ -1,4 +1,6 @@
 
+
+// Note types
 export interface Treatment {
   id: string;
   category: string;
@@ -17,6 +19,20 @@ export interface Treatment {
   treatmentManipulation: boolean;
   noteId: string;
 }
+
+/*
+id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  norm      Int?
+  dateAdded DateTime @default(now()) @db.Timestamp(6)
+  arom      String?
+  pain      String?
+  notes     String?
+  reportId  String   @db.Uuid
+  report    report   @relation(fields: [reportId], references: [id])
+*/
+
+// excel export types
 
 export type DataMappings = Record<string, any>;
 
