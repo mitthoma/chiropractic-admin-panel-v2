@@ -108,12 +108,13 @@
           >Weight: {{ currentPatient?.weight }} lbs</v-card-text
         >
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{
-          tab === 1 ? 'Back' : 'Cancel'
-        }}</v-btn>
+        <v-btn color="blue darken-1" text @click="confirmExit">Cancel</v-btn>
+        <v-btn v-if="tab > 0" color="blue darken-1" @click="backPhase"
+          >Back</v-btn
+        >
         <v-btn
           v-if="!isLoading"
-          color="blue darken-1 justify-end"
+          color="blue darken-1"
           text
           @click="processPhase"
           >{{ tab === 5 ? saveButtonText : 'Next' }}</v-btn
@@ -728,6 +729,14 @@ export default {
         } else {
           this.tab++;
         }
+      }
+    },
+    async backPhase() {
+      if (await this.validateForm(this.tab)) {
+        if (this.tab === 0) {
+          return;
+        }
+        this.tab--;
       }
     },
     async handleComplaints(patientId, complaints) {
