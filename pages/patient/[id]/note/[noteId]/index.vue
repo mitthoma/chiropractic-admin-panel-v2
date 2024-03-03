@@ -1,8 +1,12 @@
 <template>
   <div>
     <v-container class="custom-container">
-      <v-btn class="mb-4 mr-3" @click="backToPatient()"
-        >Back to Patient Profile</v-btn
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 mr-2 text-primary font-weight-bold"
+        @click="backToPatient()"
+        >Back to Patient</v-btn
       >
       <v-btn class="mb-4" color="primary" @click="editNote()">Edit Note</v-btn>
       <v-row>
