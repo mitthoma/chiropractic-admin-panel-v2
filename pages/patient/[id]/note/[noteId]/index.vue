@@ -1,12 +1,14 @@
 <template>
   <div>
     <v-container class="custom-container">
-      <v-btn class="mb-4 mr-3" @click="backToPatient()"
-        >Back to Patient Profile</v-btn
+      <v-btn
+        variant="text"
+        prepend-icon="mdi-chevron-left"
+        class="mb-4 mr-2 text-primary font-weight-bold"
+        @click="backToPatient()"
+        >Back to Patient</v-btn
       >
-      <v-btn class="mb-4" color="primary" @click="editNote(currentNote)"
-        >Edit Note</v-btn
-      >
+      <v-btn class="mb-4" color="primary" @click="editNote()">Edit Note</v-btn>
       <v-row>
         <v-col cols="12">
           <v-card-title> Subjective Complaints </v-card-title>
@@ -151,8 +153,6 @@
     </v-container>
     <NoteDialog
       v-model="noteDialog"
-      :selected-item="selectedNoteItem"
-      :patient="currentPatient"
       @note-added="getCurrentNote"
       @note-updated="getCurrentNote"
       @close-dialog="closeNoteDialog"
@@ -207,7 +207,7 @@ export default {
       currentPatient: null,
       complaintsPagination: {
         page: 1,
-        itemsPerPage: 8, // Number of rows per page
+        itemsPerPage: 8,
       },
     };
   },
@@ -237,12 +237,12 @@ export default {
   },
   methods: {
     async getCurrentNote() {
-      this.currentNote = await this.noteService?.getNote({
+      this.currentNote = await this.noteService.getNote({
         id: this.$route.params.noteId,
       });
     },
-    editNote(item) {
-      this.selectedNoteItem = item;
+    editNote() {
+      this.selectedNoteItem = this.currentNote;
       this.noteDialog = true;
     },
     async closeNoteDialog() {

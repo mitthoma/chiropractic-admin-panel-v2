@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 interface PosturePayload {
   name: string;
@@ -24,7 +22,6 @@ export const addPosture = async (payload: PosturePayload) => {
     if (!report) {
       throw new Error(`Report with id ${reportId} not found`);
     }
-
     const newPosture = await prisma.posture.create({
       data: {
         name: payload.name,
@@ -47,6 +44,7 @@ export const addPosture = async (payload: PosturePayload) => {
 
     return newPosture;
   } catch (error) {
+    console.error('error adding posture:', error);
     return error;
   }
 };

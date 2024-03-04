@@ -1,14 +1,12 @@
 /* eslint-disable camelcase */
 import {
-  PrismaClient,
   entry_category_enum,
   entry_region_enum,
   entry_extremitylevel_enum,
   entry_side_enum,
   entry_spinallevel_enum,
 } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 interface TreatmentPayload {
   id: string;

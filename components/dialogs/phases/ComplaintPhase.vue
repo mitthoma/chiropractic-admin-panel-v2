@@ -11,7 +11,7 @@
             @input="updateComplaintText(index, $event)"
           ></v-text-field>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="5">
           <v-slider
             v-model="complaint.painLevel"
             :value="complaint.painLevel"
@@ -22,6 +22,11 @@
             label="Pain Level"
             @input="updateComplaintPainLevel(index, $event)"
           ></v-slider>
+        </v-col>
+        <v-col cols="1" class="d-flex justify-end align-center">
+          <v-icon color="red" @click="deleteComplaint(complaint.id)">
+            mdi-trash-can
+          </v-icon>
         </v-col>
       </v-row>
     </div>
@@ -45,6 +50,10 @@ export default {
         index,
         newPainLevel.target.value
       );
+    },
+    deleteComplaint(complaintId) {
+      // Emitting deleteComplaint event with the complaintId
+      this.$emit('delete-complaint', complaintId);
     },
   },
 };

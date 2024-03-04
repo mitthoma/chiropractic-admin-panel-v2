@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="noteDialog" class="dialog" max-width="1600px">
+  <v-dialog class="dialog" max-width="1600px">
     <v-card>
       <v-card-title class="d-flex">
         <span class="justify-start text-h5 pa-4">{{ title }}</span>
@@ -35,6 +35,7 @@
                 :add-complaint="addComplaint"
                 @update-complaint-text="updateComplaintText"
                 @update-complaint-pain-level="updateComplaintPainLevel"
+                @delete-complaint="deleteComplaint"
               />
             </v-form>
           </v-container>
@@ -107,12 +108,13 @@
           >Weight: {{ currentPatient?.weight }} lbs</v-card-text
         >
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1 justify-end" text @click="confirmExit">{{
-          tab === 1 ? 'Back' : 'Cancel'
-        }}</v-btn>
+        <v-btn color="blue darken-1" text @click="confirmExit">Cancel</v-btn>
+        <v-btn v-if="tab > 0" color="blue darken-1" @click="backPhase"
+          >Back</v-btn
+        >
         <v-btn
           v-if="!isLoading"
-          color="blue darken-1 justify-end"
+          color="blue darken-1"
           text
           @click="processPhase"
           >{{ tab === 5 ? saveButtonText : 'Next' }}</v-btn
@@ -178,12 +180,6 @@ export default {
     SpinalTreatment,
     ExtremityTreatment,
   },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-  },
   emits: ['input', 'note-added', 'note-updated', 'close-dialog'],
   data() {
     return {
@@ -230,14 +226,15 @@ export default {
     };
   },
   computed: {
-    noteDialog: {
-      get() {
-        return this.value;
-      },
-      set(val) {
-        this.$emit('input', val);
-      },
-    },
+    // noteDialog: {
+    //   get() {
+    //     return this.dialog;
+    //   },
+    //   set() {
+    //     console.log('CALLING THE EMIT');
+    //     this.$emit('close-dialog');
+    //   },
+    // },
     isUpdateMode() {
       return !!this.currentNote;
     },
@@ -273,40 +270,7 @@ export default {
     this.entryService = createEntryService(this.$api);
     this.treatmentService = createTreatmentService(this.$api);
     this.patientService = createPatientService(this.$api);
-    this.complaints = await this.complaintService.getComplaintsForPatient({
-      patientId: this.$route.params.id,
-    });
-
-    if (this.$route.params.id) {
-      this.patient = await this.patientService.getPatient({
-        id: this.$route.params.id,
-      });
-    }
-
-    if (this.$route.params.noteId) {
-      this.currentNote = await this.noteService.getNote({
-        id: this.$route.params.noteId,
-      });
-      if (this.isUpdateMode) {
-        this.form = {
-          ...this.currentNote,
-        };
-        // retrieve the old entries for this selected note
-        const entries = await this.entryService.getEntriesForNote({
-          noteId: this.currentNote.id,
-        });
-        if (entries) {
-          this.oldEntries = entries;
-        }
-        const treatments = await this.treatmentService.getTreatmentsForNote({
-          noteId: this.currentNote.id,
-        });
-        if (treatments) {
-          this.oldTreatments = treatments;
-        }
-        await this.loadGrids(this.oldEntries, this.oldTreatments);
-      }
-    }
+    await this.fetchNoteDetails();
   },
   beforeUnmount() {
     this.resetForm();
@@ -324,6 +288,54 @@ export default {
         text: '',
         painLevel: 0,
       });
+    },
+
+    async fetchNoteDetails() {
+      this.complaints = await this.complaintService.getComplaintsForPatient({
+        patientId: this.$route.params.id,
+      });
+
+      if (this.$route.params.id) {
+        this.patient = await this.patientService.getPatient({
+          id: this.$route.params.id,
+        });
+      }
+
+      if (this.$route.params.noteId) {
+        this.currentNote = await this.noteService.getNote({
+          id: this.$route.params.noteId,
+        });
+        if (this.isUpdateMode) {
+          this.form = {
+            ...this.currentNote,
+          };
+          // retrieve the old entries for this selected note
+          const entries = await this.entryService.getEntriesForNote({
+            noteId: this.currentNote.id,
+          });
+          if (entries) {
+            this.oldEntries = entries;
+          }
+          const treatments = await this.treatmentService.getTreatmentsForNote({
+            noteId: this.currentNote.id,
+          });
+          if (treatments) {
+            this.oldTreatments = treatments;
+          }
+          await this.loadGrids(this.oldEntries, this.oldTreatments);
+        }
+      }
+    },
+
+    async deleteComplaint(complaintId) {
+      try {
+        await this.complaintService.deleteComplaint({ id: complaintId });
+        // After deletion, remove the complaint from the complaints array
+        this.complaints = this.complaints.filter((c) => c.id !== complaintId);
+      } catch (error) {
+        console.error('Failed to delete complaint:', error);
+        // Handle error (e.g., show an error message)
+      }
     },
 
     hasAnyField(entryData, entryFields) {
@@ -416,7 +428,7 @@ export default {
 
         let hasNonNullField = false;
 
-        for (let j = 0; j < grid[i].length; j++) {
+        for (let j = 0; j < grid[i]?.length; j++) {
           if (grid[i][j] !== null && grid[i][j] !== undefined) {
             data[fields[j]] = grid[i][j];
             hasNonNullField = true;
@@ -543,7 +555,7 @@ export default {
           const noteId = res.id;
           await this.processSaveOperations(noteId, this.currentPatient.id);
           this.$emit('note-added');
-          this.closeDialog();
+          await this.closeDialog();
         }
       } else {
         console.log('form is not valid');
@@ -594,7 +606,7 @@ export default {
       );
 
       this.$emit('note-updated');
-      this.closeDialog();
+      await this.closeDialog();
     },
 
     async updateAllGridEntries(
@@ -719,6 +731,14 @@ export default {
         }
       }
     },
+    async backPhase() {
+      if (await this.validateForm(this.tab)) {
+        if (this.tab === 0) {
+          return;
+        }
+        this.tab--;
+      }
+    },
     async handleComplaints(patientId, complaints) {
       for (const complaint of complaints) {
         if (complaint.id) {
@@ -742,10 +762,11 @@ export default {
     confirmExit() {
       this.exitConfirmDialog = true;
     },
-    closeDialog() {
+    async closeDialog() {
       this.$emit('close-dialog');
       this.resetForm();
       this.populateFormData();
+      await this.fetchNoteDetails();
     },
   },
 };

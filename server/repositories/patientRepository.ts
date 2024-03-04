@@ -1,8 +1,8 @@
-import { PrismaClient, Prisma, patient } from '@prisma/client';
+import { Prisma, patient } from '@prisma/client';
 import { deleteNote } from './noteRepository';
 import { deleteComplaint } from './complaintRepository';
 import { deleteReport } from './reports/reportRepository';
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 export const saveNewPatient = async (
   payload: Prisma.patientCreateInput

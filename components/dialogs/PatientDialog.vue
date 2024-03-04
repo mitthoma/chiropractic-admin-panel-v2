@@ -63,6 +63,33 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col cols="4">
+              <v-text-field
+                v-model="form.heightFeet"
+                label="Height (Feet)"
+                type="number"
+                min="0"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="form.heightInches"
+                label="Height (Inches)"
+                type="number"
+                min="0"
+                max="11"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="form.weight"
+                label="Weight"
+                type="number"
+                min="0"
+              ></v-text-field>
+            </v-col>
+          </v-row>
           <div v-if="isUpdateMode">
             <label class="form-label">Next Appointment</label>
             <VueDatePicker
@@ -115,6 +142,9 @@ export default {
         lastName: '',
         email: '',
         phoneNumber: '',
+        heightFeet: null,
+        heightInches: null,
+        weight: null,
         nextAppointment: null,
       },
       patientService: null,

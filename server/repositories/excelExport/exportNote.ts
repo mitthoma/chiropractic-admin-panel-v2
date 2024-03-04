@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { getNoteById } from '~~/server/repositories/noteRepository';
 import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
 import { getAllTreatmentsByNoteId } from '~~/server/repositories/treatmentRepository';
