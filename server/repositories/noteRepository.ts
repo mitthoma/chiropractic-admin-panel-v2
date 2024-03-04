@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { deleteEntry } from './entryRepository';
 import { deleteTreatment } from './treatmentRepository';
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 // patient must exist for a note to be added so we don't need to add new patients here
 export const addNewNote = async (payload: any, patientId: number) => {
