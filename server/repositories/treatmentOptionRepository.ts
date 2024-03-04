@@ -1,5 +1,5 @@
-import { PrismaClient, Prisma, treatmentOption } from '@prisma/client';
-const prisma = new PrismaClient();
+import { Prisma, treatmentOption } from '@prisma/client';
+import prisma from '~~/prisma/client';
 
 export const saveNewOption = async (
   payload: Prisma.treatmentOptionCreateInput

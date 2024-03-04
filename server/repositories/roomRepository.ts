@@ -1,5 +1,5 @@
-import { PrismaClient, Prisma, room } from '@prisma/client';
-const prisma = new PrismaClient();
+import { Prisma, room } from '@prisma/client';
+import prisma from '~~/prisma/client';
 
 export const saveNewRoom = async (
   payload: Prisma.roomCreateInput
