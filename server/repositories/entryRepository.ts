@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import {
-  PrismaClient,
   entry_spinallevel_enum,
   entry_category_enum,
   entry_region_enum,
@@ -8,7 +7,7 @@ import {
   entry_side_enum,
 } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 interface EntryPayload {
   createdDate?: Date; // Optional because Prisma provides a default value

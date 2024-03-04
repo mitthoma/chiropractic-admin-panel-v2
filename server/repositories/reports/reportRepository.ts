@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from '~~/prisma/client';
 
 // patient must exist for a report to be added so we don't need to add new patients here
 export const addNewReport = async (payload: any, patientId: number) => {
