@@ -116,7 +116,6 @@ export async function createFormattedNoteExcel(
   }
 
   // load the note data
-  console.log('loading data for export');
   const generalData = await getGeneralData(noteID);
   const entriesData = await getEntriesData(noteID);
   const treatmentData = await getTreatmentData(noteID);
@@ -146,20 +145,15 @@ function populateLevelData(
   // go through each level and populate the findings
   for (const level in LEVELS) {
     const levels = LEVELS[level as keyof typeof LEVELS];
-    process.stdout.write(
-      `populating ${level} levels (${levels.length} in total)`
-    );
     const rowStart = ROW_RANGES[level as keyof typeof ROW_RANGES][0];
     for (let levelNum = 0; levelNum < levels.length; levelNum++) {
       let levelObj = getLevelObj(entriesData, level, levelNum);
       if (!levelObj) {
         continue;
       }
-      process.stdout.write(`level: ${level}${levelNum}`);
       const rowNumber = rowStart + levelNum;
 
       // get each objective finding
-      process.stdout.write('adding objective findings ...');
       let colStart = COL_RANGES.OF[0];
 
       if (!colStart || !rowStart) {
@@ -177,10 +171,10 @@ function populateLevelData(
 
       // get each treatment
       levelObj = getLevelObj(treatmentData, level, levelNum);
+      if (!levelObj) {
+        continue;
+      }
       colStart = COL_RANGES.PHYS[0];
-      process.stdout.write(
-        `adding treatments (${TREATMENT_ORDER.length} in total)`
-      );
 
       fillOutTableRow(
         colStart,
@@ -211,7 +205,6 @@ function populateExtremitiesData(
     }
 
     // add findings data
-    process.stdout.write('adding findings ...');
     let colStart = COL_RANGES.OF[0];
     const rowStart = ROW_RANGES.EXT[0];
 
@@ -233,6 +226,9 @@ function populateExtremitiesData(
     // add treatment data
     colStart = COL_RANGES.PHYS[0];
     extremityObj = getExtremityObj(treatmentData, EXTREMITIES[extNum]);
+    if (!extremityObj) {
+      continue;
+    }
 
     fillOutTableRow(
       colStart,
@@ -345,11 +341,9 @@ function getValueAtPath(obj: any, path: string): any | null {
 }
 
 async function getEntriesData(noteID: string): Promise<any> {
-  process.stdout.write('loading entries');
   const entries = (await getAllEntriesByNoteId(noteID)) as any[];
 
   // get the data we want from entries into the format we use for exporting
-  process.stdout.write('reducing payload data');
   const entriesPayload = entries.reduce((acc, entry) => {
     let key = entry.spinalLevel || entry.extremityLevel;
     key = key.split('_')[0];
