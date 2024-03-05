@@ -2,7 +2,6 @@ import { getReportDataMappings } from '~~/server/repositories/excelExport/export
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log('export report api called');
     const body = await readBody(event);
     const reportID = body.reportID;
     if (!reportID) {

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import {
   cervical,
   lumbar,
@@ -36,14 +36,13 @@ interface ReportGeneralData {
   pulse: number;
   resp: number;
   patientName: string;
-  exam_date: Date;
+  examDate: string;
   acctNo: string;
 }
 
 // define the patterns for mapping different values
  
 const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-
  
 const postureOrder = ['name', 'wnl', 'tiltName', 'tiltEst', 'translationName', 'translationEst', 'rotation', 'lordKyph'];
 const postureOrder2 = ['name', 'pronated', 'supinated'];
@@ -98,10 +97,10 @@ const generalDataMappings = {
   height: "B8",
   weight: "B9",
   temp: "B10",
-  sys: "C8",
-  dia: "C9",
-  pulse: "E8",
-  resp: "E9"
+  sys: "D8",
+  dia: "D9",
+  pulse: "F8",
+  resp: "F9"
 };
 
 export async function getReportDataMappings(
@@ -119,10 +118,15 @@ export async function getReportDataMappings(
 
   // put all the data into a DataMappings object
   const dataMappings: DataMappings = {};
-
   populateGeneralData(dataMappings, reportGeneral);
 
-  // populatePosture(dataMappings, reportData.postures);
+  // fill out postures - needs special handling since the data is organized oddly
+  const posturesData1 = reportData.postures.slice(0, 3);
+  const posturesData2 = [reportData.postures[3]];
+  populateTable(dataMappings, postureOrder, postureColStart, postureRowStart, posturesData1);
+  populateTable(dataMappings, postureOrder2, postureColStart, postureRowStart2, posturesData2);
+
+  // fill out the rest of the tables
   populateTable(dataMappings, lumbarOrder, lumbarColStart, lumbarRowStart, reportData.lumbar);
   populateTable(dataMappings, reflexesOrder, reflexesColStart, reflexesRowStart, reportData.reflexes);
   populateTable(dataMappings, orthoStandingOrder, orthoStandingColStart, orthoStandingRowStart, reportData.orthoStanding);
@@ -204,8 +208,18 @@ async function loadReportGeneralData(reportID: string): Promise<ReportGeneralDat
     console.error('failed to load patient data during report export.');
     return null;
   }
+  console.log('general report data:', reportData);
   const height = `${patient.heightFeet}'${patient.heightInches}`;
   const patientName = `${patient.lastName}, ${patient.firstName}`;
+  
+  let examDate = 'None';
+  if (reportData.exam_date) {
+    examDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date(reportData.exam_date));
+  }
   return {
     temp: reportData.temp || 0,
     sys: reportData.sys || 0,
@@ -215,7 +229,7 @@ async function loadReportGeneralData(reportID: string): Promise<ReportGeneralDat
     patientName,
     height,
     weight: patient.weight || 0,
-    exam_date: reportData.exam_date,
+    examDate,
     acctNo: patient.acctNo
   }
 }

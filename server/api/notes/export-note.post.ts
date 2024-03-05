@@ -3,7 +3,6 @@ import { createFormattedNoteExcel } from '~~/server/repositories/excelExport/exp
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log('export note get api called');
     const body = await readBody(event);
     const noteID = body.noteId;
     if (!noteID) {
