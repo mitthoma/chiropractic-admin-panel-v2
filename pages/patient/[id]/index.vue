@@ -139,14 +139,10 @@
                           <!-- Update button with export icon -->
                         </template>
                         <v-list>
-                          <v-list-item
-                            v-for="(exportItem, i) in exportItems"
-                            :key="i"
-                            @click="handleExport(exportItem.type, item)"
-                          >
-                            <v-list-item-title>{{
-                              exportItem.title
-                            }}</v-list-item-title>
+                          <v-list-item @click="handleExportNote(item)">
+                            <v-list-item-title>
+                              Export to Excel
+                            </v-list-item-title>
                           </v-list-item>
                         </v-list>
                       </v-menu>
@@ -330,7 +326,6 @@ import { createNoteService } from '~/services/note';
 import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
 import NoteDialog from '~/components/dialogs/NoteDialog.vue';
-import { generateCSV } from '~/utils/csvExport';
 import { makeFilenameExcel } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
@@ -533,24 +528,18 @@ export default {
         console.error('Error deleting report:', error);
       }
     },
-    async handleExportNote(type, item) {
-      if (type === 'csv') {
-        await this.assignPayload(item);
-        generateCSV(this.payload);
-      } else if (type === 'excel') {
-        console.log(`exporting note ${item.id} to excel`);
-        const visitDate = this.formatDate(item.visitDate, item);
-        const filename = makeFilenameExcel(
-          visitDate,
-          'Note',
-          this.currentPatient?.firstName,
-          this.currentPatient?.lastName
-        );
-        await this.noteService.exportNote({
-          noteId: item.id,
-          filename,
-        });
-      }
+    async handleExportNote(item) {
+      const visitDate = this.formatDate(item.visitDate, item);
+      const filename = makeFilenameExcel(
+        visitDate,
+        'Note',
+        this.currentPatient?.firstName,
+        this.currentPatient?.lastName
+      );
+      await this.noteService.exportNote({
+        noteId: item.id,
+        filename,
+      });
     },
     async handleExportReport(item) {
       if (!item || !item.id) {
@@ -564,7 +553,7 @@ export default {
 
       const filename = makeFilenameExcel(
         examDate,
-        'report',
+        'Report',
         this.currentPatient?.firstName,
         this.currentPatient?.lastName
       );
