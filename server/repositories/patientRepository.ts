@@ -15,6 +15,17 @@ export const saveNewPatient = async (
       throw new Error('User with this email already exists');
     }
 
+    // convert any values that are supposed to be numbers
+    if (payload.heightFeet) {
+      payload.heightFeet = Number(payload.heightFeet) || null;
+    }
+    if (payload.heightInches) {
+      payload.heightInches = Number(payload.heightInches) || null;
+    }
+    if (payload.weight) {
+      payload.weight = Number(payload.weight) || null;
+    }
+
     const savedPatient = await prisma.patient.create({ data: payload });
     return { success: true, patient: savedPatient };
   } catch (error: any) {
