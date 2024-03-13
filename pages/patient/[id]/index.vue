@@ -195,6 +195,7 @@
                     <v-card-text>
                       <VueDatePicker
                         v-model="selectedDate"
+                        week-start="0"
                         type="date"
                         class="datepicker"
                         :enable-time-picker="false"
