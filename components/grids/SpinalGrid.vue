@@ -1,8 +1,8 @@
 <template>
   <div class="grid-container">
     <v-row>
-      <v-col cols="1" class="text-center static-col pb-8"></v-col>
-      <v-col cols="1" class="text-center static-col"> </v-col>
+      <v-col cols="1" class="text-center pb-8"></v-col>
+      <v-col cols="1" class="text-center"> </v-col>
       <v-col cols="10">
         <v-row
           v-for="(row, i) in spinalLevels.slice(0, 1)"
@@ -38,13 +38,13 @@
     <div class="scrollable-content mt-5">
       <!-- C Levels  -->
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-top"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Sub Occ</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(0, 1)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -56,20 +56,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-mid"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-mid"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Upper Cerv</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(1, 3)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -81,22 +81,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 1, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-mid"
-          >C-Levels</v-col
-        >
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-mid">C-Levels</v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Mid Cerv</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(3, 5)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -108,20 +106,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 3, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-low"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-low"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Lower Cerv</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(5, 8)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -133,7 +131,7 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 5, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
@@ -141,13 +139,13 @@
       </v-row>
       <!-- T Levels Group -->
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-top"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Upper T</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(8, 10)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -159,20 +157,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 8, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-mid"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-mid"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Mid T</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(10, 14)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -184,22 +182,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 10, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-low"
-          >T Levels</v-col
-        >
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-low">T Levels</v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Lower T</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(14, 20)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -211,7 +207,7 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 14, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
@@ -220,13 +216,13 @@
 
       <!-- L Levels Group -->
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-top"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Upper L</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(20, 22)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -238,22 +234,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 20, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-low"
-          >L Levels</v-col
-        >
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-low">L Levels</v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Lower L</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(22, 25)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -265,7 +259,7 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 22, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
@@ -273,13 +267,13 @@
       </v-row>
       <!-- S Levels Group -->
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-top"></v-col>
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-top"></v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Upper S</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(25, 27)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -291,22 +285,20 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 25, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1" class="text-center static-col outer-group-low"
-          >S Levels</v-col
-        >
-        <v-col cols="1" class="text-center static-col extra-info-group">
+        <v-col cols="1" class="text-center outer-group-low">S Levels</v-col>
+        <v-col cols="1" class="text-center extra-info-group">
           <div class="mb-1">Lower S</div>
         </v-col>
         <v-col cols="10">
           <v-row v-for="(row, i) in spinalLevels.slice(27, 30)" :key="i">
-            <v-col class="text-center static-col grid-cell">
+            <v-col class="text-center grid-cell">
               <div class="mb-1">
                 <strong>{{ getRangeLabel(row) }}</strong>
               </div>
@@ -318,7 +310,7 @@
               :class="['grid-cell', { 'alternating-bg': j % 2 === 0 }]"
             >
               <div v-if="getValue(i + 27, j) === 'X'">
-                <SvgRender :width="20" :height="20" icon="x" />
+                <SvgRender :width="15" :height="15" icon="x" />
               </div>
             </v-col>
           </v-row>
@@ -449,9 +441,9 @@ export default {
 }
 .grid-cell {
   border: 1px solid gray;
-  padding-top: 20px;
+  padding-top: 10px;
   text-align: center;
-  min-width: 20px !important;
+  min-width: 15px !important;
 }
 
 .grid-cell-heading {
