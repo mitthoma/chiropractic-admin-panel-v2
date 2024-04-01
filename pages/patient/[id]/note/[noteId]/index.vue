@@ -25,9 +25,8 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="10">
-          <!-- <Posture :report-id="$route.params.reportId" /> -->
-          <SpinalGrid :entries="spinalEntries" />
+        <v-col cols="12">
+          <SpinalEntries />
         </v-col>
       </v-row>
       <v-row>
@@ -82,7 +81,7 @@ import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 import { createNoteService } from '~~/services/note';
 import { createEntryService } from '~~/services/entry';
-import SpinalGrid from '~~/components/grids/SpinalGrid.vue';
+import SpinalEntries from '~~/components/note/SpinalEntries.vue';
 
 export default {
   name: 'PatientReport',
@@ -98,7 +97,7 @@ export default {
     GeneralInfo,
     Vitals,
     Posture,
-    SpinalGrid,
+    SpinalEntries,
   },
   data() {
     return {
