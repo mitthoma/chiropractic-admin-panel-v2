@@ -24,20 +24,21 @@
           <th>Swelling</th>
           <th>Reduced Motion</th>
         </tr>
-        <tr v-for="(entry, index) in entries" :key="index">
+
+        <tr v-for="(entry, index) in entries" :key="index" class="entry-row">
           <td>{{ entry.spinalLevel }}</td>
           <td v-if="!editMode">{{ entry.side || 'None' }}</td>
           <td v-else>
             <input v-model="entry.side" type="text" placeholder="None" />
           </td>
+          <td v-if="!editMode">
+            <SvgRender v-if="entry.sublux" :width="20" :height="20" icon="x" />
+          </td>
           <td
-            v-if="!editMode"
+            v-else
             class="editable-field"
             @click="toggleField(entry, 'sublux')"
           >
-            <SvgRender v-if="entry.sublux" :width="20" :height="20" icon="x" />
-          </td>
-          <td v-else>
             <SvgRender v-if="entry.sublux" :width="20" :height="20" icon="x" />
           </td>
           <td v-if="!editMode">{{ entry.muscleSpasm || 'None' }}</td>
@@ -90,9 +91,9 @@ export default {
   },
   methods: {
     toggleField(entry, field) {
-      if (this.editMode) {
-        entry[field] = !entry[field];
-      }
+      console.log('CLICKING TOGGLE');
+      entry[field] = !entry[field];
+      console.log('entry.field is ', entry[field]);
     },
     async getExistingEntries() {
       this.existingEntries = await this.entryService.getEntriesForNote({
@@ -116,36 +117,50 @@ export default {
     },
     async handleSave() {
       for (const entry of this.entries) {
+        console.log('ENTRY IS ', entry);
         const matchingEntry = this.existingEntries.find(
           (el) => el.name === entry.name
         );
+        console.log('matching entry is ', matchingEntry);
 
         const isChanged =
           JSON.stringify(entry) !==
           JSON.stringify(this.entriesCopy.find((r) => r.name === entry.name));
+        console.log('IS CHANGED IS ', isChanged);
 
         if (isChanged) {
           if (matchingEntry) {
+            console.log('MATCHING ENTRY IS ', matchingEntry);
+            console.log('sublux is ', entry.sublux);
             const isEmpty = [
-              entry.norm,
-              entry.pain,
-              entry.arom,
-              entry.notes,
+              entry.sublux,
+              entry.muscleSpasm,
+              entry.triggerPoints,
+              entry.tenderness,
+              entry.numbness,
+              entry.edema,
+              entry.swelling,
+              entry.reducedMotion,
             ].every((field) => !field);
             if (isEmpty) {
+              console.log('deleting entry');
               await this.entryService.deleteEntry({
                 id: matchingEntry.id,
               });
             } else {
+              console.log('updating entry ', id);
               await this.entryService.updateEntry({
                 id: matchingEntry.id,
                 ...entry,
               });
             }
           } else {
+            console.log('adding entry');
+            console.log('note id ', this.$route.params.noteId);
             await this.entryService.addEntry({
               ...entry,
-              noteId: this.$route.params.noteId,
+              note: this.$route.params.noteId,
+              category: 'spinal',
             });
           }
         }
@@ -172,9 +187,16 @@ export default {
   text-align: center;
 }
 
+.entry-row {
+}
+
 .entry-table th,
 .entry-table td {
-  padding: 4px;
+  padding: 16px 4px;
+}
+
+.entry-table td {
+  border: 1px solid black;
 }
 
 .entry-table th {
@@ -187,6 +209,7 @@ export default {
   height: 10vh;
   padding-top: 15px;
   padding-bottom: 15px;
+  margin-bottom: 100px !important;
 }
 
 .entry-table input[type='text'] {

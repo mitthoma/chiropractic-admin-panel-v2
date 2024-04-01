@@ -29,54 +29,13 @@
           <SpinalEntries />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col cols="6">
-          <Lumbar :report-id="$route.params.reportId" />
-        </v-col>
-        <v-col cols="6">
-          <Reflexes :report-id="$route.params.reportId" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="6">
-          <OrthoStanding :report-id="$route.params.reportId" />
-        </v-col>
-        <v-col cols="6">
-          <OrthoSeated :report-id="$route.params.reportId" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="6">
-          <Cervical :report-id="$route.params.reportId" />
-        </v-col>
-        <v-col cols="6">
-          <OrthoSupine :report-id="$route.params.reportId" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="6">
-          <MyoDerm :report-id="$route.params.reportId" />
-        </v-col>
-        <v-col cols="6">
-          <OrthoProne :report-id="$route.params.reportId" />
-        </v-col>
-      </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
-import Lumbar from '~~/components/report/Lumbar.vue';
-import OrthoStanding from '~~/components/report/OrthoStanding.vue';
-import OrthoSeated from '~~/components/report/OrthoSeated.vue';
-import OrthoSupine from '~~/components/report/OrthoSupine.vue';
-import OrthoProne from '~~/components/report/OrthoProne.vue';
-import Cervical from '~~/components/report/Cervical.vue';
-import MyoDerm from '~~/components/report/MyoDerm.vue';
-import Reflexes from '~~/components/report/Reflexes.vue';
 import GeneralInfo from '~~/components/report/GeneralInfo.vue';
 import Vitals from '~~/components/report/Vitals.vue';
-import Posture from '~~/components/report/Posture.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 import { createNoteService } from '~~/services/note';
@@ -86,17 +45,8 @@ import SpinalEntries from '~~/components/note/SpinalEntries.vue';
 export default {
   name: 'PatientReport',
   components: {
-    Lumbar,
-    OrthoStanding,
-    OrthoSeated,
-    OrthoSupine,
-    OrthoProne,
-    Cervical,
-    MyoDerm,
-    Reflexes,
     GeneralInfo,
     Vitals,
-    Posture,
     SpinalEntries,
   },
   data() {
