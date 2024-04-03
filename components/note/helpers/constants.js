@@ -1,7 +1,7 @@
 export const spinalEntries = [
   {
     spinalLevel: 'occ_c1',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -19,7 +19,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c1_c2',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -37,7 +37,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c2_c3',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -55,7 +55,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c3_c4',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -73,7 +73,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c5_c6',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -91,7 +91,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c6_c7',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -109,7 +109,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'c7_t1',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -127,7 +127,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't1_t2',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -145,7 +145,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't2_t3',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -163,7 +163,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't3_t4',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -181,7 +181,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't4_t5',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -199,7 +199,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't5_t6',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -217,7 +217,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't6_t7',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -235,7 +235,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't7_t8',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -253,7 +253,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't8_t9',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -271,7 +271,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't9_t10',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -289,7 +289,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't10_t11',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -307,7 +307,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't11_t12',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -325,7 +325,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 't12_l1',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -343,7 +343,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'l1_l2',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -361,7 +361,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'l2_l3',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -379,7 +379,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'l3_l4',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -397,7 +397,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'l4_l5',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -415,7 +415,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 'l5_s1',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -433,7 +433,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 's1_s2',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -451,7 +451,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 's2_s3',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -469,7 +469,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 's3_s4',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -487,7 +487,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 's4_s5',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,
@@ -505,7 +505,7 @@ export const spinalEntries = [
   },
   {
     spinalLevel: 's5_',
-    side: 'l',
+    side: null,
     sublux: false,
     muscleSpasm: false,
     triggerPoints: false,

@@ -23,6 +23,7 @@
           <th>Edema</th>
           <th>Swelling</th>
           <th>Reduced Motion</th>
+          <th v-if="editMode">Actions</th>
         </tr>
 
         <tr v-for="(entry, index) in entries" :key="index" class="entry-row">
@@ -53,6 +54,16 @@
               placeholder="None"
             />
           </td>
+          <td
+            v-if="
+              editMode &&
+              existingEntries.some((e) => e.spinalLevel === entry.spinalLevel)
+            "
+          >
+            <v-btn text color="red" @click="handleRowClear(entry.spinalLevel)">
+              Clear
+            </v-btn>
+          </td>
         </tr>
       </table>
     </v-card>
@@ -81,6 +92,7 @@ export default {
         { text: '++++', value: '4' },
         { text: '+++++', value: '5' },
       ],
+      existingEntriesToDelete: [],
     };
   },
   async mounted() {
@@ -95,6 +107,20 @@ export default {
       entry[field] = !entry[field];
       console.log('entry.field is ', entry[field]);
     },
+    handleRowClear(level) {
+      console.log('level is ', level);
+      // level corresponds to spinal level
+      // reference existingEntries by spinal level and pull the id from it
+      // store the id in existingEntriesToDelete
+      // once we save our progress, then we'll go through that array and delete the entries for good
+    },
+
+    async deleteEntries() {
+      // go through the array existingEntriesToDelete and just make delete api call with their id
+      await this.entryService.deleteEntry();
+      this.existingEntriesToDelete = [];
+    },
+
     async getExistingEntries() {
       this.existingEntries = await this.entryService.getEntriesForNote({
         id: this.$route.params.noteId,
@@ -116,55 +142,40 @@ export default {
       this.$router.push(`/patient/${this.$route.params.id}`);
     },
     async handleSave() {
+      console.log('ENTRIES ARE ', this.entries);
       for (const entry of this.entries) {
-        console.log('ENTRY IS ', entry);
-        const matchingEntry = this.existingEntries.find(
-          (el) => el.name === entry.name
-        );
-        console.log('matching entry is ', matchingEntry);
+        if (entry.side) {
+          console.log('ENTRY IS ', entry);
+          const matchingEntry = this.existingEntries.find(
+            (el) => el.name === entry.name
+          );
+          console.log('matching entry is ', matchingEntry);
 
-        const isChanged =
-          JSON.stringify(entry) !==
-          JSON.stringify(this.entriesCopy.find((r) => r.name === entry.name));
-        console.log('IS CHANGED IS ', isChanged);
+          const isChanged =
+            JSON.stringify(entry) !==
+            JSON.stringify(this.entriesCopy.find((r) => r.name === entry.name));
+          console.log('IS CHANGED IS ', isChanged);
 
-        if (isChanged) {
-          if (matchingEntry) {
-            console.log('MATCHING ENTRY IS ', matchingEntry);
-            console.log('sublux is ', entry.sublux);
-            const isEmpty = [
-              entry.sublux,
-              entry.muscleSpasm,
-              entry.triggerPoints,
-              entry.tenderness,
-              entry.numbness,
-              entry.edema,
-              entry.swelling,
-              entry.reducedMotion,
-            ].every((field) => !field);
-            if (isEmpty) {
-              console.log('deleting entry');
-              await this.entryService.deleteEntry({
-                id: matchingEntry.id,
-              });
-            } else {
-              console.log('updating entry ', id);
+          if (isChanged) {
+            if (matchingEntry) {
+              console.log('MATCHING ENTRY IS ', matchingEntry);
+              console.log('sublux is ', entry.sublux);
               await this.entryService.updateEntry({
                 id: matchingEntry.id,
                 ...entry,
               });
+            } else {
+              console.log('adding entry');
+              await this.entryService.addEntry({
+                ...entry,
+                note: this.$route.params.noteId,
+                category: 'spinal',
+              });
             }
-          } else {
-            console.log('adding entry');
-            console.log('note id ', this.$route.params.noteId);
-            await this.entryService.addEntry({
-              ...entry,
-              note: this.$route.params.noteId,
-              category: 'spinal',
-            });
           }
         }
       }
+      await this.deleteEntries();
       this.editMode = false;
       await this.getExistingEntries();
       this.entriesCopy = JSON.parse(JSON.stringify(this.entries));
@@ -230,5 +241,10 @@ export default {
 
 .editable-field {
   cursor: pointer;
+}
+
+.clear-row-button {
+  margin-left: auto;
+  border: 1px solid red;
 }
 </style>
