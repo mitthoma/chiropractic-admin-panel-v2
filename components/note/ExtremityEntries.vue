@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <div class="card-header">
-        <v-card-title>Spinal Entries</v-card-title>
+        <v-card-title>Extremity Entries</v-card-title>
         <div class="icon-container">
           <v-icon v-if="!editMode" @click="startEditMode">mdi-pencil</v-icon>
           <div v-if="editMode">
@@ -27,7 +27,7 @@
         </tr>
 
         <tr v-for="(entry, index) in entrySet" :key="index" class="entry-row">
-          <td>{{ entry.spinalLevel }}</td>
+          <td>{{ entry.extremityLevel }}</td>
           <td v-if="!editMode">
             {{
               entry.side === 'l'
@@ -193,11 +193,15 @@
             v-if="
               editMode &&
               existingShownEntries.some(
-                (e) => e.spinalLevel === entry.spinalLevel
+                (e) => e.extremityLevel === entry.extremityLevel
               )
             "
           >
-            <v-btn text color="red" @click="handleRowClear(entry.spinalLevel)">
+            <v-btn
+              text
+              color="red"
+              @click="handleRowClear(entry.extremityLevel)"
+            >
               Clear
             </v-btn>
           </td>
@@ -210,11 +214,11 @@
 <script>
 import SvgRender from '../SvgRender.vue';
 import { sides } from '../helper';
-import { spinalEntries } from './helpers/constants';
+import { extremityEntries } from './helpers/constants';
 import { createEntryService } from '~~/services/entry';
 
 export default {
-  name: 'SpinalEntries',
+  name: 'ExtremityEntries',
   components: { SvgRender },
   data() {
     return {
@@ -239,8 +243,8 @@ export default {
     },
   },
   async mounted() {
-    this.entries = spinalEntries;
-    this.entryService = await createEntryService(this.$api);
+    this.entries = extremityEntries;
+    this.entryService = createEntryService(this.$api);
     await this.getExistingEntries();
   },
   methods: {
@@ -253,7 +257,7 @@ export default {
     },
     handleRowClear(level) {
       this.entriesCopy.forEach((entry) => {
-        if (entry.spinalLevel === level) {
+        if (entry.extremityLevel === level) {
           this.existingEntriesToDelete.add(entry.id);
           entry.side = null;
           entry.sublux = false;
@@ -299,7 +303,7 @@ export default {
       if (this.existingEntries.length > 0) {
         this.entries = this.entries.map((entry) => {
           const existing = this.existingEntries.find(
-            (el) => el.spinalLevel === entry.spinalLevel
+            (el) => el.extremityLevel === entry.extremityLevel
           );
           return existing ? { ...entry, ...existing } : entry;
         });
@@ -313,14 +317,14 @@ export default {
       for (const entry of this.entries) {
         if (entry.side) {
           const matchingEntry = this.existingEntries.find(
-            (el) => el.spinalLevel === entry.spinalLevel
+            (el) => el.extremityLevel === entry.extremityLevel
           );
 
           const isChanged =
             JSON.stringify(entry) !==
             JSON.stringify(
               this.initialEntries.find(
-                (r) => r.spinalLevel === entry.spinalLevel
+                (r) => r.extremityLevel === entry.extremityLevel
               )
             );
 
@@ -342,12 +346,12 @@ export default {
               };
 
               this.existingEntries.push(newEntry);
-              this.entries = spinalEntries;
+              this.entries = extremityEntries;
 
               if (this.existingEntries.length > 0) {
                 this.entries = this.entries.map((entry) => {
                   const existing = this.existingEntries.find(
-                    (el) => el.spinalLevel === entry.spinalLevel
+                    (el) => el.extremityLevel === entry.extremityLevel
                   );
                   return existing ? { ...entry, ...existing } : entry;
                 });
@@ -357,16 +361,16 @@ export default {
               const newEntry = await this.entryService.addEntry({
                 ...entry,
                 note: this.$route.params.noteId,
-                category: 'spinal',
+                category: 'extremity',
               });
 
               // now catch existingEntries up
               this.existingEntries.push(newEntry);
-              this.entries = spinalEntries;
+              this.entries = extremityEntries;
               if (this.existingEntries.length > 0) {
                 this.entries = this.entries.map((entry) => {
                   const existing = this.existingEntries.find(
-                    (el) => el.spinalLevel === entry.spinalLevel
+                    (el) => el.extremityLevel === entry.extremityLevel
                   );
                   return existing ? { ...entry, ...existing } : entry;
                 });

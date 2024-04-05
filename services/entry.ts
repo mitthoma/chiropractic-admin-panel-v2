@@ -14,7 +14,7 @@ export const createEntryService = (api: AxiosInstance) => ({
 
   addEntry: async (payload: any) => {
     const { data } = await api.post('/entry/entry', payload);
-    return data.data;
+    return data;
   },
 
   updateEntry: async (payload: any) => {
@@ -23,7 +23,9 @@ export const createEntryService = (api: AxiosInstance) => ({
   },
 
   deleteEntry: async (payload: any) => {
+    console.log('payload is ', payload);
     const { data } = await api.post('/entry/delete-entry', payload);
+    console.log('data returned is ', data);
     return data.data;
   },
 });

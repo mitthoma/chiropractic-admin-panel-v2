@@ -28,6 +28,9 @@
         <v-col cols="12">
           <SpinalEntries />
         </v-col>
+        <v-col cols="12">
+          <ExtremityEntries />
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -41,6 +44,7 @@ import { createReportService } from '~~/services/report';
 import { createNoteService } from '~~/services/note';
 import { createEntryService } from '~~/services/entry';
 import SpinalEntries from '~~/components/note/SpinalEntries.vue';
+import ExtremityEntries from '~~/components/note/ExtremityEntries.vue';
 
 export default {
   name: 'PatientReport',
@@ -48,6 +52,7 @@ export default {
     GeneralInfo,
     Vitals,
     SpinalEntries,
+    ExtremityEntries,
   },
   data() {
     return {
@@ -56,7 +61,6 @@ export default {
       noteService: null,
       patient: null,
       currentNote: null,
-      spinalEntries: [],
     };
   },
   computed: {
@@ -87,9 +91,9 @@ export default {
       });
 
       // retrieve spinal entries for the retrieved note
-      this.spinalEntries = await this.entryService.getEntriesForNote({
-        noteId: this.currentNote.id,
-      });
+      // this.spinalEntries = await this.entryService.getEntriesForNote({
+      //   noteId: this.currentNote.id,
+      // });
     },
 
     backToPatient() {
