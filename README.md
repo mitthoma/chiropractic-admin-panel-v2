@@ -50,6 +50,8 @@ AFTER CHANGES TO SCHEMA:
 
 2. npx prisma migrate deploy
 
+3. npx prisma generate
+
 VISUAL STUDIO CONFIGURATION (LINTER & FORMATTING):
 
 - to add extensions, Code --> Settings --> Extensions
