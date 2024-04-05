@@ -1,69 +1,65 @@
-/* eslint-disable camelcase */
-import {
-  entry_category_enum,
-  entry_region_enum,
-  entry_extremitylevel_enum,
-  entry_side_enum,
-  entry_spinallevel_enum,
-} from '@prisma/client';
-import prisma from '~~/prisma/client';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
-interface TreatmentPayload {
-  id: string;
-  category: entry_category_enum;
-  region?: entry_region_enum;
-  spinalLevel?: entry_spinallevel_enum;
-  extremityLevel?: entry_extremitylevel_enum;
-  side: entry_side_enum;
-
-  physioPositioning?: string;
-  treatmentPositioning?: string;
-  treatmentTechnique?: string;
-
-  coldPack?: boolean;
-  hotPack?: boolean;
-  electStim?: boolean;
-  traction?: boolean;
-  massage?: boolean;
-  treatmentManipulation?: boolean;
-  noteId: string;
-}
-
-export const addTreatment = async (payload: TreatmentPayload) => {
+export const addTreatment = async (payload: Prisma.TreatmentCreateInput) => {
   try {
-    const newTreatment = await prisma.treatment.create({
-      data: payload,
-    });
+    const newTreatment = await prisma.treatment.create({ data: payload });
     return newTreatment;
   } catch (error) {
-    console.log(error);
-    return error;
+    console.error('Failed to add treatment:', error);
+    throw error;
   }
 };
 
-export const deleteTreatment = async (treatmentId: string) => {
+export const updateTreatment = async (
+  id: string,
+  payload: Prisma.TreatmentUpdateInput
+) => {
   try {
-    await prisma.treatment.delete({
-      where: { id: treatmentId },
-    });
-    return true;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-export const updateTreatment = async (payload: TreatmentPayload) => {
-  try {
-    const treatmentId = payload.id;
     const updatedTreatment = await prisma.treatment.update({
-      where: { id: treatmentId },
+      where: { id },
       data: payload,
     });
     return updatedTreatment;
   } catch (error) {
-    console.log(error);
-    return error;
+    console.error('Failed to update treatment:', error);
+    throw error;
+  }
+};
+
+export const deleteTreatment = async (id: string) => {
+  try {
+    await prisma.treatment.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    console.error('Failed to delete treatment:', error);
+    throw error;
+  }
+};
+
+export const getTreatmentById = async (id: string) => {
+  try {
+    const treatment = await prisma.treatment.findUnique({
+      where: { id },
+      include: { treatmentMethod: true },
+    });
+    return treatment;
+  } catch (error) {
+    console.error('Failed to retrieve treatment:', error);
+    throw error;
+  }
+};
+
+export const getTreatmentMethodsForTreatment = async (treatmentId: string) => {
+  try {
+    const treatmentMethods = await prisma.treatmentMethod.findMany({
+      where: { treatmentId },
+      include: { treatmentMethodName: true },
+    });
+    return treatmentMethods;
+  } catch (error) {
+    console.error('Failed to retrieve treatment methods for treatment:', error);
+    throw error;
   }
 };
 
@@ -73,21 +69,6 @@ export const getAllTreatmentsByNoteId = async (noteId: string) => {
       where: { noteId },
     });
     return treatments;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-};
-
-export const getTreatmentById = async (id: string) => {
-  try {
-    const treatment = await prisma.treatment.findUnique({
-      where: { id },
-    });
-    if (!treatment) {
-      throw new Error(`Treatment with id ${id} not found`);
-    }
-    return treatment;
   } catch (error) {
     console.log(error);
     return error;
