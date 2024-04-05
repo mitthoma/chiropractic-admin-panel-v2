@@ -42,16 +42,134 @@
           >
             <SvgRender v-if="entry.sublux" :width="20" :height="20" icon="x" />
           </td>
-          <td v-if="!editMode">{{ entry.muscleSpasm || 'None' }}</td>
-          <td v-else>
-            <input v-model="entry.muscleSpasm" type="text" placeholder="None" />
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.muscleSpasm"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
           </td>
-          <td v-if="!editMode">{{ entry.triggerPoints || 'None' }}</td>
-          <td v-else>
-            <input
-              v-model="entry.triggerPoints"
-              type="text"
-              placeholder="None"
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'muscleSpasm')"
+          >
+            <SvgRender
+              v-if="entry.muscleSpasm"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.triggerPoints"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'triggerPoints')"
+          >
+            <SvgRender
+              v-if="entry.triggerPoints"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.tenderness"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'tenderness')"
+          >
+            <SvgRender
+              v-if="entry.tenderness"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.numbness"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'numbness')"
+          >
+            <SvgRender
+              v-if="entry.numbness"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender v-if="entry.edema" :width="20" :height="20" icon="x" />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'edema')"
+          >
+            <SvgRender v-if="entry.edema" :width="20" :height="20" icon="x" />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.swelling"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'swelling')"
+          >
+            <SvgRender
+              v-if="entry.swelling"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td v-if="!editMode">
+            <SvgRender
+              v-if="entry.reducedMotion"
+              :width="20"
+              :height="20"
+              icon="x"
+            />
+          </td>
+          <td
+            v-else
+            class="editable-field"
+            @click="toggleField(entry, 'reducedMotion')"
+          >
+            <SvgRender
+              v-if="entry.reducedMotion"
+              :width="20"
+              :height="20"
+              icon="x"
             />
           </td>
           <td
@@ -99,26 +217,27 @@ export default {
     this.entries = spinalEntries;
     this.entryService = await createEntryService(this.$api);
     await this.getExistingEntries();
-    this.entriesCopy = JSON.parse(JSON.stringify(this.entries));
   },
   methods: {
     toggleField(entry, field) {
-      console.log('CLICKING TOGGLE');
       entry[field] = !entry[field];
-      console.log('entry.field is ', entry[field]);
     },
     handleRowClear(level) {
-      console.log('level is ', level);
-      // level corresponds to spinal level
-      // reference existingEntries by spinal level and pull the id from it
-      // store the id in existingEntriesToDelete
-      // once we save our progress, then we'll go through that array and delete the entries for good
+      for (let i = 0; i < this.existingEntries.length; i++) {
+        const curr = this.existingEntries[i];
+        if (curr.spinalLevel === level) {
+          this.existingEntriesToDelete.push(curr.id);
+        }
+      }
     },
 
     async deleteEntries() {
-      // go through the array existingEntriesToDelete and just make delete api call with their id
-      await this.entryService.deleteEntry();
+      for (let i = 0; i < this.existingEntriesToDelete.length; i++) {
+        const curr = this.existingEntriesToDelete[i];
+        await this.entryService.deleteEntry(curr.id);
+      }
       this.existingEntriesToDelete = [];
+      await this.getExistingEntries();
     },
 
     async getExistingEntries() {
@@ -137,6 +256,7 @@ export default {
           return existing ? { ...entry, ...existing } : entry;
         });
       }
+      this.entriesCopy = JSON.parse(JSON.stringify(this.entries));
     },
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
@@ -147,13 +267,15 @@ export default {
         if (entry.side) {
           console.log('ENTRY IS ', entry);
           const matchingEntry = this.existingEntries.find(
-            (el) => el.name === entry.name
+            (el) => el.spinalLevel === entry.spinalLevel
           );
           console.log('matching entry is ', matchingEntry);
 
           const isChanged =
             JSON.stringify(entry) !==
-            JSON.stringify(this.entriesCopy.find((r) => r.name === entry.name));
+            JSON.stringify(
+              this.entriesCopy.find((r) => r.spinalLevel === entry.spinalLevel)
+            );
           console.log('IS CHANGED IS ', isChanged);
 
           if (isChanged) {
@@ -178,12 +300,10 @@ export default {
       await this.deleteEntries();
       this.editMode = false;
       await this.getExistingEntries();
-      this.entriesCopy = JSON.parse(JSON.stringify(this.entries));
     },
     async handleCancel() {
       this.editMode = false;
       await this.getExistingEntries();
-      this.entriesCopy = JSON.parse(JSON.stringify(this.entries));
     },
   },
 };
