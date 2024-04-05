@@ -30,19 +30,26 @@ model treatment {
   treatmentManipulation Boolean?
   noteId                String              @db.Uuid
   note                  note                @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  treatmentMethods      treatmentMethod[]
+  treatmentMethod      treatmentMethod[]
 
-  @@map("treatments")
+  @@map("treatment")
+}
+
+model treatmentMethodName {
+  id   Int    @id @default(autoincrement())
+  name String
+  treatmentMethod treatmentMethod[]
 }
 
 model treatmentMethod {
-  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name          String
-  active        Boolean   @default(false)
-  treatmentId   String    @db.Uuid
-  treatment     treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  active            Boolean             @default(false)
+  treatmentId       String              @db.Uuid
+  treatmentMethodNameId Int            
+  treatment         treatment           @relation(fields: [treatmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  treatmentMethodName treatmentMethodName @relation(fields: [treatmentMethodNameId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@map("treatment_methods")
+  @@map("treatment_method")
 }
 
 model entry {
@@ -95,21 +102,21 @@ enum treatmentOptionCategory {
   treatmentTechnique
 }
 
-model TreatmentPlan {
+model treatmentPlan {
   id     String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nextVisit1 String?
   nextVisit2 String?
   noteId String  @unique @db.Uuid
   note   note    @relation(fields: [noteId], references: [id], onDelete: Cascade)
   
-  @@map("treatment_plans")
+  @@map("treatment_plan")
 }
 
-model TreatmentPlanOption {
+model treatmentPlanOption {
   id   Int    @id @default(autoincrement())
   text String
 
-  @@map("treatment_plan_options")
+  @@map("treatment_plan_option")
 }
 
 model note {
@@ -134,9 +141,9 @@ model note {
   doctorNote               String?        @db.Text
   phaseFourRoomAssignment  String?
   entry                    entry[]
-  treatments               treatment[]
+  treatment               treatment[]
   patient                  patient?       @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
-  TreatmentPlan            TreatmentPlan?
+  treatmentPlan            treatmentPlan?
 }
 
 model report {
