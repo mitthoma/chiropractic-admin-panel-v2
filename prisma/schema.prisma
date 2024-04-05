@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -14,34 +14,47 @@ model complaint {
   painLevel  Int
   lastEdited DateTime @default(now()) @db.Timestamp(6)
   patientId  Int?
-  patient    patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  patient    patient? @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model treatment {
-  id                     String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  category               entry_category_enum
-  region                 entry_region_enum?      
-  spinalLevel            entry_spinallevel_enum? 
-  extremityLevel         entry_extremitylevel_enum?
-  side                   entry_side_enum
-  physioPositioning      String?
-  treatmentPositioning   String?
-  treatmentTechnique     String?
-  coldPack               Boolean?                
-  hotPack                Boolean?                
-  electStim              Boolean?                
-  traction               Boolean?                
-  massage                Boolean?                
-  treatmentManipulation  Boolean?              
-  noteId                 String                  @db.Uuid
-  note                   note                    @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                    String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  category              entry_category_enum
+  region                entry_region_enum?
+  spinalLevel           entry_spinallevel_enum?
+  extremityLevel        entry_extremitylevel_enum?
+  side                  entry_side_enum
+  physioPositioning     String?
+  treatmentPositioning  String?
+  treatmentTechnique    String?
+  treatmentManipulation Boolean?
+  noteId                String              @db.Uuid
+  note                  note                @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  treatmentMethod      treatmentMethod[]
 
-  @@map("treatments")
+  @@map("treatment")
+}
+
+model treatmentMethodName {
+  id   Int    @id @default(autoincrement())
+  name String
+  treatmentMethod treatmentMethod[]
+}
+
+model treatmentMethod {
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  active            Boolean             @default(false)
+  treatmentId       String              @db.Uuid
+  treatmentMethodNameId Int            
+  treatment         treatment           @relation(fields: [treatmentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  treatmentMethodName treatmentMethodName @relation(fields: [treatmentMethodNameId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("treatment_method")
 }
 
 model entry {
-  id                   String                     @id(map: "PK_a58c675c4c129a8e0f63d3676d6") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdDate          DateTime                   @default(now()) @db.Timestamp(6)
+  id                   String                      @id(map: "PK_a58c675c4c129a8e0f63d3676d6") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdDate          DateTime                    @default(now()) @db.Timestamp(6)
   category             entry_category_enum
   region               entry_region_enum?
   spinalLevel          entry_spinallevel_enum?
@@ -62,24 +75,24 @@ model entry {
   massage              Boolean
   technique            positioning_technique_enum?
   manipulation         Boolean
-  noteId               String?                    @db.Uuid
-  physioPositioning    positioning_technique_enum?  
-  treatmentPositioning positioning_technique_enum?  
-  note                 note?                      @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_df491c2c902d007610301eff36d")
+  noteId               String?                     @db.Uuid
+  physioPositioning    positioning_technique_enum?
+  treatmentPositioning positioning_technique_enum?
+  note                 note?                       @relation(fields: [noteId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_df491c2c902d007610301eff36d")
 }
 
 model room {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   text       String
   lastEdited DateTime @default(now()) @db.Timestamp(6)
   createdAt  DateTime @default(now()) @db.Timestamp(6)
 }
 
 model treatmentOption {
-  id         Int       @id @default(autoincrement())
+  id         Int                     @id @default(autoincrement())
   text       String
-  lastEdited DateTime @default(now()) @db.Timestamp(6)
-  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  lastEdited DateTime                @default(now()) @db.Timestamp(6)
+  createdAt  DateTime                @default(now()) @db.Timestamp(6)
   category   treatmentOptionCategory
 }
 
@@ -89,12 +102,29 @@ enum treatmentOptionCategory {
   treatmentTechnique
 }
 
+model treatmentPlan {
+  id     String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nextVisit1 String?
+  nextVisit2 String?
+  noteId String  @unique @db.Uuid
+  note   note    @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  
+  @@map("treatment_plan")
+}
+
+model treatmentPlanOption {
+  id   Int    @id @default(autoincrement())
+  text String
+
+  @@map("treatment_plan_option")
+}
+
 model note {
-  id                       String    @id(map: "PK_96d0c172a4fba276b1bbed43058") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  visitDate                DateTime? @default(now()) @db.Timestamp(6)
-  createdDate              DateTime  @default(now()) @db.Timestamp(6)
-  lastEdited               DateTime  @default(now()) @db.Timestamp(6)
-  temperature              Decimal?  @db.Decimal(4,1)
+  id                       String         @id(map: "PK_96d0c172a4fba276b1bbed43058") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  visitDate                DateTime?      @default(now()) @db.Timestamp(6)
+  createdDate              DateTime       @default(now()) @db.Timestamp(6)
+  lastEdited               DateTime       @default(now()) @db.Timestamp(6)
+  temperature              Decimal?       @db.Decimal(4, 1)
   respiration              Int?
   systolic                 Int?
   diastolic                Int?
@@ -108,36 +138,38 @@ model note {
   visitDateText            String?
   phaseTwoRoomAssignment   String?
   phaseThreeRoomAssignment String?
+  doctorNote               String?        @db.Text
   phaseFourRoomAssignment  String?
   entry                    entry[]
-  treatments               treatment[]
-  patient                  patient?  @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
+  treatment               treatment[]
+  patient                  patient?       @relation(fields: [patientId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a649a57c157f8cc9c44241e404c")
+  treatmentPlan            treatmentPlan?
 }
 
 model report {
-  id                String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  exam_date         DateTime       @db.Timestamp(6)
-  temp              Float?
-  sys               Int?
-  dia               Int?
-  pulse             Int?
-  resp              Int?
-  speech            String?
-  gait              String?
-  rhomberg          String?
-  demeanor          String?
-  dateAdded         DateTime       @default(now()) @db.Timestamp(6)
-  patientId         Int
-  patient           patient        @relation(fields: [patientId], references: [id])
-  posture           posture[]
-  lumbar            lumbar[]
-  orthoStanding     orthoStanding[]
-  cervical          cervical[]
-  myoDerm           myoDerm[]
-  reflexes          reflexes[]
-  orthoSeated       orthoSeated[]
-  orthoSupine       orthoSupine[]
-  orthoProne        orthoProne[]
+  id            String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  exam_date     DateTime        @db.Timestamp(6)
+  temp          Float?
+  sys           Int?
+  dia           Int?
+  pulse         Int?
+  resp          Int?
+  speech        String?
+  gait          String?
+  rhomberg      String?
+  demeanor      String?
+  dateAdded     DateTime        @default(now()) @db.Timestamp(6)
+  patientId     Int
+  patient       patient         @relation(fields: [patientId], references: [id])
+  posture       posture[]
+  lumbar        lumbar[]
+  orthoStanding orthoStanding[]
+  cervical      cervical[]
+  myoDerm       myoDerm[]
+  reflexes      reflexes[]
+  orthoSeated   orthoSeated[]
+  orthoSupine   orthoSupine[]
+  orthoProne    orthoProne[]
 }
 
 model posture {

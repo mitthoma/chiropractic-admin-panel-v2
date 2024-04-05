@@ -38,12 +38,12 @@ interface EntryPayload {
 
 export const addEntry = async (payload: EntryPayload) => {
   try {
+    console.log('payload is ', payload);
     const noteId = payload.note;
     const note = await prisma.note.findUnique({ where: { id: noteId } });
     if (!note) {
       throw new Error(`Note with id ${noteId} not found`);
     }
-
     const newEntry = await prisma.entry.create({
       data: {
         ...payload,
@@ -55,8 +55,11 @@ export const addEntry = async (payload: EntryPayload) => {
       },
     });
 
+    console.log('success');
+
     return newEntry;
   } catch (error) {
+    console.log('error is ', error);
     return error;
   }
 };
