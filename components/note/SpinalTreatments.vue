@@ -11,8 +11,7 @@
           </div>
         </div>
       </div>
-      treatment set is {{ treatmentSet }} treatment set 1 is
-      {{ treatmentSet[0] }}
+
       <table class="p-3 treatment-table">
         <tr class="table-heading-row">
           <th>Level</th>
@@ -53,16 +52,16 @@
           <td
             v-for="methodName in methodNames"
             :key="methodName"
-            @click="toggleField(treatment, methodName)"
+            @click="toggleField(treatment, methodName.name)"
           >
             <SvgRender
-              v-if="treatment[methodName] && !editMode"
+              v-if="treatment[methodName.name]?.active && !editMode"
               :width="20"
               :height="20"
               icon="x"
             />
             <SvgRender
-              v-if="treatment[methodName] && editMode"
+              v-if="treatment[methodName.name]?.active && editMode"
               :width="20"
               :height="20"
               class="editable-field"
@@ -89,6 +88,7 @@ import SvgRender from '../SvgRender.vue';
 import { sides } from '../helper';
 import { createTreatmentService } from '~~/services/treatment';
 import { createTreatmentMethodNameService } from '~~/services/treatmentMethodName';
+import { createTreatmentMethodService } from '~~/services/treatmentMethod';
 
 export default {
   name: 'SpinalTreatments',
@@ -104,6 +104,7 @@ export default {
       existingTreatmentsToDelete: new Set(),
       methodNames: [],
       methodNameService: null,
+      methodService: null,
       spinalTreatments: [],
     };
   },
@@ -118,8 +119,8 @@ export default {
   async mounted() {
     this.treatmentService = createTreatmentService(this.$api);
     this.methodNameService = createTreatmentMethodNameService(this.$api);
+    this.methodService = createTreatmentMethodService(this.$api);
     this.methodNames = await this.methodNameService.getTreatmentMethodNames();
-    console.log('method names ', this.methodNames);
     this.methodNames = Array.isArray(this.methodNames) ? this.methodNames : [];
     console.log('METHOD NAMES BROUGHT IN ARE ', this.methodNames);
 
@@ -156,33 +157,90 @@ export default {
       's5_',
     ];
 
-    this.spinalTreatments = spinalLevels.map((level) => ({
-      spinalLevel: level,
-      side: null,
-      treatments: {
-        ...this.methodNames.reduce(
-          (acc, methodName) => ({
-            ...acc,
-            [methodName]: false,
-          }),
-          {}
-        ),
-      },
-    }));
+    spinalLevels.forEach((lvl) => {
+      this.spinalTreatments.push({
+        spinalLevel: lvl,
+        side: null,
+        category: 'spinal',
+      });
+    });
 
+    console.log(
+      'spinal treatments after initial load are ',
+      this.spinalTreatments
+    );
+
+    // initial load in of the methodName fields for each treatment
+    this.spinalTreatments.forEach((st) => {
+      this.methodNames.forEach((methodName) => {
+        st[methodName.name] = {
+          id: methodName.id,
+          name: methodName.name,
+          active: false,
+        };
+      });
+    });
+
+    console.log(
+      'spinal treatments after initial field load-in are ',
+      this.spinalTreatments
+    );
+
+    await this.getExistingTreatmentsForNote();
     this.treatments = this.spinalTreatments;
-
-    await this.getExistingTreatments();
+    console.log('this treatments is ', this.treatments);
   },
   methods: {
+    async getExistingTreatmentsForNote() {
+      this.existingTreatments =
+        await this.treatmentService.getTreatmentsForNote({
+          id: this.$route.params.noteId,
+        });
+
+      // go through each existing treatment and see if we can match it to the spinalTreatments array by spinalLevel
+      this.existingTreatments.forEach((existingTreatment) => {
+        this.spinalTreatments.forEach(async (spinalTreatment) => {
+          if (existingTreatment.spinalLevel === spinalTreatment.spinalLevel) {
+            // we found an existing treatment!
+            // now we must find the dynamic values as they exist for this treatment and populate the spinalTreatments array
+            const treatmentId = existingTreatment.id;
+            const treatmentMethodsForTreatment =
+              await this.methodService.getTreatmentMethodsForTreatment({
+                treatmentId,
+              });
+
+            treatmentMethodsForTreatment.forEach(
+              (treatmentMethodForTreatment) => {
+                let currMethod;
+
+                this.methodNames.forEach((mn) => {
+                  if (
+                    mn.id === treatmentMethodForTreatment.treatmentMethodNameId
+                  ) {
+                    currMethod = mn;
+                  }
+                });
+
+                spinalTreatment[currMethod.name].active =
+                  treatmentMethodForTreatment.active;
+              }
+            );
+          }
+        });
+      });
+    },
     startEditMode() {
       this.editMode = true;
       this.treatmentsCopy = this.treatments;
     },
     toggleField(treatment, field) {
+      // toggling only affects treatmentsCopy. If I don't save, treatments does not get affected
       if (this.editMode) {
-        console.log('treatment is ', treatment);
-        treatment[field] = !treatment[field];
+        this.treatmentsCopy.forEach((trCopy) => {
+          if (trCopy.spinalLevel === treatment.spinalLevel) {
+            trCopy[field].active = !trCopy[field].active;
+          }
+        });
       }
     },
 
@@ -228,21 +286,6 @@ export default {
       this.resetComponent();
     },
 
-    async getExistingTreatments() {
-      this.existingTreatments =
-        await this.treatmentService.getTreatmentsForNote({
-          id: this.$route.params.noteId,
-        });
-      if (this.existingTreatments.length > 0) {
-        this.treatments = this.treatments.map((treatment) => {
-          const existing = this.existingTreatments.find(
-            (el) => el.spinalLevel === treatment.spinalLevel
-          );
-          return existing ? { ...treatment, ...existing } : treatment;
-        });
-      }
-      this.initialTreatments = JSON.parse(JSON.stringify(this.treatments));
-    },
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
     },
@@ -316,15 +359,7 @@ export default {
             }
           }
         } else {
-          treatment.side = null;
-          treatment.sublux = false;
-          treatment.muscleSpasm = false;
-          treatment.tenderness = false;
-          treatment.numbness = false;
-          treatment.edema = false;
-          treatment.triggerPoints = false;
-          treatment.swelling = false;
-          treatment.reducedMotion = false;
+          // this.treatments
         }
       }
 
@@ -343,6 +378,7 @@ export default {
     handleCancel() {
       this.editMode = false;
       this.existingTreatmentsToDelete.clear();
+      this.treatmentsCopy = this.treatments;
     },
   },
 };

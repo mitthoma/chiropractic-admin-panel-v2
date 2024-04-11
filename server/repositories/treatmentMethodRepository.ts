@@ -15,6 +15,19 @@ export const addTreatmentMethod = async (
   }
 };
 
+export const findAllByTreatmentId = async (treatmentId: string) => {
+  try {
+    const treatmentMethods = await prisma.treatmentMethod.findMany({
+      where: { treatmentId },
+      include: { treatmentMethodName: true },
+    });
+    return treatmentMethods;
+  } catch (error) {
+    console.error('Failed to find treatment methods by treatment ID:', error);
+    throw error;
+  }
+};
+
 export const updateTreatmentMethod = async (
   id: string,
   payload: Prisma.TreatmentMethodUpdateInput

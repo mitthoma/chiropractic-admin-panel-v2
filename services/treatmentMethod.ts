@@ -6,6 +6,11 @@ export const createTreatmentMethodService = (api: AxiosInstance) => ({
     return data.data;
   },
 
+  getTreatmentMethodsForTreatment: async (payload: any) => {
+    const { data } = await api.post('/treatment-method/treatment-id', payload);
+    return data.data;
+  },
+
   addTreatmentMethod: async (payload: any) => {
     const { data } = await api.post('/treatment-method/method', payload);
     return data.data;
