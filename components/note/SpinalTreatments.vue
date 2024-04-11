@@ -11,18 +11,15 @@
           </div>
         </div>
       </div>
+      treatment set is {{ treatmentSet }} treatment set 1 is
+      {{ treatmentSet[0] }}
       <table class="p-3 treatment-table">
         <tr class="table-heading-row">
           <th>Level</th>
           <th>Side</th>
-          <th>Sublux</th>
-          <th>Muscle Spasm</th>
-          <th>Trigger Points</th>
-          <th>Tenderness</th>
-          <th>Numbness</th>
-          <th>Edema</th>
-          <th>Swelling</th>
-          <th>Reduced Motion</th>
+          <th v-for="methodName in methodNames" :key="methodName">
+            {{ methodName.name }}
+          </th>
           <th v-if="editMode">Actions</th>
         </tr>
 
@@ -53,174 +50,26 @@
               v-bind="{ 'return-object': false }"
             ></v-select>
           </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.sublux"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
           <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'sublux')"
+            v-for="methodName in methodNames"
+            :key="methodName"
+            @click="toggleField(treatment, methodName)"
           >
             <SvgRender
-              v-if="treatment.sublux"
+              v-if="treatment[methodName] && !editMode"
               :width="20"
               :height="20"
               icon="x"
             />
-          </td>
-          <td v-if="!editMode">
             <SvgRender
-              v-if="treatment.muscleSpasm"
+              v-if="treatment[methodName] && editMode"
               :width="20"
               :height="20"
+              class="editable-field"
               icon="x"
             />
           </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'muscleSpasm')"
-          >
-            <SvgRender
-              v-if="treatment.muscleSpasm"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.triggerPoints"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'triggerPoints')"
-          >
-            <SvgRender
-              v-if="treatment.triggerPoints"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.tenderness"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'tenderness')"
-          >
-            <SvgRender
-              v-if="treatment.tenderness"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.numbness"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'numbness')"
-          >
-            <SvgRender
-              v-if="treatment.numbness"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.edema"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'edema')"
-          >
-            <SvgRender
-              v-if="treatment.edema"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.swelling"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'swelling')"
-          >
-            <SvgRender
-              v-if="treatment.swelling"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td v-if="!editMode">
-            <SvgRender
-              v-if="treatment.reducedMotion"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-else
-            class="editable-field"
-            @click="toggleField(treatment, 'reducedMotion')"
-          >
-            <SvgRender
-              v-if="treatment.reducedMotion"
-              :width="20"
-              :height="20"
-              icon="x"
-            />
-          </td>
-          <td
-            v-if="
-              editMode &&
-              existingShownEntries.some(
-                (e) => e.spinalLevel === treatment.spinalLevel
-              )
-            "
-          >
+          <td v-if="editMode">
             <v-btn
               text
               color="red"
@@ -238,8 +87,8 @@
 <script>
 import SvgRender from '../SvgRender.vue';
 import { sides } from '../helper';
-import { spinalEntries } from './helpers/constants';
 import { createTreatmentService } from '~~/services/treatment';
+import { createTreatmentMethodNameService } from '~~/services/treatmentMethodName';
 
 export default {
   name: 'SpinalTreatments',
@@ -250,41 +99,98 @@ export default {
       treatmentService: null,
       existingTreatments: [],
       treatmentsCopy: null,
-      initialEntries: null,
+      initialTreatments: null,
       treatments: [],
-      existingEntriesToDelete: new Set(),
+      existingTreatmentsToDelete: new Set(),
+      methodNames: [],
+      methodNameService: null,
+      spinalTreatments: [],
     };
   },
   computed: {
-    entrySet() {
-      return this.editMode ? this.entriesCopy : this.treatments;
+    treatmentSet() {
+      return this.editMode ? this.treatmentsCopy : this.treatments;
     },
     sideOptions() {
       return sides;
     },
-    existingShownEntries() {
-      return this.existingEntries;
-    },
   },
   async mounted() {
-    this.treatments = spinalEntries;
-    this.treatmentService = await createTreatmentService(this.$api);
+    this.treatmentService = createTreatmentService(this.$api);
+    this.methodNameService = createTreatmentMethodNameService(this.$api);
+    this.methodNames = await this.methodNameService.getTreatmentMethodNames();
+    console.log('method names ', this.methodNames);
+    this.methodNames = Array.isArray(this.methodNames) ? this.methodNames : [];
+    console.log('METHOD NAMES BROUGHT IN ARE ', this.methodNames);
+
+    const spinalLevels = [
+      'occ_c1',
+      'c1_c2',
+      'c2_c3',
+      'c3_c4',
+      'c4_c5',
+      'c5_c6',
+      'c6_c7',
+      'c7_t1',
+      't1_t2',
+      't2_t3',
+      't3_t4',
+      't4_t5',
+      't5_t6',
+      't6_t7',
+      't7_t8',
+      't8_t9',
+      't9_t10',
+      't10_t11',
+      't11_t12',
+      't12_l1',
+      'l1_l2',
+      'l2_l3',
+      'l3_l4',
+      'l4_l5',
+      'l5_s1',
+      's1_s2',
+      's2_s3',
+      's3_s4',
+      's4_s5',
+      's5_',
+    ];
+
+    this.spinalTreatments = spinalLevels.map((level) => ({
+      spinalLevel: level,
+      side: null,
+      treatments: {
+        ...this.methodNames.reduce(
+          (acc, methodName) => ({
+            ...acc,
+            [methodName]: false,
+          }),
+          {}
+        ),
+      },
+    }));
+
+    this.treatments = this.spinalTreatments;
+
     await this.getExistingTreatments();
   },
   methods: {
     startEditMode() {
       this.editMode = true;
-      this.entriesCopy = this.treatments;
+      this.treatmentsCopy = this.treatments;
     },
     toggleField(treatment, field) {
-      treatment[field] = !treatment[field];
+      if (this.editMode) {
+        console.log('treatment is ', treatment);
+        treatment[field] = !treatment[field];
+      }
     },
 
     // todo: handle row clear for treatments
     handleRowClear(level) {
-      this.entriesCopy.forEach((treatment) => {
+      this.treatmentsCopy.forEach((treatment) => {
         if (treatment.spinalLevel === level) {
-          this.existingEntriesToDelete.add(treatment.id);
+          this.existingTreatmentsToDelete.add(treatment.id);
           treatment.side = null;
           treatment.sublux = false;
           treatment.muscleSpasm = false;
@@ -298,43 +204,44 @@ export default {
       });
     },
 
-    deleteEntries() {
-      this.existingEntriesToDelete.forEach(async (entryId) => {
-        await this.entryService.deleteEntry({ id: entryId });
-        this.existingEntries = this.existingEntries.filter(
-          (treatment) => treatment.id !== entryId
+    deleteTreatments() {
+      this.existingTreatmentsToDelete.forEach(async (treatmentId) => {
+        await this.treatmentService.deleteTreatment({ id: treatmentId });
+        this.existingTreatments = this.existingTreatments.filter(
+          (treatment) => treatment.id !== treatmentId
         );
 
-        this.treatments.forEach((originalEntry) => {
-          if (originalEntry.id === entryId) {
-            originalEntry.side = null;
-            originalEntry.sublux = false;
-            originalEntry.muscleSpasm = false;
-            originalEntry.tenderness = false;
-            originalEntry.numbness = false;
-            originalEntry.edema = false;
-            originalEntry.triggerPoints = false;
-            originalEntry.swelling = false;
-            originalEntry.reducedMotion = false;
+        this.treatments.forEach((originalTreatment) => {
+          if (originalTreatment.id === treatmentId) {
+            originalTreatment.side = null;
+            originalTreatment.sublux = false;
+            originalTreatment.muscleSpasm = false;
+            originalTreatment.tenderness = false;
+            originalTreatment.numbness = false;
+            originalTreatment.edema = false;
+            originalTreatment.triggerPoints = false;
+            originalTreatment.swelling = false;
+            originalTreatment.reducedMotion = false;
           }
         });
       });
       this.resetComponent();
     },
 
-    async getExistingEntries() {
-      this.existingEntries = await this.entryService.getEntriesForNote({
-        id: this.$route.params.noteId,
-      });
-      if (this.existingEntries.length > 0) {
+    async getExistingTreatments() {
+      this.existingTreatments =
+        await this.treatmentService.getTreatmentsForNote({
+          id: this.$route.params.noteId,
+        });
+      if (this.existingTreatments.length > 0) {
         this.treatments = this.treatments.map((treatment) => {
-          const existing = this.existingEntries.find(
+          const existing = this.existingTreatments.find(
             (el) => el.spinalLevel === treatment.spinalLevel
           );
           return existing ? { ...treatment, ...existing } : treatment;
         });
       }
-      this.initialEntries = JSON.parse(JSON.stringify(this.treatments));
+      this.initialTreatments = JSON.parse(JSON.stringify(this.treatments));
     },
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
@@ -342,66 +249,70 @@ export default {
     async handleSave() {
       for (const treatment of this.treatments) {
         if (treatment.side) {
-          const matchingEntry = this.existingEntries.find(
+          const matchingTreatment = this.existingTreatments.find(
             (el) => el.spinalLevel === treatment.spinalLevel
           );
 
           const isChanged =
             JSON.stringify(treatment) !==
             JSON.stringify(
-              this.initialEntries.find(
+              this.initialTreatments.find(
                 (r) => r.spinalLevel === treatment.spinalLevel
               )
             );
 
           if (isChanged) {
-            if (matchingEntry) {
-              await this.entryService.updateEntry({
-                id: matchingEntry.id,
+            if (matchingTreatment) {
+              await this.treatmentService.updateTreatment({
+                id: matchingTreatment.id,
                 ...treatment,
               });
 
-              // now catch existingEntries up
-              this.existingEntries = this.existingEntries.filter(
-                (treatment) => treatment.id !== matchingEntry.id
+              // now catch existingTreatments up
+              this.existingTreatments = this.existingTreatments.filter(
+                (treatment) => treatment.id !== matchingTreatment.id
               );
 
-              const newEntry = {
-                id: matchingEntry.id,
+              const newTreatment = {
+                id: matchingTreatment.id,
                 ...treatment,
               };
 
-              this.existingEntries.push(newEntry);
-              this.treatments = spinalEntries;
+              this.existingTreatments.push(newTreatment);
+              this.treatments = this.spinalTreatments;
 
-              if (this.existingEntries.length > 0) {
+              if (this.existingTreatments.length > 0) {
                 this.treatments = this.treatments.map((treatment) => {
-                  const existing = this.existingEntries.find(
+                  const existing = this.existingTreatments.find(
                     (el) => el.spinalLevel === treatment.spinalLevel
                   );
                   return existing ? { ...treatment, ...existing } : treatment;
                 });
               }
-              this.initialEntries = JSON.parse(JSON.stringify(this.treatments));
+              this.initialTreatments = JSON.parse(
+                JSON.stringify(this.treatments)
+              );
             } else {
-              const newEntry = await this.entryService.addEntry({
+              const newTreatment = await this.treatmentService.addTreatment({
                 ...treatment,
                 note: this.$route.params.noteId,
                 category: 'spinal',
               });
 
-              // now catch existingEntries up
-              this.existingEntries.push(newEntry);
-              this.treatments = spinalEntries;
-              if (this.existingEntries.length > 0) {
+              // now catch existingTreatments up
+              this.existingTreatments.push(newTreatment);
+              this.treatments = this.spinalTreatments;
+              if (this.existingTreatments.length > 0) {
                 this.treatments = this.treatments.map((treatment) => {
-                  const existing = this.existingEntries.find(
+                  const existing = this.existingTreatments.find(
                     (el) => el.spinalLevel === treatment.spinalLevel
                   );
                   return existing ? { ...treatment, ...existing } : treatment;
                 });
               }
-              this.initialEntries = JSON.parse(JSON.stringify(this.treatments));
+              this.initialTreatments = JSON.parse(
+                JSON.stringify(this.treatments)
+              );
             }
           }
         } else {
@@ -417,18 +328,21 @@ export default {
         }
       }
 
-      console.log('existingEntries at end of day are ', this.existingEntries);
-      this.deleteEntries();
+      console.log(
+        'existingTreatments at end of day are ',
+        this.existingTreatments
+      );
+      this.deleteTreatments();
     },
     resetComponent() {
-      this.existingEntriesToDelete.clear();
+      this.existingTreatmentsToDelete.clear();
 
       this.editMode = false;
-      this.entriesCopy = this.treatments;
+      this.treatmentsCopy = this.treatments;
     },
     handleCancel() {
       this.editMode = false;
-      this.existingEntriesToDelete.clear();
+      this.existingTreatmentsToDelete.clear();
     },
   },
 };
