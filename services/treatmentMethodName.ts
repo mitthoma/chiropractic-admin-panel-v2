@@ -14,7 +14,6 @@ export const createTreatmentMethodNameService = (api: AxiosInstance) => ({
       '/treatment-method-name/method-names',
       payload
     );
-    console.log('data is ', data);
     return data.data;
   },
 
