@@ -111,11 +111,6 @@ export default {
   },
   computed: {
     treatmentSet() {
-      console.log('TREATMENT SET CALLED');
-      console.log('treatment backup is ', this.treatmentsBackup);
-      console.log('treatment copy is ', this.treatmentsCopy);
-      console.log('treatmentis ', this.treatments[0]);
-
       return this.editMode ? this.treatmentsCopy : this.treatments;
     },
     sideOptions() {
@@ -128,7 +123,6 @@ export default {
     this.methodService = createTreatmentMethodService(this.$api);
     this.methodNames = await this.methodNameService.getTreatmentMethodNames();
     this.methodNames = Array.isArray(this.methodNames) ? this.methodNames : [];
-    console.log('METHOD NAMES BROUGHT IN ARE ', this.methodNames);
 
     const spinalLevels = [
       'occ_c1',
@@ -171,11 +165,6 @@ export default {
       });
     });
 
-    console.log(
-      'spinal treatments after initial load are ',
-      this.spinalTreatments
-    );
-
     // initial load in of the methodName fields for each treatment
     this.spinalTreatments.forEach((st) => {
       this.methodNames.forEach((methodName) => {
@@ -186,15 +175,8 @@ export default {
         };
       });
     });
-
-    console.log(
-      'spinal treatments after initial field load-in are ',
-      this.spinalTreatments
-    );
-
     await this.getExistingTreatmentsForNote();
     this.treatments = this.spinalTreatments;
-    console.log('this treatments is ', this.treatments);
   },
   methods: {
     async getExistingTreatmentsForNote() {
@@ -246,7 +228,6 @@ export default {
       this.treatments = [];
     },
     toggleField(treatment, field) {
-      // toggling only affects treatmentsCopy. If I don't save, treatments does not get affected
       if (this.editMode) {
         this.treatmentsCopy.forEach((trCopy) => {
           if (trCopy.spinalLevel === treatment.spinalLevel) {
@@ -258,44 +239,14 @@ export default {
 
     // todo: handle row clear for treatments
     handleRowClear(level) {
-      this.treatmentsCopy.forEach((treatment) => {
-        if (treatment.spinalLevel === level) {
-          this.existingTreatmentsToDelete.add(treatment.id);
-          treatment.side = null;
-          treatment.sublux = false;
-          treatment.muscleSpasm = false;
-          treatment.tenderness = false;
-          treatment.numbness = false;
-          treatment.edema = false;
-          treatment.triggerPoints = false;
-          treatment.swelling = false;
-          treatment.reducedMotion = false;
-        }
-      });
+      console.log(
+        'IMPLEMENT ROW CLEAR -- YOULL NEED TO ADD TO TREATMENTSTOBEDELETED'
+      );
+      console.log('level', level);
     },
 
     deleteTreatments() {
-      this.existingTreatmentsToDelete.forEach(async (treatmentId) => {
-        await this.treatmentService.deleteTreatment({ id: treatmentId });
-        this.existingTreatments = this.existingTreatments.filter(
-          (treatment) => treatment.id !== treatmentId
-        );
-
-        this.treatments.forEach((originalTreatment) => {
-          if (originalTreatment.id === treatmentId) {
-            originalTreatment.side = null;
-            originalTreatment.sublux = false;
-            originalTreatment.muscleSpasm = false;
-            originalTreatment.tenderness = false;
-            originalTreatment.numbness = false;
-            originalTreatment.edema = false;
-            originalTreatment.triggerPoints = false;
-            originalTreatment.swelling = false;
-            originalTreatment.reducedMotion = false;
-          }
-        });
-      });
-      this.resetComponent();
+      // todo: implement delete Treatments
     },
 
     backToPatient() {
@@ -375,10 +326,6 @@ export default {
         }
       }
 
-      console.log(
-        'existingTreatments at end of day are ',
-        this.existingTreatments
-      );
       this.deleteTreatments();
     },
     resetComponent() {
@@ -390,14 +337,9 @@ export default {
     handleCancel() {
       this.editMode = false;
       this.existingTreatmentsToDelete.clear();
-
-      console.log('TREATMENTS BACKUP ', this.treatmentsBackup[0]);
-
-      // Clear treatments array completely before restoring from backup
-      // Reset treatments to its original state before any edits were made
       this.treatments = this.treatmentsBackup.map((t) => ({ ...t }));
-      this.treatmentsBackup = []; // Clear the backup after restoring
-      this.treatmentsCopy = []; // Also clear the working copy
+      this.treatmentsBackup = [];
+      this.treatmentsCopy = [];
     },
   },
 };
