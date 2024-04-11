@@ -2,6 +2,6 @@ import { updateTreatmentMethodName } from '~~/server/repositories/treatmentMetho
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const response = await updateTreatmentMethodName(body.id, body);
+  const response = await updateTreatmentMethodName(body.id, body.name);
   return response;
 });

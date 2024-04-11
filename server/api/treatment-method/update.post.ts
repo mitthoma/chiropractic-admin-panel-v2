@@ -1,7 +1,7 @@
-import { deleteTreatmentMethod } from '~~/server/repositories/treatmentMethodRepository';
+import { updateTreatmentMethod } from '~~/server/repositories/treatmentMethodRepository';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const response = await deleteTreatmentMethod(body.id);
+  const response = await updateTreatmentMethod(body.id, body);
   return response;
 });
