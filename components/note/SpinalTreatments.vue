@@ -98,7 +98,7 @@ export default {
       editMode: false,
       treatmentService: null,
       existingTreatments: [],
-      treatmentsCopy: null,
+      treatmentsCopy: [],
       initialTreatments: null,
       treatments: [],
       existingTreatmentsToDelete: new Set(),
@@ -106,10 +106,16 @@ export default {
       methodNameService: null,
       methodService: null,
       spinalTreatments: [],
+      treatmentsBackup: [],
     };
   },
   computed: {
     treatmentSet() {
+      console.log('TREATMENT SET CALLED');
+      console.log('treatment backup is ', this.treatmentsBackup);
+      console.log('treatment copy is ', this.treatmentsCopy);
+      console.log('treatmentis ', this.treatments[0]);
+
       return this.editMode ? this.treatmentsCopy : this.treatments;
     },
     sideOptions() {
@@ -231,7 +237,13 @@ export default {
     },
     startEditMode() {
       this.editMode = true;
-      this.treatmentsCopy = this.treatments;
+      this.treatmentsBackup = this.treatments.map((treatment) =>
+        JSON.parse(JSON.stringify(treatment))
+      );
+      this.treatmentsCopy = this.treatments.map((treatment) =>
+        JSON.parse(JSON.stringify(treatment))
+      );
+      this.treatments = [];
     },
     toggleField(treatment, field) {
       // toggling only affects treatmentsCopy. If I don't save, treatments does not get affected
@@ -378,7 +390,14 @@ export default {
     handleCancel() {
       this.editMode = false;
       this.existingTreatmentsToDelete.clear();
-      this.treatmentsCopy = this.treatments;
+
+      console.log('TREATMENTS BACKUP ', this.treatmentsBackup[0]);
+
+      // Clear treatments array completely before restoring from backup
+      // Reset treatments to its original state before any edits were made
+      this.treatments = this.treatmentsBackup.map((t) => ({ ...t }));
+      this.treatmentsBackup = []; // Clear the backup after restoring
+      this.treatmentsCopy = []; // Also clear the working copy
     },
   },
 };
