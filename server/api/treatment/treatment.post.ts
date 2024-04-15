@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
   //   cleanedBody.extremityLevel = body.level || null;
   // }
 
+  console.log('BODY ON TREATMENT POST IS ', body);
+
   const response = await addTreatment(body);
   return response;
 });

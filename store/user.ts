@@ -10,7 +10,7 @@ interface UserState {
 export const userStore = defineStore('user', {
   state: () => ({
     user: {} as user,
-    isLoggedIn: false,
+    isLoggedIn: true, // dev mode
     authInitialized: false,
   }),
 

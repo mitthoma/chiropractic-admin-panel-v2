@@ -36,7 +36,7 @@
                   ? 'Right'
                   : treatment.side === 'b'
                     ? 'Both'
-                    : 'None'
+                    : ''
             }}
           </td>
           <td v-else>
@@ -190,6 +190,15 @@ export default {
             // now we must find the dynamic values as they exist for this treatment and populate the spinalTreatments array
             const treatmentId = existingTreatment.id;
             spinalTreatment.id = treatmentId;
+            spinalTreatment.side = existingTreatment.side;
+            spinalTreatment.physioPositioning =
+              existingTreatment.physioPositioning;
+            spinalTreatment.treatmentPositioning =
+              existingTreatment.treatmentPositioning;
+            spinalTreatment.treatmentTechnique =
+              existingTreatment.treatmentTechnique;
+            spinalTreatment.treatmentManipulation =
+              existingTreatment.treatmentManipulation;
             const treatmentMethodsForTreatment =
               await this.methodService.getTreatmentMethodsForTreatment({
                 treatmentId,
@@ -227,6 +236,16 @@ export default {
       );
       this.treatments = [];
     },
+    // toggleSide(treatment, side) {
+    //   console.log('treatment is ', treatment);
+    //   if (this.editMode) {
+    //     this.treatmentsCopy.forEach((trCopy) => {
+    //       if (trCopy.spinalLevel === treatment.spinalLevel) {
+    //         trCopy.side = side;
+    //       }
+    //     });
+    //   }
+    // },
     toggleField(treatment, field) {
       if (this.editMode) {
         this.treatmentsCopy.forEach((trCopy) => {
@@ -255,9 +274,11 @@ export default {
 
       // TODO: SIDE IS NOT BEING RECORDED OR SHOWN
 
-      for (const tr in this.treatmentsCopy) {
+      console.log('TREATMENTS COPY IS ', this.treatmentsCopy);
+
+      // for (const tr in this.treatmentsCopy) {
+      this.treatmentsCopy.forEach(async (tr) => {
         if (tr.side) {
-          console.log('tr side is ', tr.side);
           // this means it has an input, decide whether it is new or updatedjk
           if (tr.id) {
             // update
@@ -284,18 +305,26 @@ export default {
               }
             }
 
+            console.log('new treatment to add is ', newTreatmentToAdd);
+
             // now we save the newTreatmentToAdd as a treatment.
-            const newlyAddedMethod =
-              await this.treatmentService.addTreatment(newTreatmentToAdd);
+            const newlyAddedTreatment =
+              await this.treatmentService.addTreatment({
+                ...newTreatmentToAdd,
+                note: this.$route.params.noteId,
+              });
 
             // then go through the fields in the methodToAdd object. Each field will be a new method
 
             for (const key in methodToAdd) {
               this.methodNames.forEach(async (mn) => {
                 if (mn.name === key) {
-                  await this.treatmentMethodService.addTreatmentMethod({
-                    treatmentMethodNameId: mn.id,
-                    treatmentId: newlyAddedMethod.id,
+                  console.log('MN IS ', mn);
+                  console.log('new tr IS ', newlyAddedTreatment);
+
+                  await this.methodService.addTreatmentMethod({
+                    treatmentMethodNameId: mn?.id,
+                    treatmentId: newlyAddedTreatment?.id,
                     active: true,
                   });
                 }
@@ -307,13 +336,15 @@ export default {
           // if it does not have a side, then we must check if it exists in backup
 
           this.treatmentsBackup.forEach(async (trBackup) => {
-            if (trBackup.spinalLevel === tr.spinalLevel) {
+            if (trBackup.spinalLevel === tr.spinalLevel && trBackup.side) {
               // on the backend, this will delete any associated treatmentmethods first
               await this.treatmentService.deleteTreatment({ id: trBackup.id });
             }
           });
         }
-      }
+      });
+
+      // }
 
       // restore the backup with a new one
       this.editMode = false;

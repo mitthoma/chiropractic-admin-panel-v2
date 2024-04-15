@@ -1,9 +1,24 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const addTreatment = async (payload: Prisma.TreatmentCreateInput) => {
+export const addTreatment = async (payload) => {
   try {
-    const newTreatment = await prisma.treatment.create({ data: payload });
+    // Assuming payload.note is the UUID of the existing note you want to link
+    const noteId = payload.note;
+    delete payload.note; // Remove note field from payload to prevent errors
+
+    console.log('PAYLOAD ON TREATMENT ADD IS ', payload);
+    const newTreatment = await prisma.treatment.create({
+      data: {
+        ...payload,
+        note: {
+          connect: {
+            id: noteId, // Connect the existing note using its ID
+          },
+        },
+      },
+    });
+    console.log('new treatment ', newTreatment);
     return newTreatment;
   } catch (error) {
     console.error('Failed to add treatment:', error);
