@@ -19,6 +19,9 @@
           <th v-for="methodName in methodNames" :key="methodName">
             {{ methodName.name }}
           </th>
+          <th>Physio Position</th>
+          <th>Treatment Position</th>
+          <th>Treatment Technique</th>
           <th v-if="editMode">Actions</th>
         </tr>
 
@@ -68,6 +71,43 @@
               icon="x"
             />
           </td>
+          <td v-if="!editMode">
+            {{ treatment.physioPositioning }}
+          </td>
+          <td v-else class="editable-field">
+            <v-select
+              v-model="treatment.physioPositioning"
+              :items="physioPositioningOptions"
+              item-text="title"
+              item-value="value"
+              v-bind="{ 'return-object': false }"
+            ></v-select>
+          </td>
+          <td v-if="!editMode">
+            {{ treatment.treatmentPositioning }}
+          </td>
+          <td v-else class="editable-field">
+            <v-select
+              v-model="treatment.treatmentPositioning"
+              :items="treatmentPositioningOptions"
+              item-text="title"
+              item-value="value"
+              v-bind="{ 'return-object': false }"
+            ></v-select>
+          </td>
+          <td v-if="!editMode">
+            {{ treatment.treatmentTechnique }}
+          </td>
+          <td v-else class="editable-field">
+            <v-select
+              v-model="treatment.treatmentTechnique"
+              :items="treatmentTechniqueOptions"
+              item-text="title"
+              item-value="value"
+              v-bind="{ 'return-object': false }"
+            ></v-select>
+          </td>
+
           <td v-if="editMode">
             <v-btn
               text
@@ -89,6 +129,7 @@ import { sides } from '../helper';
 import { createTreatmentService } from '~~/services/treatment';
 import { createTreatmentMethodNameService } from '~~/services/treatmentMethodName';
 import { createTreatmentMethodService } from '~~/services/treatmentMethod';
+import { createTreatmentOptionService } from '~~/services/treatmentOption';
 
 export default {
   name: 'SpinalTreatments',
@@ -105,6 +146,10 @@ export default {
       methodService: null,
       spinalTreatments: [],
       treatmentsBackup: [],
+      physioPositioningOptions: [],
+      treatmentPositioningOptions: [],
+      treatmentTechniqueOptions: [],
+      options: [],
     };
   },
   computed: {
@@ -121,6 +166,19 @@ export default {
     this.methodService = createTreatmentMethodService(this.$api);
     this.methodNames = await this.methodNameService.getTreatmentMethodNames();
     this.methodNames = Array.isArray(this.methodNames) ? this.methodNames : [];
+    this.treatmentOptionService = createTreatmentOptionService(this.$api);
+    this.options = await this.treatmentOptionService.getTreatmentOptions();
+    this.physioPositioningOptions = this.options
+      .filter((option) => option.category === 'physioPositioning')
+      .map((option) => option.text);
+
+    this.treatmentPositioningOptions = this.options
+      .filter((option) => option.category === 'treatmentPositioning')
+      .map((option) => option.text);
+
+    this.treatmentTechniqueOptions = this.options
+      .filter((option) => option.category === 'treatmentTechnique')
+      .map((option) => option.text);
 
     await this.getExistingTreatmentsForNote();
   },
@@ -164,10 +222,13 @@ export default {
           spinalLevel: lvl,
           side: null,
           category: 'spinal',
+          physioPositioning: null,
+          treatmentPositioning: null,
+          treatmentTechnique: null,
+          treatmentManipulation: null,
         });
       });
 
-      // initial load in of the methodName fields for each treatment
       this.spinalTreatments.forEach((st) => {
         this.methodNames.forEach((methodName) => {
           st[methodName.name] = {
@@ -182,12 +243,9 @@ export default {
           id: this.$route.params.noteId,
         });
 
-      // go through each existing treatment and see if we can match it to the spinalTreatments array by spinalLevel
       this.existingTreatments.forEach((existingTreatment) => {
         this.spinalTreatments.forEach(async (spinalTreatment) => {
           if (existingTreatment.spinalLevel === spinalTreatment.spinalLevel) {
-            // we found an existing treatment!
-            // now we must find the dynamic values as they exist for this treatment and populate the spinalTreatments array
             const treatmentId = existingTreatment.id;
             spinalTreatment.id = treatmentId;
             spinalTreatment.side = existingTreatment.side;
@@ -236,16 +294,6 @@ export default {
       );
       this.treatments = [];
     },
-    // toggleSide(treatment, side) {
-    //   console.log('treatment is ', treatment);
-    //   if (this.editMode) {
-    //     this.treatmentsCopy.forEach((trCopy) => {
-    //       if (trCopy.spinalLevel === treatment.spinalLevel) {
-    //         trCopy.side = side;
-    //       }
-    //     });
-    //   }
-    // },
     toggleField(treatment, field) {
       if (this.editMode) {
         this.treatmentsCopy.forEach((trCopy) => {
@@ -256,95 +304,108 @@ export default {
       }
     },
 
-    // todo: handle row clear for treatments
     handleRowClear(level) {
-      console.log(level);
-      // big thing here is we need to clear the side of the cleared ones, this is what will determine deletion in handleSave
+      this.treatmentsCopy.forEach((tr) => {
+        if (tr.spinalLevel === level) {
+          tr.side = null;
+          tr.physioPositioning = null;
+          tr.treatmentPositioning = null;
+          tr.treatmentTechnique = null;
+          this.methodNames.forEach((mn) => {
+            tr[mn.name] = false;
+          });
+        }
+      });
     },
 
-    deleteTreatments() {
-      // todo: implement delete Treatments
-    },
-
-    // TODO: HandleSave/update
     async handleSave() {
-      console.log('copy is ', this.treatmentsCopy); // updated one
-      console.log('reg is ', this.treatments); // cleared one
-      console.log('backup is ', this.treatmentsBackup); // old one
-
-      // TODO: SIDE IS NOT BEING RECORDED OR SHOWN
-
-      console.log('TREATMENTS COPY IS ', this.treatmentsCopy);
-
-      // for (const tr in this.treatmentsCopy) {
       this.treatmentsCopy.forEach(async (tr) => {
+        console.log('TR IS ', tr);
         if (tr.side) {
-          // this means it has an input, decide whether it is new or updatedjk
           if (tr.id) {
-            // update
-          } else {
-            // save
-            const methodToAdd = {};
-            const newTreatmentToAdd = {};
+            const updatedTreatment = {
+              id: tr.id,
+              side: tr.side,
+              spinalLevel: tr.spinalLevel,
+              physioPositioning: tr.physioPositioning,
+              treatmentPositioning: tr.treatmentPositioning,
+              treatmentTechnique: tr.treatmentTechnique,
+              treatmentManipulation: tr.treatmentManipulation,
+              noteId: this.$route.params.noteId,
+            };
 
-            const methodNameOnly = [];
-            this.methodNames.forEach((mn) => {
-              methodNameOnly.push(mn.name);
-            });
+            await this.treatmentService.updateTreatment(updatedTreatment);
+            // we need to pull existing methods referencing the treatment id
+            const existingMethodsForTreatment =
+              await this.methodService.getTreatmentMethodsForTreatment({
+                treatmentId: tr.id,
+              });
 
-            // Iterate over all properties in the object
-            for (const key in tr) {
-              if (Object.prototype.hasOwnProperty.call(tr, key)) {
-                // If the key is in the fieldsToStrip array, add to tempObject
-                if (methodNameOnly.includes(key)) {
-                  methodToAdd[key] = tr[key];
-                } else {
-                  // Otherwise, add to remainingObject
-                  newTreatmentToAdd[key] = tr[key];
-                }
+            // go through each method in methodNames to compare changes
+
+            this.methodNames.forEach(async (mn) => {
+              const currentMethodState = tr[mn.name]?.active;
+              const existingMethod = existingMethodsForTreatment.find(
+                (method) => method.treatmentMethodNameId === mn.id
+              );
+
+              if (currentMethodState && !existingMethod) {
+                await this.methodService.addTreatmentMethod({
+                  treatmentMethodNameId: mn.id,
+                  treatmentId: tr.id,
+                  active: true,
+                });
+              } else if (!currentMethodState && existingMethod) {
+                await this.methodService.deleteTreatmentMethod({
+                  id: existingMethod.id,
+                });
               }
-            }
+            });
+          } else {
+            const newTreatmentData = {
+              spinalLevel: tr.spinalLevel,
+              side: tr.side,
+              note: this.$route.params.noteId,
+              category: 'spinal',
+              physioPositioning: tr.physioPositioning,
+              treatmentPositioning: tr.treatmentPositioning,
+              treatmentTechnique: tr.treatmentTechnique,
+            };
 
-            console.log('new treatment to add is ', newTreatmentToAdd);
+            const newTreatment =
+              await this.treatmentService.addTreatment(newTreatmentData);
 
-            // now we save the newTreatmentToAdd as a treatment.
-            const newlyAddedTreatment =
-              await this.treatmentService.addTreatment({
-                ...newTreatmentToAdd,
-                note: this.$route.params.noteId,
-              });
-
-            // then go through the fields in the methodToAdd object. Each field will be a new method
-
-            for (const key in methodToAdd) {
-              this.methodNames.forEach(async (mn) => {
-                if (mn.name === key) {
-                  console.log('MN IS ', mn);
-                  console.log('new tr IS ', newlyAddedTreatment);
-
-                  await this.methodService.addTreatmentMethod({
-                    treatmentMethodNameId: mn?.id,
-                    treatmentId: newlyAddedTreatment?.id,
-                    active: true,
-                  });
-                }
-              });
-            }
+            this.methodNames.forEach(async (methodName) => {
+              if (tr[methodName.name].active) {
+                await this.methodService.addTreatmentMethod({
+                  treatmentId: newTreatment.id,
+                  treatmentMethodNameId: methodName.id,
+                  active: true,
+                });
+              }
+            });
           }
         } else {
-          console.log('no side');
           // if it does not have a side, then we must check if it exists in backup
 
           this.treatmentsBackup.forEach(async (trBackup) => {
             if (trBackup.spinalLevel === tr.spinalLevel && trBackup.side) {
-              // on the backend, this will delete any associated treatmentmethods first
+              const existingMethodsForTreatment =
+                await this.methodService.getTreatmentMethodsForTreatment({
+                  treatmentId: tr.id,
+                });
+
+              existingMethodsForTreatment.forEach(async (methodToDelete) => {
+                await this.methodService.deleteTreatmentMethod({
+                  id: methodToDelete.id,
+                });
+              });
+              // delete any associated treatmentmethods first
               await this.treatmentService.deleteTreatment({ id: trBackup.id });
             }
           });
         }
       });
-
-      // }
 
       // restore the backup with a new one
       this.editMode = false;
@@ -367,89 +428,6 @@ export default {
   },
 };
 </script>
-
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
-<!-- styling -->
 
 <style scoped>
 .treatment-table {
