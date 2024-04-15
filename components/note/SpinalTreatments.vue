@@ -11,8 +11,12 @@
           </div>
         </div>
       </div>
-
-      <table class="p-3 treatment-table">
+      <v-progress-circular
+        v-if="isLoading"
+        indeterminate
+        color="primary"
+      ></v-progress-circular>
+      <table v-else class="p-3 treatment-table">
         <tr class="table-heading-row">
           <th>Level</th>
           <th>Side</th>
@@ -151,6 +155,7 @@ export default {
       treatmentTechniqueOptions: [],
       options: [],
       deleted: [],
+      isLoading: false,
     };
   },
   computed: {
@@ -185,7 +190,7 @@ export default {
   },
   methods: {
     async getExistingTreatmentsForNote() {
-      console.log('BEING CALLED');
+      this.isLoading = true;
       const spinalLevels = [
         'occ_c1',
         'c1_c2',
@@ -245,14 +250,10 @@ export default {
           id: this.$route.params.noteId,
         });
 
-      console.log('THIS DELETED IS ', this.deleted);
-
       // Filter out deleted treatments
       this.existingTreatments = this.existingTreatments.filter(
         (treatment) => !this.deleted.includes(treatment.id)
       );
-
-      console.log('EXISTING SPINAL TREATMENT ', this.existingTreatments);
 
       this.existingTreatments.forEach((existingTreatment) => {
         this.spinalTreatments.forEach(async (spinalTreatment) => {
@@ -293,12 +294,9 @@ export default {
         });
       });
 
-      console.log('spinal treatments first row ', this.spinalTreatments[0]);
-
       this.treatments = this.spinalTreatments;
       this.deleted = [];
-
-      console.log('first row ', this.treatments[0]);
+      this.isLoading = false;
     },
     startEditMode() {
       this.editMode = true;
@@ -335,6 +333,7 @@ export default {
     },
 
     async handleSave() {
+      this.isLoading = true;
       for (const tr of this.treatmentsCopy) {
         if (tr.side) {
           if (tr.id) {
@@ -420,12 +419,11 @@ export default {
             await this.treatmentService.deleteTreatment({
               id: trBackup.id,
             });
-            console.log('being called 2');
           }
         }
       }
 
-      console.log('being called 1');
+      this.isLoading = false;
       this.editMode = false;
       this.existingTreatments = [];
       this.treatmentsBackup = [];

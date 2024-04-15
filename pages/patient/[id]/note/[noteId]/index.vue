@@ -36,7 +36,7 @@
         <v-col cols="12">
           <SpinalTreatments />
         </v-col>
-        <v-col cols="12"> </v-col>
+        <v-col cols="12"><ExtremityTreatments /></v-col>
       </v-row>
     </v-container>
   </div>
@@ -52,6 +52,7 @@ import { createEntryService } from '~~/services/entry';
 import SpinalEntries from '~~/components/note/SpinalEntries.vue';
 import ExtremityEntries from '~~/components/note/ExtremityEntries.vue';
 import SpinalTreatments from '~~/components/note/SpinalTreatments.vue';
+import ExtremityTreatments from '~~/components/note/ExtremityTreatments.vue';
 
 export default {
   name: 'PatientReport',
@@ -61,6 +62,7 @@ export default {
     SpinalEntries,
     ExtremityEntries,
     SpinalTreatments,
+    ExtremityTreatments,
   },
   data() {
     return {
