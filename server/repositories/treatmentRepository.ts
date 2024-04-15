@@ -44,8 +44,22 @@ export const updateTreatment = async (
 
 export const deleteTreatment = async (id: string) => {
   try {
-    await prisma.treatment.delete({ where: { id } });
-    return true;
+    // First, check if the treatment exists
+    const existingTreatment = await prisma.treatment.findUnique({
+      where: { id },
+    });
+
+    // If the treatment exists, proceed with deletion
+    if (existingTreatment) {
+      await prisma.treatment.delete({
+        where: { id },
+      });
+      console.log('Treatment deleted successfully.');
+      return true; // Indicate successful deletion
+    } else {
+      console.log('Treatment not found, no action taken.');
+      return false; // Indicate no deletion took place
+    }
   } catch (error) {
     console.error('Failed to delete treatment:', error);
     throw error;

@@ -150,6 +150,7 @@ export default {
       treatmentPositioningOptions: [],
       treatmentTechniqueOptions: [],
       options: [],
+      deleted: [],
     };
   },
   computed: {
@@ -184,6 +185,7 @@ export default {
   },
   methods: {
     async getExistingTreatmentsForNote() {
+      console.log('BEING CALLED');
       const spinalLevels = [
         'occ_c1',
         'c1_c2',
@@ -243,6 +245,15 @@ export default {
           id: this.$route.params.noteId,
         });
 
+      console.log('THIS DELETED IS ', this.deleted);
+
+      // Filter out deleted treatments
+      this.existingTreatments = this.existingTreatments.filter(
+        (treatment) => !this.deleted.includes(treatment.id)
+      );
+
+      console.log('EXISTING SPINAL TREATMENT ', this.existingTreatments);
+
       this.existingTreatments.forEach((existingTreatment) => {
         this.spinalTreatments.forEach(async (spinalTreatment) => {
           if (existingTreatment.spinalLevel === spinalTreatment.spinalLevel) {
@@ -282,7 +293,12 @@ export default {
         });
       });
 
+      console.log('spinal treatments first row ', this.spinalTreatments[0]);
+
       this.treatments = this.spinalTreatments;
+      this.deleted = [];
+
+      console.log('first row ', this.treatments[0]);
     },
     startEditMode() {
       this.editMode = true;
@@ -319,8 +335,7 @@ export default {
     },
 
     async handleSave() {
-      this.treatmentsCopy.forEach(async (tr) => {
-        console.log('TR IS ', tr);
+      for (const tr of this.treatmentsCopy) {
         if (tr.side) {
           if (tr.id) {
             const updatedTreatment = {
@@ -335,15 +350,13 @@ export default {
             };
 
             await this.treatmentService.updateTreatment(updatedTreatment);
-            // we need to pull existing methods referencing the treatment id
+
             const existingMethodsForTreatment =
               await this.methodService.getTreatmentMethodsForTreatment({
                 treatmentId: tr.id,
               });
 
-            // go through each method in methodNames to compare changes
-
-            this.methodNames.forEach(async (mn) => {
+            for (const mn of this.methodNames) {
               const currentMethodState = tr[mn.name]?.active;
               const existingMethod = existingMethodsForTreatment.find(
                 (method) => method.treatmentMethodNameId === mn.id
@@ -360,7 +373,7 @@ export default {
                   id: existingMethod.id,
                 });
               }
-            });
+            }
           } else {
             const newTreatmentData = {
               spinalLevel: tr.spinalLevel,
@@ -375,7 +388,7 @@ export default {
             const newTreatment =
               await this.treatmentService.addTreatment(newTreatmentData);
 
-            this.methodNames.forEach(async (methodName) => {
+            for (const methodName of this.methodNames) {
               if (tr[methodName.name].active) {
                 await this.methodService.addTreatmentMethod({
                   treatmentId: newTreatment.id,
@@ -383,36 +396,42 @@ export default {
                   active: true,
                 });
               }
-            });
-          }
-        } else {
-          // if it does not have a side, then we must check if it exists in backup
-
-          this.treatmentsBackup.forEach(async (trBackup) => {
-            if (trBackup.spinalLevel === tr.spinalLevel && trBackup.side) {
-              const existingMethodsForTreatment =
-                await this.methodService.getTreatmentMethodsForTreatment({
-                  treatmentId: tr.id,
-                });
-
-              existingMethodsForTreatment.forEach(async (methodToDelete) => {
-                await this.methodService.deleteTreatmentMethod({
-                  id: methodToDelete.id,
-                });
-              });
-              // delete any associated treatmentmethods first
-              await this.treatmentService.deleteTreatment({ id: trBackup.id });
             }
-          });
-        }
-      });
+          }
+        } else if (tr.spinalLevel) {
+          const trBackup = this.treatmentsBackup.find(
+            (tb) => tb.spinalLevel === tr.spinalLevel && tb.side
+          );
 
-      // restore the backup with a new one
+          if (trBackup) {
+            const existingMethodsForTreatment =
+              await this.methodService.getTreatmentMethodsForTreatment({
+                treatmentId: trBackup.id,
+              });
+
+            for (const methodToDelete of existingMethodsForTreatment) {
+              await this.methodService.deleteTreatmentMethod({
+                id: methodToDelete.id,
+              });
+            }
+
+            this.deleted.push(trBackup.id);
+
+            await this.treatmentService.deleteTreatment({
+              id: trBackup.id,
+            });
+            console.log('being called 2');
+          }
+        }
+      }
+
+      console.log('being called 1');
       this.editMode = false;
       this.existingTreatments = [];
       this.treatmentsBackup = [];
       this.treatmentsCopy = [];
       this.treatments = [];
+      this.spinalTreatments = [];
       await this.getExistingTreatmentsForNote();
     },
 
