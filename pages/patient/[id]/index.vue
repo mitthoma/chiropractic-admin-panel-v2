@@ -100,15 +100,50 @@
               <v-card-title> Notes List </v-card-title>
               <v-spacer></v-spacer>
               <v-row class="mx-2 pa-2" justify="end">
-                <v-btn color="primary" @click="dialog = true"
+                <v-btn color="primary" @click="openNewNoteDialog"
                   >Add New Note</v-btn
                 >
-                <NoteDialog
+                <v-dialog
+                  v-model="newNoteDialog"
+                  max-width="500px"
+                  max-height="300px"
+                >
+                  <v-card class="report-dialog-card">
+                    <v-card-title class="headline"
+                      >Select a Note Date</v-card-title
+                    >
+                    <v-card-text>
+                      <VueDatePicker
+                        v-model="selectedDate"
+                        week-start="0"
+                        type="date"
+                        class="datepicker"
+                        :enable-time-picker="false"
+                      />
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="closeNewNoteDialog"
+                        >Cancel</v-btn
+                      >
+                      <v-btn
+                        color="green darken-1"
+                        text
+                        @click="saveAndGoToNote"
+                        >Save & Go To Note</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+                <!-- <NoteDialog
                   v-model="dialog"
                   :patient="currentPatient"
                   @note-added="refreshNotes"
                   @close-dialog="closeNoteDialog"
-                />
+                /> -->
               </v-row>
             </div>
             <v-table>
@@ -186,7 +221,7 @@
                 <v-dialog
                   v-model="reportDialog"
                   max-width="500px"
-                  max-height="600px"
+                  max-height="300px"
                 >
                   <v-card class="report-dialog-card">
                     <v-card-title class="headline"
@@ -326,7 +361,6 @@ import { createPatientService } from '~/services/patient';
 import { createNoteService } from '~/services/note';
 import { createEntryService } from '~/services/entry';
 import { createReportService } from '~~/services/report';
-import NoteDialog from '~/components/dialogs/NoteDialog.vue';
 import { makeFilenameExcel } from '~~/utils/downloadUtils';
 import '@vuepic/vue-datepicker/dist/main.css';
 import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
@@ -334,7 +368,6 @@ import PatientDialog from '~~/components/dialogs/PatientDialog.vue';
 export default {
   name: 'PatientPage',
   components: {
-    NoteDialog,
     VueDatePicker,
     PatientDialog,
   },
@@ -382,6 +415,7 @@ export default {
       patientDialog: false,
       isLoading: false,
       isReportsLoading: false,
+      newNoteDialog: false,
     };
   },
   computed: {
@@ -437,6 +471,17 @@ export default {
         `/patient/${this.$route.params.id}/report/${report.id}`
       );
       this.dialog = false;
+    },
+    async saveAndGoToNote() {
+      const adjustedDate = this.adjustDateToUTC(this.selectedDate);
+      const note = await this.noteService.addNote(
+        {
+          visitDate: adjustedDate,
+        },
+        this.currentPatient.id
+      );
+      this.$router.push(`/patient/${this.$route.params.id}/note/${note.id}`);
+      this.newNoteDialog = false;
     },
     adjustDateToUTC(localDate) {
       if (!localDate) return null;
@@ -683,8 +728,14 @@ export default {
     openNewReportDialog() {
       this.reportDialog = true;
     },
+    openNewNoteDialog() {
+      this.newNoteDialog = true;
+    },
     closeDialog() {
       this.reportDialog = false;
+    },
+    closeNewNoteDialog() {
+      this.newNoteDialog = false;
     },
     closePatientDialog() {
       this.patientDialog = false;
@@ -775,7 +826,7 @@ tbody tr {
   overflow-y: auto;
 }
 .report-dialog-card {
-  min-height: 80vh;
+  min-height: 50vh;
 }
 .datepicker {
   z-index: 9999;
