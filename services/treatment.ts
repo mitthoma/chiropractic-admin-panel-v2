@@ -17,7 +17,7 @@ export const createTreatmentService = (api: AxiosInstance) => ({
       payload
     );
     const { data } = await api.post('/treatment/treatment', payload);
-    return data.data;
+    return data;
   },
 
   updateTreatment: async (payload: any) => {

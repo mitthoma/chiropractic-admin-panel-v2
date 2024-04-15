@@ -226,12 +226,154 @@
           </v-card>
         </v-col>
       </v-row>
+      <br />
+      <br />
+
+      <v-title>Treatment Method Name Management</v-title>
+      <br />
+      <v-row>
+        <v-col cols="6">
+          <v-card class="elevation-4">
+            <div class="d-flex pa-3">
+              <v-card-title class="justify-start">
+                Treatment Method Names
+              </v-card-title>
+              <v-spacer></v-spacer>
+              <v-btn
+                class="mb-4 justify-end"
+                color="primary"
+                @click="showAddTreatmentMethodNameDialog = true"
+                >Add New Method Name</v-btn
+              >
+            </div>
+            <v-table>
+              <thead>
+                <tr>
+                  <th class="text-left" @click="sortNotes('name')">Name</th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody class="">
+                <tr v-for="item in treatmentMethodNames" :key="item.id">
+                  <td>{{ item.name }}</td>
+                  <td class="d-flex justify-end">
+                    <v-icon
+                      class="ma-2 pa-3 pt-5"
+                      @click="editTreatmentMethodNameItem(item)"
+                      >mdi-pencil</v-icon
+                    >
+                    <v-icon
+                      class="ma-2 pa-3 pt-5"
+                      @click="openDeleteTreatmentMethodNameDialog(item)"
+                      >mdi-delete</v-icon
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+
+            <v-dialog
+              v-model="showAddTreatmentMethodNameDialog"
+              max-width="600px"
+            >
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Add New Treatment Method Name</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    v-model="newTreatmentMethodName.name"
+                    label="Treatment Method Name"
+                  ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="showAddTreatmentMethodNameDialog = false"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="addTreatmentMethodName"
+                    >Save</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <v-dialog
+              v-model="showEditTreatmentMethodNameDialog"
+              max-width="600px"
+            >
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Edit Treatment Method Name</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    v-model="editedTreatmentMethodName.name"
+                    label="Treatment Method Name"
+                  ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="showEditTreatmentMethodNameDialog = false"
+                    >Cancel</v-btn
+                  >
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="updateTreatmentMethodName"
+                    >Update</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <v-dialog
+              v-model="showDeleteTreatmentMethodNameDialog"
+              max-width="600px"
+            >
+              <v-card>
+                <v-card-title>
+                  <span class="text-h5">Delete Treatment Method Name</span>
+                </v-card-title>
+                <v-card-text>
+                  Are you sure you want to delete this treatment Method Name?
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="showDeleteTreatmentMethodNameDialog = false"
+                    >No</v-btn
+                  >
+                  <v-btn
+                    color="red darken-1"
+                    text
+                    @click="deleteTreatmentMethodName(item)"
+                    >Yes</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
 import { createTreatmentOptionService } from '~~/services/treatmentOption';
+import { createTreatmentMethodNameService } from '~~/services/treatmentMethodName';
 
 export default {
   name: 'SettingsPage',
@@ -239,7 +381,9 @@ export default {
   data() {
     return {
       treatmentOptionService: null,
+      treatmentMethodNameService: null,
       treatmentOptions: [],
+      treatmentMethodNames: [],
       physioPositioningOptions: [],
       treatmentPositioningOptions: [],
       treatmentTechniqueOptions: [],
@@ -247,17 +391,29 @@ export default {
         text: '',
         category: '',
       },
+      newTreatmentMethodName: {
+        name: '',
+      },
       editedTreatmentOption: null,
+      editedTreatmentMethodName: null,
       showAddTreatmentOptionDialog: false,
+      showAddTreatmentMethodNameDialog: false,
       showEditTreatmentOptionDialog: false,
+      showEditTreatmentMethodNameDialog: false,
       showDeleteTreatmentOptionDialog: false,
+      showDeleteTreatmentMethodNameDialog: false,
       treatmentOptionToDelete: null,
+      treatmentMethodNameToDelete: null,
       currentTreatmentOptionCategory: null,
     };
   },
   async mounted() {
     this.treatmentOptionService = createTreatmentOptionService(this.$api);
     await this.loadTreatmentOptions();
+    this.treatmentMethodNameService = createTreatmentMethodNameService(
+      this.$api
+    );
+    await this.loadTreatmentMethodNames();
   },
   methods: {
     async loadTreatmentOptions() {
@@ -277,6 +433,10 @@ export default {
         console.error(error);
       }
     },
+    async loadTreatmentMethodNames() {
+      this.treatmentMethodNames =
+        await this.treatmentMethodNameService.getTreatmentMethodNames();
+    },
     async addTreatmentOption(category) {
       try {
         this.newTreatmentOption.category = category;
@@ -291,9 +451,21 @@ export default {
         console.error(error);
       }
     },
+    async addTreatmentMethodName() {
+      await this.treatmentMethodNameService.addTreatmentMethodName(
+        this.newTreatmentMethodName
+      );
+      this.showAddTreatmentMethodNameDialog = false;
+      this.newTreatmentMethodName.name = '';
+      await this.loadTreatmentMethodNames();
+    },
     editTreatmentOptionItem(treatmentOption) {
       this.editedTreatmentOption = Object.assign({}, treatmentOption);
       this.showEditTreatmentOptionDialog = true;
+    },
+    editTreatmentMethodNameItem(treatmentMethodName) {
+      this.editedTreatmentMethodName = Object.assign({}, treatmentMethodName);
+      this.showEditTreatmentMethodNameDialog = true;
     },
     async updateTreatmentOption() {
       try {
@@ -305,6 +477,13 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    async updateTreatmentMethodName() {
+      await this.treatmentMethodNameService.updateTreatmentMethodName(
+        this.editedTreatmentMethodName
+      );
+      this.showEditTreatmentMethodNameDialog = false;
+      await this.loadTreatmentMethodNames();
     },
     showAddDialog(category) {
       this.showAddTreatmentOptionDialog = true;
@@ -318,6 +497,10 @@ export default {
       this.treatmentOptionToDelete = treatmentOption;
       this.showDeleteTreatmentOptionDialog = true;
     },
+    openDeleteTreatmentMethodNameDialog(item) {
+      this.treatmentMethodNameToDelete = item;
+      this.showDeleteTreatmentMethodNameDialog = true;
+    },
     async deleteTreatmentOption() {
       try {
         await this.treatmentOptionService.deleteTreatmentOption(
@@ -329,6 +512,15 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    async deleteTreatmentMethodName() {
+      await this.treatmentMethodNameService.deleteTreatmentMethodName(
+        this.treatmentMethodNameToDelete
+      );
+      this.showDeleteTreatmentMethodNameDialog = false;
+      this.treatmentMethodNameToDelete = null;
+
+      await this.loadTreatmentMethodNames();
     },
     backToDashboard() {
       this.$router.push('/');

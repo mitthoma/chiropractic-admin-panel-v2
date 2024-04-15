@@ -1,9 +1,24 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-export const addTreatment = async (payload: Prisma.TreatmentCreateInput) => {
+export const addTreatment = async (payload) => {
   try {
-    const newTreatment = await prisma.treatment.create({ data: payload });
+    // Assuming payload.note is the UUID of the existing note you want to link
+    const noteId = payload.note;
+    delete payload.note; // Remove note field from payload to prevent errors
+
+    console.log('PAYLOAD ON TREATMENT ADD IS ', payload);
+    const newTreatment = await prisma.treatment.create({
+      data: {
+        ...payload,
+        note: {
+          connect: {
+            id: noteId, // Connect the existing note using its ID
+          },
+        },
+      },
+    });
+    console.log('new treatment ', newTreatment);
     return newTreatment;
   } catch (error) {
     console.error('Failed to add treatment:', error);
@@ -29,8 +44,22 @@ export const updateTreatment = async (
 
 export const deleteTreatment = async (id: string) => {
   try {
-    await prisma.treatment.delete({ where: { id } });
-    return true;
+    // First, check if the treatment exists
+    const existingTreatment = await prisma.treatment.findUnique({
+      where: { id },
+    });
+
+    // If the treatment exists, proceed with deletion
+    if (existingTreatment) {
+      await prisma.treatment.delete({
+        where: { id },
+      });
+      console.log('Treatment deleted successfully.');
+      return true; // Indicate successful deletion
+    } else {
+      console.log('Treatment not found, no action taken.');
+      return false; // Indicate no deletion took place
+    }
   } catch (error) {
     console.error('Failed to delete treatment:', error);
     throw error;
