@@ -199,7 +199,7 @@ export default {
         physio: null,
         tx: null,
         pulse: null,
-        otherNotes: '',
+        doctorNotes: '',
       },
       spinalGrid: [],
       extremityGrid: [],
@@ -520,7 +520,7 @@ export default {
         physio: null,
         tx: null,
         pulse: null,
-        otherNotes: '',
+        doctorNotes: '',
       };
       this.visitDateTime = null;
       this.formIsValid = [false, false, false, false, false, false];

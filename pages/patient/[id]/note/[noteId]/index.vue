@@ -20,9 +20,11 @@
       <GeneralInfo :patient="currentPatient" :report="currentReport" />
       <Vitals :patient="currentPatient" :report="currentReport" />
       <v-row>
-        <v-col cols="12">
-          <!-- subjective complaints  -->
+        <v-col cols="6">
           <SubjectiveComplaints />
+        </v-col>
+        <v-col cols="6">
+          <DoctorNote :note="currentNote" />
         </v-col>
       </v-row>
       <v-row>
@@ -60,6 +62,7 @@ import ExtremityEntries from '~~/components/note/ExtremityEntries.vue';
 import SpinalTreatments from '~~/components/note/SpinalTreatments.vue';
 import ExtremityTreatments from '~~/components/note/ExtremityTreatments.vue';
 import SubjectiveComplaints from '~~/components/note/SubjectiveComplaints.vue';
+import DoctorNote from '~~/components/note/DoctorNote.vue';
 
 export default {
   name: 'PatientReport',
@@ -71,6 +74,7 @@ export default {
     SpinalTreatments,
     ExtremityTreatments,
     SubjectiveComplaints,
+    DoctorNote,
   },
   data() {
     return {
