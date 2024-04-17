@@ -21,6 +21,12 @@
       <Vitals :patient="currentPatient" :report="currentReport" />
       <v-row>
         <v-col cols="12">
+          <!-- subjective complaints  -->
+          <SubjectiveComplaints />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <Posture :report-id="$route.params.reportId" />
         </v-col>
       </v-row>
@@ -53,6 +59,7 @@ import SpinalEntries from '~~/components/note/SpinalEntries.vue';
 import ExtremityEntries from '~~/components/note/ExtremityEntries.vue';
 import SpinalTreatments from '~~/components/note/SpinalTreatments.vue';
 import ExtremityTreatments from '~~/components/note/ExtremityTreatments.vue';
+import SubjectiveComplaints from '~~/components/note/SubjectiveComplaints.vue';
 
 export default {
   name: 'PatientReport',
@@ -63,6 +70,7 @@ export default {
     ExtremityEntries,
     SpinalTreatments,
     ExtremityTreatments,
+    SubjectiveComplaints,
   },
   data() {
     return {
@@ -134,7 +142,7 @@ export default {
 }
 .posture-option .active {
   font-weight: bold;
-  background-color: lightgray; /* or any color that matches your theme */
+  background-color: lightgray;
 }
 .posture-option .inactive {
   opacity: 0.6;

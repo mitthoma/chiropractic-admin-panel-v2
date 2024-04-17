@@ -55,7 +55,7 @@
               <v-col cols="12" sm="6">
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Exam Date</v-list-item-title>
+                    <v-list-item-title>Note Date</v-list-item-title>
                     <v-list-item-subtitle v-if="!editMode">
                       {{ formatExamDate(currentReport?.exam_date) }}
                     </v-list-item-subtitle>
