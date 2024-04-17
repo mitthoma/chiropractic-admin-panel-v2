@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     patientId: body.patientId ? parseInt(body.patientId) : null,
     pulse: body.pulse ? parseInt(body.pulse) : null,
     visitDate: body.visitDate ? body.visitDate : null,
+    doctorNote: body.doctorNote ? body.doctorNote : null,
   };
 
   const response = await updateNote(body.id, noteToPass);

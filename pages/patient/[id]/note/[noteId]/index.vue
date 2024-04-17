@@ -17,11 +17,14 @@
           ></v-col
         >
       </v-row>
-      <GeneralInfo :patient="currentPatient" :report="currentReport" />
-      <Vitals :patient="currentPatient" :report="currentReport" />
+      <GeneralInfo :patient="currentPatient" :note="currentNote" />
+      <Vitals :patient="currentPatient" :note="currentNote" />
       <v-row>
-        <v-col cols="12">
-          <Posture :report-id="$route.params.reportId" />
+        <v-col cols="6">
+          <SubjectiveComplaints />
+        </v-col>
+        <v-col cols="6">
+          <DoctorNote :note="currentNote" />
         </v-col>
       </v-row>
       <v-row>
@@ -43,8 +46,8 @@
 </template>
 
 <script>
-import GeneralInfo from '~~/components/report/GeneralInfo.vue';
-import Vitals from '~~/components/report/Vitals.vue';
+import GeneralInfo from '~~/components/note/GeneralInfo.vue';
+import Vitals from '~~/components/note/Vitals.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 import { createNoteService } from '~~/services/note';
@@ -53,6 +56,8 @@ import SpinalEntries from '~~/components/note/SpinalEntries.vue';
 import ExtremityEntries from '~~/components/note/ExtremityEntries.vue';
 import SpinalTreatments from '~~/components/note/SpinalTreatments.vue';
 import ExtremityTreatments from '~~/components/note/ExtremityTreatments.vue';
+import SubjectiveComplaints from '~~/components/note/SubjectiveComplaints.vue';
+import DoctorNote from '~~/components/note/DoctorNote.vue';
 
 export default {
   name: 'PatientReport',
@@ -63,6 +68,8 @@ export default {
     ExtremityEntries,
     SpinalTreatments,
     ExtremityTreatments,
+    SubjectiveComplaints,
+    DoctorNote,
   },
   data() {
     return {
@@ -134,7 +141,7 @@ export default {
 }
 .posture-option .active {
   font-weight: bold;
-  background-color: lightgray; /* or any color that matches your theme */
+  background-color: lightgray;
 }
 .posture-option .inactive {
   opacity: 0.6;

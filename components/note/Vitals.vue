@@ -155,7 +155,7 @@
 </template>
 
 <script>
-import { createReportService } from '~~/services/report';
+import { createNoteService } from '~~/services/note';
 import { createPatientService } from '~~/services/patient';
 
 export default {
@@ -166,7 +166,7 @@ export default {
       required: true,
       type: Object,
     },
-    report: {
+    note: {
       default: null,
       required: true,
       type: Object,
@@ -174,21 +174,21 @@ export default {
   },
   data() {
     return {
-      reportService: null,
+      noteService: null,
       patientService: null,
       editMode: false,
       heightFeet: this.patient?.heightFeet,
       heightInches: this.patient?.heightInches,
       weight: this.patient?.weight,
-      systolic: this.report?.sys,
-      diastolic: this.report?.dia,
-      pulse: this.report?.pulse,
-      temperature: this.report?.temp,
-      respiration: this.report?.resp,
+      systolic: this.note?.systolic,
+      diastolic: this.note?.diastolic,
+      pulse: this.note?.pulse,
+      temperature: this.note?.temperature,
+      respiration: this.note?.respiration,
     };
   },
   mounted() {
-    this.reportService = createReportService(this.$api);
+    this.noteService = createNoteService(this.$api);
     this.patientService = createPatientService(this.$api);
   },
   methods: {
@@ -207,20 +207,18 @@ export default {
         weight: this.weight,
         id: this.patient.id,
       };
-      const reportPayload = {
-        ...this.report,
-        sys: this.systolic,
-        dia: this.diastolic,
+      const notePayload = {
+        ...this.note,
+        systolic: this.systolic,
+        diastolic: this.diastolic,
         pulse: this.pulse,
-        temp: this.temperature,
-        resp: this.respiration,
-        id: this.report.id,
+        temperature: this.temperature,
+        respiration: this.respiration,
+        id: this.note.id,
       };
-      const resReport = await this.reportService.updateReport(reportPayload);
-      const resPatient =
-        await this.patientService.updatePatient(patientPayload);
-      console.log('res report ', resReport);
-      console.log('res patient ', resPatient);
+      console.log('calling update note');
+      await this.noteService.updateNote(notePayload);
+      await this.patientService.updatePatient(patientPayload);
       this.editMode = false;
     },
     handleCancel() {
@@ -231,11 +229,11 @@ export default {
       this.heightFeet = this.patient?.heightFeet;
       this.heightInches = this.patient?.heightInches;
       this.weight = this.patient?.weight;
-      this.systolic = this.report?.sys;
-      this.diastolic = this.report?.dia;
-      this.pulse = this.report?.pulse;
-      this.temperature = this.report?.temp;
-      this.respiration = this.report?.resp;
+      this.systolic = this.note?.systolic;
+      this.diastolic = this.note?.diastolic;
+      this.pulse = this.note?.pulse;
+      this.temperature = this.note?.temperature;
+      this.respiration = this.note?.respiration;
     },
   },
 };
