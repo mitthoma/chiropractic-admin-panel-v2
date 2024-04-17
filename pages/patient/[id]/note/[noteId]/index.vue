@@ -17,19 +17,14 @@
           ></v-col
         >
       </v-row>
-      <GeneralInfo :patient="currentPatient" :report="currentReport" />
-      <Vitals :patient="currentPatient" :report="currentReport" />
+      <GeneralInfo :patient="currentPatient" :note="currentNote" />
+      <Vitals :patient="currentPatient" :note="currentNote" />
       <v-row>
         <v-col cols="6">
           <SubjectiveComplaints />
         </v-col>
         <v-col cols="6">
           <DoctorNote :note="currentNote" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <Posture :report-id="$route.params.reportId" />
         </v-col>
       </v-row>
       <v-row>
@@ -51,7 +46,7 @@
 </template>
 
 <script>
-import GeneralInfo from '~~/components/report/GeneralInfo.vue';
+import GeneralInfo from '~~/components/note/GeneralInfo.vue';
 import Vitals from '~~/components/report/Vitals.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';

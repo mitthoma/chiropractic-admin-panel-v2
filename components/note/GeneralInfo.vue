@@ -4,9 +4,7 @@
       <v-col cols="12">
         <v-card>
           <div class="card-header">
-            <v-card-title class="text-h5 pb-5"
-              >General Exam Summary Info</v-card-title
-            >
+            <v-card-title class="text-h5 pb-5">General Note Info</v-card-title>
             <div class="icon-container">
               <v-icon v-if="!editMode" @click="editMode = true"
                 >mdi-pencil</v-icon
@@ -55,19 +53,13 @@
               <v-col cols="12" sm="6">
                 <v-list-item>
                   <v-list-item-content>
-                    <v-list-item-title>Note Date</v-list-item-title>
+                    <v-list-item-title>Visit Date</v-list-item-title>
                     <v-list-item-subtitle v-if="!editMode">
-                      {{ formatExamDate(currentReport?.exam_date) }}
+                      {{ formatVisitDate(currentNote?.visitDate) }}
                     </v-list-item-subtitle>
                     <div v-if="editMode">
-                      <v-text-field
-                        v-model="selectedDate"
-                        label="Pick a date"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                      ></v-text-field>
                       <VueDatePicker
-                        v-model="selectedDate"
+                        v-model="form.date"
                         type="date"
                         :enable-time-picker="false"
                       />
@@ -86,7 +78,7 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { createReportService } from '~~/services/report';
+import { createNoteService } from '~~/services/note';
 export default {
   name: 'GeneralInfo',
   components: {
@@ -98,7 +90,7 @@ export default {
       required: true,
       type: Object,
     },
-    report: {
+    note: {
       default: null,
       required: true,
       type: Object,
@@ -106,9 +98,12 @@ export default {
   },
   data() {
     return {
-      reportService: null,
+      noteService: null,
       editMode: false,
       menu: false,
+      form: {
+        date: null,
+      },
       selectedDate: new Date().toISOString().substr(0, 10),
     };
   },
@@ -116,37 +111,54 @@ export default {
     currentPatient() {
       return this.patient;
     },
-    currentReport() {
-      return this.report;
+    currentNote() {
+      return this.note;
     },
   },
   async mounted() {
     // load services
 
-    this.reportService = await createReportService(this.$api);
+    this.noteService = await createNoteService(this.$api);
   },
   methods: {
-    formatExamDate(date) {
+    logEvent(event) {
+      console.log('Clicked inside editMode area');
+      event.stopPropagation(); // Temporarily stop propagation to test
+    },
+    formatVisitDate(date) {
       return date ? new Date(date).toLocaleDateString() : 'N/A';
     },
-    formatHeight(feet, inches) {
-      return `${feet}' ${inches}"` || 'N/A';
-    },
     async handleSave() {
-      const payload = {
-        exam_date: this.selectedDate,
+      const notePayload = {
+        ...this.note,
+        visitDate: this.selectedDate,
+        id: this.note.id,
       };
-      await this.reportService.updateReport(this.currentReport.id, payload);
+      await this.noteService.updateNote(notePayload);
+      this.editMode = false;
     },
     handleCancel() {
       this.editMode = false;
-      this.selectedDate = new Date(this.currentReport.exam_date)
+      this.selectedDate = new Date(this.currentNote?.visitDate)
         .toISOString()
         .substr(0, 10);
     },
   },
 };
 </script>
+
+<style scoped>
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.icon-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+</style>
 
 <style scoped>
 .card-header {

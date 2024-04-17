@@ -147,16 +147,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.icon-container {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-</style>
