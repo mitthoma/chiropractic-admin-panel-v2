@@ -47,7 +47,7 @@
 
 <script>
 import GeneralInfo from '~~/components/note/GeneralInfo.vue';
-import Vitals from '~~/components/report/Vitals.vue';
+import Vitals from '~~/components/note/Vitals.vue';
 import { createPatientService } from '~~/services/patient';
 import { createReportService } from '~~/services/report';
 import { createNoteService } from '~~/services/note';

@@ -216,11 +216,8 @@ export default {
         resp: this.respiration,
         id: this.report.id,
       };
-      const resReport = await this.reportService.updateReport(reportPayload);
-      const resPatient =
-        await this.patientService.updatePatient(patientPayload);
-      console.log('res report ', resReport);
-      console.log('res patient ', resPatient);
+      await this.reportService.updateReport(reportPayload);
+      await this.patientService.updatePatient(patientPayload);
       this.editMode = false;
     },
     handleCancel() {
