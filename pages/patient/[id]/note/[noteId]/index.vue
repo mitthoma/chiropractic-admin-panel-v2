@@ -17,14 +17,14 @@
           ></v-col
         >
       </v-row>
-      <GeneralInfo :patient="currentPatient" :note="currentNote" />
-      <Vitals :patient="currentPatient" :note="currentNote" />
+      <GeneralInfo />
+      <Vitals />
       <v-row>
         <v-col cols="6">
           <SubjectiveComplaints />
         </v-col>
         <v-col cols="6">
-          <DoctorNote :note="currentNote" />
+          <DoctorNote :note="currentNote" @refresh="getCurrentProperties" />
         </v-col>
       </v-row>
       <v-row>
@@ -99,18 +99,18 @@ export default {
     });
 
     // load properties
-    await this.getCurrentNoteProperties();
+    await this.getCurrentProperties();
   },
   methods: {
-    async getCurrentNoteProperties() {
+    async refresh() {},
+    async getCurrentProperties() {
       this.currentNote = await this.noteService.getNote({
         id: this.$route.params.noteId,
       });
 
-      // retrieve spinal entries for the retrieved note
-      // this.spinalEntries = await this.entryService.getEntriesForNote({
-      //   noteId: this.currentNote.id,
-      // });
+      this.patient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
     },
 
     backToPatient() {

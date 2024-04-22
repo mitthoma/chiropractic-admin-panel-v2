@@ -22,9 +22,7 @@
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>First Name</v-list-item-title>
-                    <v-list-item-subtitle>{{
-                      currentPatient?.firstName
-                    }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ firstName }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
@@ -32,9 +30,7 @@
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>Last Name</v-list-item-title>
-                    <v-list-item-subtitle>{{
-                      currentPatient?.lastName
-                    }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ lastName }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
@@ -44,9 +40,7 @@
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>Account Number</v-list-item-title>
-                    <v-list-item-subtitle>{{
-                      currentPatient?.acctNo
-                    }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ acctNo }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
@@ -59,7 +53,7 @@
                     </v-list-item-subtitle>
                     <div v-if="editMode">
                       <VueDatePicker
-                        v-model="form.date"
+                        v-model="selectedDate"
                         type="date"
                         :enable-time-picker="false"
                       />
@@ -79,51 +73,44 @@
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { createNoteService } from '~~/services/note';
+import { createPatientService } from '~~/services/patient';
 export default {
   name: 'GeneralInfo',
   components: {
     VueDatePicker,
   },
-  props: {
-    patient: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-    note: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-  },
   data() {
     return {
       noteService: null,
+      patientService: null,
       editMode: false,
       menu: false,
-      form: {
-        date: null,
-      },
-      selectedDate: new Date().toISOString().substr(0, 10),
+      selectedDate: null,
+      firstName: null,
+      lastName: null,
+      acctNo: null,
     };
   },
-  computed: {
-    currentPatient() {
-      return this.patient;
-    },
-    currentNote() {
-      return this.note;
-    },
-  },
   async mounted() {
-    // load services
-
-    this.noteService = await createNoteService(this.$api);
+    this.noteService = createNoteService(this.$api);
+    this.patientService = createPatientService(this.$api);
+    await this.retrieveData();
   },
   methods: {
-    logEvent(event) {
-      console.log('Clicked inside editMode area');
-      event.stopPropagation(); // Temporarily stop propagation to test
+    async retrieveData() {
+      this.note = await this.noteService.getNote({
+        id: this.$route.params.noteId,
+      });
+
+      this.patient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
+
+      this.selectedDate =
+        this.note.visitDate || new Date().toISOString().substr(0, 10);
+      this.firstName = this.patient.firstName;
+      this.lastName = this.patient.lastName;
+      this.acctNo = this.patient.acctNo;
     },
     formatVisitDate(date) {
       return date ? new Date(date).toLocaleDateString() : 'N/A';
@@ -136,12 +123,14 @@ export default {
       };
       await this.noteService.updateNote(notePayload);
       this.editMode = false;
+      await this.retrieveData();
     },
-    handleCancel() {
+    async handleCancel() {
       this.editMode = false;
       this.selectedDate = new Date(this.currentNote?.visitDate)
         .toISOString()
         .substr(0, 10);
+      await this.retrieveData();
     },
   },
 };
