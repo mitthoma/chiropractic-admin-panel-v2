@@ -3,6 +3,8 @@ import { updateNote } from '~/server/repositories/noteRepository';
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
+  console.log('BODY IS ', body);
+
   const noteToPass = {
     temperature: body.temperature ? parseFloat(body.temperature) : null,
     respiration: body.respiration ? parseInt(body.respiration) : null,
@@ -16,6 +18,9 @@ export default defineEventHandler(async (event) => {
     visitDate: body.visitDate ? body.visitDate : null,
     doctorNote: body.doctorNote ? body.doctorNote : null,
   };
+
+  console.log('NOTE TO PASS IS ', noteToPass);
+  console.log('body id is ', body.id);
 
   const response = await updateNote(body.id, noteToPass);
   return response;

@@ -160,22 +160,12 @@ import { createPatientService } from '~~/services/patient';
 
 export default {
   name: 'VitalsInfo',
-  props: {
-    patient: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-    note: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-  },
   data() {
     return {
       noteService: null,
       patientService: null,
+      patient: null,
+      note: null,
       editMode: false,
       heightFeet: this.patient?.heightFeet,
       heightInches: this.patient?.heightInches,
@@ -187,9 +177,10 @@ export default {
       respiration: this.note?.respiration,
     };
   },
-  mounted() {
+  async mounted() {
     this.noteService = createNoteService(this.$api);
     this.patientService = createPatientService(this.$api);
+    await this.retrieveData();
   },
   methods: {
     formatHeight(feet, inches) {
@@ -216,24 +207,33 @@ export default {
         respiration: this.respiration,
         id: this.note.id,
       };
-      console.log('calling update note');
       await this.noteService.updateNote(notePayload);
       await this.patientService.updatePatient(patientPayload);
       this.editMode = false;
+      await this.retrieveData();
     },
-    handleCancel() {
+    async retrieveData() {
+      this.note = await this.noteService.getNote({
+        id: this.$route.params.noteId,
+      });
+
+      this.patient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
+
+      this.heightFeet = this.patient.heightFeet;
+      this.heightInches = this.patient.heightInches;
+      this.weight = this.patient.weight;
+
+      this.systolic = this.note.systolic;
+      this.diastolic = this.note.diastolic;
+      this.pulse = this.note.pulse;
+      this.temperature = this.note.temperature;
+      this.respiration = this.note.respiration;
+    },
+    async handleCancel() {
       this.editMode = false;
-      this.resetVitals();
-    },
-    resetVitals() {
-      this.heightFeet = this.patient?.heightFeet;
-      this.heightInches = this.patient?.heightInches;
-      this.weight = this.patient?.weight;
-      this.systolic = this.note?.systolic;
-      this.diastolic = this.note?.diastolic;
-      this.pulse = this.note?.pulse;
-      this.temperature = this.note?.temperature;
-      this.respiration = this.note?.respiration;
+      await this.retrieveData();
     },
   },
 };

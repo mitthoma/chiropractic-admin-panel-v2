@@ -43,26 +43,20 @@ import { createNoteService } from '~~/services/note';
 
 export default {
   name: 'DoctorNote',
-  props: {
-    note: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-  },
   data() {
     return {
       noteService: null,
       editMode: false,
-      doctorNote: this.note?.doctorNote,
+      doctorNote: null,
+      note: null,
     };
   },
-  mounted() {
+  async mounted() {
     this.noteService = createNoteService(this.$api);
+    await this.retrieveData();
   },
   methods: {
     async handleSave() {
-      console.log('NOTE IS ', this.note);
       const notePayload = {
         ...this.note,
         doctorNote: this.doctorNote,
@@ -70,13 +64,18 @@ export default {
       };
       await this.noteService.updateNote(notePayload);
       this.editMode = false;
+      await this.retrieveData();
     },
-    handleCancel() {
+    async handleCancel() {
       this.editMode = false;
-      this.reset();
+      await this.retrieveData();
     },
-    reset() {
-      this.doctorNote = this.note?.doctorNote;
+    async retrieveData() {
+      this.note = await this.noteService.getNote({
+        id: this.$route.params.noteId,
+      });
+
+      this.doctorNote = this.note.doctorNote;
     },
   },
 };
