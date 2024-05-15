@@ -160,22 +160,12 @@ import { createPatientService } from '~~/services/patient';
 
 export default {
   name: 'VitalsInfo',
-  props: {
-    patient: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-    report: {
-      default: null,
-      required: true,
-      type: Object,
-    },
-  },
   data() {
     return {
       reportService: null,
       patientService: null,
+      patient: null,
+      report: null,
       editMode: false,
       heightFeet: this.patient?.heightFeet,
       heightInches: this.patient?.heightInches,
@@ -187,9 +177,10 @@ export default {
       respiration: this.report?.resp,
     };
   },
-  mounted() {
+  async mounted() {
     this.reportService = createReportService(this.$api);
     this.patientService = createPatientService(this.$api);
+    await this.retrieveData();
   },
   methods: {
     formatHeight(feet, inches) {
@@ -219,6 +210,7 @@ export default {
       await this.reportService.updateReport(reportPayload);
       await this.patientService.updatePatient(patientPayload);
       this.editMode = false;
+      await this.retrieveData();
     },
     handleCancel() {
       this.editMode = false;
@@ -233,6 +225,25 @@ export default {
       this.pulse = this.report?.pulse;
       this.temperature = this.report?.temp;
       this.respiration = this.report?.resp;
+    },
+    async retrieveData() {
+      this.report = await this.reportService.getReport({
+        id: this.$route.params.reportId,
+      });
+
+      this.patient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
+
+      this.heightFeet = this.patient.heightFeet;
+      this.heightInches = this.patient.heightInches;
+      this.weight = this.patient.weight;
+
+      this.systolic = this.report.sys;
+      this.diastolic = this.report.dia;
+      this.pulse = this.report.pulse;
+      this.temperature = this.report.temp;
+      this.respiration = this.report.resp;
     },
   },
 };
