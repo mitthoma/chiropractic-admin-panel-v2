@@ -4,9 +4,7 @@
       <v-col cols="12">
         <v-card>
           <div class="card-header">
-            <v-card-title class="text-h5 pb-5"
-              >General Exam Summary Info</v-card-title
-            >
+            <v-card-title class="text-h5 pb-5">General Info</v-card-title>
             <div class="icon-container">
               <v-icon v-if="!editMode" @click="editMode = true"
                 >mdi-pencil</v-icon
@@ -147,3 +145,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.icon-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+</style>
