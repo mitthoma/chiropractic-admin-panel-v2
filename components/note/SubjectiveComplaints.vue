@@ -14,7 +14,7 @@
       <div>
         <div v-for="(complaint, index) in complaints" :key="index">
           <v-row class="mx-5">
-            <v-col cols="6">
+            <v-col cols="3">
               <v-text-field
                 v-model="complaint.text"
                 label="Complaint Text"
@@ -22,7 +22,7 @@
                 :disabled="!editMode"
               ></v-text-field>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="8">
               <v-slider
                 v-model="complaint.painLevel"
                 :max="5"

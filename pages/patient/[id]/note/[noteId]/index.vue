@@ -17,13 +17,19 @@
           ></v-col
         >
       </v-row>
-      <GeneralInfo />
-      <Vitals />
       <v-row>
         <v-col cols="6">
-          <SubjectiveComplaints />
+          <GeneralInfo />
         </v-col>
         <v-col cols="6">
+          <Vitals />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="8">
+          <SubjectiveComplaints />
+        </v-col>
+        <v-col cols="4">
           <DoctorNote :note="currentNote" @refresh="getCurrentProperties" />
         </v-col>
       </v-row>

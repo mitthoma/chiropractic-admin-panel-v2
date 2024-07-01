@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <div class="card-header">
-        <v-card-title>Spinal Treatments</v-card-title>
+        <v-card-title>Treatments - Spinal</v-card-title>
         <div class="icon-container">
           <v-icon v-if="!editMode" @click="startEditMode">mdi-pencil</v-icon>
           <div v-if="editMode">
@@ -18,14 +18,26 @@
       ></v-progress-circular>
       <table v-else class="p-3 treatment-table">
         <tr class="table-heading-row">
-          <th>Level</th>
-          <th>Side</th>
-          <th v-for="methodName in methodNames" :key="methodName">
-            {{ methodName.name }}
+          <th>
+            <div class="outer"><p class="inner">Level</p></div>
           </th>
-          <th>Physio Position</th>
-          <th>Treatment Position</th>
-          <th>Treatment Technique</th>
+          <th>
+            <div class="outer"><p class="inner">Side</p></div>
+          </th>
+          <th v-for="methodName in methodNames" :key="methodName">
+            <div>
+              <p>{{ methodName.name }}</p>
+            </div>
+          </th>
+          <th>
+            <div class="outer"><p class="inner">Physio Position</p></div>
+          </th>
+          <th>
+            <div class="outer"><p class="inner">Treatment Position</p></div>
+          </th>
+          <th>
+            <div class="outer"><p class="inner">Treatment Technique</p></div>
+          </th>
           <th v-if="editMode">Actions</th>
         </tr>
 
@@ -34,7 +46,7 @@
           :key="index"
           class="treatment-row"
         >
-          <td>{{ treatment.spinalLevel }}</td>
+          <td>{{ transformLabel(treatment.spinalLevel) }}</td>
           <td v-if="!editMode">
             {{
               treatment.side === 'l'
@@ -63,14 +75,14 @@
           >
             <SvgRender
               v-if="treatment[methodName.name]?.active && !editMode"
-              :width="20"
-              :height="20"
+              :width="15"
+              :height="15"
               icon="x"
             />
             <SvgRender
               v-if="treatment[methodName.name]?.active && editMode"
-              :width="20"
-              :height="20"
+              :width="15"
+              :height="15"
               class="editable-field"
               icon="x"
             />
@@ -332,6 +344,13 @@ export default {
       });
     },
 
+    transformLabel(label) {
+      return label
+        .split('_')
+        .map((part) => part.toUpperCase())
+        .join(' - ');
+    },
+
     async handleSave() {
       this.isLoading = true;
       for (const tr of this.treatmentsCopy) {
@@ -450,59 +469,61 @@ export default {
 .treatment-table {
   border-radius: 5px;
   width: 100%;
-  table-layout: fixed;
-  padding: 10px;
   text-align: center;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 2%;
+  padding-bottom: 2%;
 }
 
-.treatment-table th,
-.treatment-table td {
-  padding: 16px 4px;
-}
-
-.treatment-table td {
-  border: 1px solid black;
-}
-
-.treatment-table th {
-  font-size: 12px;
-  transform: rotate(90deg);
-  text-wrap: wrap;
-}
-
-.table-heading-row {
-  height: 10vh;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-bottom: 100px !important;
-}
-
-.treatment-table input[type='text'] {
-  width: 100%;
-  box-sizing: border-box;
-}
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.icon-container {
+  display: flex;
+  gap: 5px;
+}
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  max-width: 5vw;
+  word-wrap: normal;
+  font-size: 12px;
+  padding: 8px;
+}
+td {
+  padding: 4px;
+}
+.outer {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  max-width: 5vw;
+  word-wrap: normal;
+  padding-top: 4vh;
+  padding-bottom: 4vh;
+}
+.inner {
+  transform: rotate(90deg);
+}
+.editable-field {
+  cursor: pointer;
 }
 
 .icon-container {
   display: flex;
   align-items: center;
   padding: 10px;
-}
-
-.editable-field {
-  cursor: pointer;
-}
-
-.clear-row-button {
-  margin-left: auto;
-  border: 1px solid red;
-}
-
-.treatment-table th {
-  border-right: 30px solid transparent;
 }
 </style>
