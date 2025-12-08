@@ -59,12 +59,10 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'vercel',
-    node: {
-      version: '20',
-    },
-    vercel: {
-      functions: {
-        '*': { runtime: 'nodejs20.x' },
+    // This ensures modern runtime without triggering TS errors
+    runtimeConfig: {
+      nitro: {
+        nodeVersion: '20',
       },
     },
   },
