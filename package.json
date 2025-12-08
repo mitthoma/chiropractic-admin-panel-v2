@@ -16,9 +16,12 @@
     "*.{ts,vue}": "eslint --fix",
     "*.{js,css,md,json}": "prettier --write"
   },
+  "engines": {
+    "node": "24.x"
+  },
   "devDependencies": {
     "@nuxtjs/proxy": "^2.1.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^24.0.0",
     "http-proxy-middleware": "^2.0.6",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
