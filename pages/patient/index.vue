@@ -1,105 +1,150 @@
 <template>
   <div>
-    <v-container>
-      <v-btn
-        variant="text"
-        prepend-icon="mdi-chevron-left"
-        class="mb-4 text-primary font-weight-bold"
-        @click="backToDashboard"
-      >
-        Back to Dashboard
-      </v-btn>
-      <v-card class="elevation-4">
-        <div v-if="isLoading" class="text-center py-5">
+    <v-container fluid class="pa-6">
+      <v-row class="mb-4">
+        <v-col cols="12">
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-chevron-left"
+            class="mb-2"
+            @click="backToDashboard"
+          >
+            Back to Dashboard
+          </v-btn>
+          <h1 class="text-h4 font-weight-bold mb-2">Patients</h1>
+          <p class="text-body-1 text-medium-emphasis">
+            Manage patient records and information
+          </p>
+        </v-col>
+      </v-row>
+
+      <v-card elevation="2" class="rounded-lg">
+        <div v-if="isLoading" class="text-center py-12">
           <v-progress-circular
             indeterminate
             color="primary"
+            size="64"
           ></v-progress-circular>
+          <p class="text-body-1 mt-4 text-medium-emphasis">
+            Loading patients...
+          </p>
         </div>
-        <div v-else class="py-5 d-flex">
-          <v-card-title> Patient List </v-card-title>
-          <v-text-field
-            v-model="searchQuery"
-            class="searchField"
-            prepend-icon="mdi-magnify"
-            label="Search Patients"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            prepend-icon="mdi-plus"
-            color="primary"
-            class="mx-2 pa-2 mr-5 my-2"
-            @click="patientDialog = true"
-            >Add New Patient</v-btn
-          >
-        </div>
-        <v-table>
-          <thead>
-            <tr>
-              <th class="text-left" @click="sortPatients('acctNo')">
-                Account Number
-              </th>
-              <th class="text-left" @click="sortPatients('firstName')">
-                First Name
-              </th>
-              <th class="text-left" @click="sortPatients('lastName')">
-                Last Name
-              </th>
-              <th class="text-left" @click="sortPatients('phoneNumber')">
-                Phone Number
-              </th>
-              <th class="text-left" @click="sortPatients('lastUpdated')">
-                Last Updated
-              </th>
-              <th class="text-left"></th>
-            </tr>
-          </thead>
-          <tbody class="">
-            <template v-for="(item, index) in displayedPatients" :key="item.id">
-              <tr
-                :class="index % 2 == 0 ? 'bg-surface' : 'bg-surface-darken-1'"
-              >
-                <td>{{ item.acctNo }}</td>
-                <td>{{ item.firstName }}</td>
-                <td>{{ item.lastName }}</td>
-                <td>{{ formatPhoneNumber(item.phoneNumber) }}</td>
-                <td>{{ formatDateTime(item.lastUpdated) }}</td>
-                <td class="d-flex justify-end">
-                  <v-icon
-                    class="ma-2 pa-3 pt-5"
-                    title="Update patient info"
-                    @click="editPatientItem(item)"
-                    >mdi-pencil</v-icon
-                  >
-                  <v-icon
-                    class="ma-2 pa-3 pt-5"
-                    title="Delete patient"
-                    @click="openDeletePatientDialog(item)"
-                    >mdi-delete</v-icon
-                  >
-                  <!-- Add delete button -->
-                  <v-btn
-                    append-icon="mdi-arrow-right"
-                    class="ma-2"
-                    color="primary"
-                    @click="goToPatient(item)"
-                  >
-                    Select patient
-                  </v-btn>
-                </td>
+        <div v-else>
+          <DemoModeNotice
+            v-if="demoStore && demoStore.getIsDemo"
+            :show="true"
+            title="Demo Mode: Explore Features"
+            message="You're viewing demo data. Adding new patients is disabled. Editing and viewing existing patients works normally."
+            type="info"
+            icon="mdi-information"
+          />
+          <div class="pa-6 pb-4">
+            <v-row align="center">
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="searchQuery"
+                  prepend-inner-icon="mdi-magnify"
+                  label="Search Patients"
+                  variant="outlined"
+                  density="comfortable"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="text-right">
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <div v-bind="props" style="display: inline-block">
+                      <v-btn
+                        prepend-icon="mdi-plus"
+                        color="primary"
+                        size="large"
+                        :disabled="demoStore && demoStore.getIsDemo"
+                        @click="patientDialog = true"
+                      >
+                        Add New Patient
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span v-if="demoStore && demoStore.getIsDemo">
+                    Adding patients is disabled in demo mode. Contact us for a
+                    quote!
+                  </span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </div>
+          <v-divider></v-divider>
+          <v-table>
+            <thead>
+              <tr>
+                <th class="text-left" @click="sortPatients('acctNo')">
+                  Account Number
+                </th>
+                <th class="text-left" @click="sortPatients('firstName')">
+                  First Name
+                </th>
+                <th class="text-left" @click="sortPatients('lastName')">
+                  Last Name
+                </th>
+                <th class="text-left" @click="sortPatients('phoneNumber')">
+                  Phone Number
+                </th>
+                <th class="text-left" @click="sortPatients('lastUpdated')">
+                  Last Updated
+                </th>
+                <th class="text-left"></th>
               </tr>
-            </template>
-          </tbody>
-        </v-table>
-        <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
-          :total-visible="5"
-          color="primary"
-        ></v-pagination>
+            </thead>
+            <tbody class="">
+              <template
+                v-for="(item, index) in displayedPatients"
+                :key="item.id"
+              >
+                <tr
+                  :class="index % 2 == 0 ? 'bg-surface' : 'bg-surface-darken-1'"
+                >
+                  <td>{{ item.acctNo }}</td>
+                  <td>{{ item.firstName }}</td>
+                  <td>{{ item.lastName }}</td>
+                  <td>{{ formatPhoneNumber(item.phoneNumber) }}</td>
+                  <td>{{ formatDateTime(item.lastUpdated) }}</td>
+                  <td class="d-flex justify-end">
+                    <v-icon
+                      class="ma-2 pa-3 pt-5"
+                      title="Update patient info"
+                      @click="editPatientItem(item)"
+                      >mdi-pencil</v-icon
+                    >
+                    <v-icon
+                      class="ma-2 pa-3 pt-5"
+                      title="Delete patient"
+                      @click="openDeletePatientDialog(item)"
+                      >mdi-delete</v-icon
+                    >
+                    <!-- Add delete button -->
+                    <v-btn
+                      append-icon="mdi-arrow-right"
+                      class="ma-2"
+                      color="primary"
+                      @click="goToPatient(item)"
+                    >
+                      Select patient
+                    </v-btn>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </v-table>
+          <div class="pa-4">
+            <v-pagination
+              v-model="currentPage"
+              :length="totalPages"
+              :total-visible="5"
+              color="primary"
+            ></v-pagination>
+          </div>
+        </div>
       </v-card>
     </v-container>
     <PatientDialog
@@ -133,6 +178,7 @@
 <script>
 import PatientDialog from '~/components/dialogs/PatientDialog.vue';
 import { patientStore } from '~/store/patient';
+import { demoStore } from '~/store/demo';
 import { createPatientService } from '~/services/patient';
 
 export default {
@@ -154,6 +200,7 @@ export default {
       searchQuery: '',
       deletePatientDialog: false,
       patientToDelete: null,
+      demoStore: null,
     };
   },
   computed: {
@@ -184,25 +231,45 @@ export default {
   async mounted() {
     this.isLoading = true;
     this.patientStore = patientStore();
-    this.patientService = createPatientService(this.$api);
-    this.patients = await this.patientService.getPatients();
+    this.demoStore = demoStore();
+
+    // Use demo patients if in demo mode, otherwise fetch from API
+    if (this.demoStore.getIsDemo) {
+      this.patients = this.demoStore.getPatients;
+    } else {
+      this.patientService = createPatientService(this.$api);
+      this.patients = await this.patientService.getPatients();
+    }
+
     this.updateDisplayedPatients();
     this.isLoading = false;
   },
   methods: {
     async deletePatient(item) {
       try {
-        await this.patientService.deletePatient({
-          id: item.id,
-        });
-        this.refreshPatientList();
+        if (this.demoStore.getIsDemo) {
+          // Handle demo mode deletion
+          this.demoStore.deletePatient(item.id);
+          this.refreshPatientList();
+        } else {
+          await this.patientService.deletePatient({
+            id: item.id,
+          });
+          this.refreshPatientList();
+        }
       } catch (error) {
         console.error('Error deleting patient:', error);
       }
     },
     async refreshPatientList() {
       this.isLoading = true;
-      this.patients = await this.patientService.getPatients();
+
+      if (this.demoStore.getIsDemo) {
+        this.patients = this.demoStore.getPatients;
+      } else {
+        this.patients = await this.patientService.getPatients();
+      }
+
       this.updateDisplayedPatients();
       this.isLoading = false;
     },

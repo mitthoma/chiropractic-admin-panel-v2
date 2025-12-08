@@ -9,6 +9,14 @@
         <span class="text-h5">{{ title }}</span>
       </v-card-title>
       <v-card-text>
+        <DemoModeNotice
+          v-if="isDemo && !isEditing"
+          :show="true"
+          title="Demo Mode: View Only"
+          message="Adding new patients is disabled in demo mode. You can explore the form below. Contact us for a quote to get your own system with full database access."
+          type="warning"
+          icon="mdi-lock"
+        />
         <v-form ref="patientForm" v-model="formValid">
           <v-row>
             <v-col cols="12">
@@ -105,9 +113,14 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="closeDialog">Close</v-btn>
-        <v-btn color="blue darken-1" text @click="submitPatientForm">{{
-          saveButtonText
-        }}</v-btn>
+        <v-btn
+          color="blue darken-1"
+          text
+          :disabled="isDemo && !isEditing"
+          @click="submitPatientForm"
+        >
+          {{ saveButtonText }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -116,6 +129,7 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { createPatientService } from '~/services/patient';
+import { demoStore } from '~/store/demo';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
@@ -171,6 +185,13 @@ export default {
     },
     isUpdateMode() {
       return !!this.selectedItem;
+    },
+    isEditing() {
+      return this.isUpdateMode;
+    },
+    isDemo() {
+      const demo = demoStore();
+      return demo.getIsDemo;
     },
     title() {
       return this.isUpdateMode ? 'Update Patient' : 'Add Patient';

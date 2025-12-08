@@ -43,10 +43,10 @@ export const saveEntries = async (
   noteId,
   levelKey
 ) => {
-  let noteEntries = await entryService.getEntriesForNote({ noteId });
+  const noteEntries = await entryService.getEntriesForNote({ noteId });
   for (let i = 0; i < grid.length; i++) {
-    let entryData = {
-      noteId: noteId,
+    const entryData = {
+      noteId,
       [levelKey]: levels[i],
     };
 
@@ -59,7 +59,7 @@ export const saveEntries = async (
     }
 
     if (hasAnyField(entryData, entryFields)) {
-      let existingEntry = noteEntries.find(
+      const existingEntry = noteEntries.find(
         (entry) => entry[levelKey] === levels[i]
       );
       if (existingEntry) {

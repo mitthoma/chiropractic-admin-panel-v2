@@ -1,6 +1,6 @@
-# Newton-Admin-Panel
+# Chiropractic Admin Panel
 
-Newton-Admin-Panel is a web-based admin panel built using **Nuxt 3** and **Vue 3** with **TypeScript**. It leverages **Prisma ORM** for database management, **Vuetify** for UI components, and various other modern web development tools. The project includes authentication via **Google OAuth** and utilizes **Firebase** for storing sensitive user credentials.
+Chiropractic Admin Panel is a web-based admin panel built using **Nuxt 3** and **Vue 3** with **TypeScript**. It leverages **Prisma ORM** for database management, **Vuetify** for UI components, and various other modern web development tools. The project includes authentication via **Google OAuth** and utilizes **Firebase** for storing sensitive user credentials.
 
 ## Tech Stack
 

@@ -263,9 +263,20 @@ export default {
     },
   },
   async mounted() {
-    this.entries = extremityEntries;
-    this.entryService = createEntryService(this.$api);
-    await this.getExistingEntries();
+    const { demoStore } = await import('~/store/demo');
+    const demo = demoStore();
+
+    if (demo.getIsDemo) {
+      // Load demo extremity entries
+      const noteId = this.$route.params.noteId;
+      this.entries = demo.getNoteExtremityEntries(noteId);
+      this.entriesToDelete = new Set();
+      this.existingEntriesToDelete = new Set();
+    } else {
+      this.entries = extremityEntries;
+      this.entryService = createEntryService(this.$api);
+      await this.getExistingEntries();
+    }
   },
   methods: {
     startEditMode() {

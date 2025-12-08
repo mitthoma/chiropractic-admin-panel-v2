@@ -1,19 +1,39 @@
 <template>
   <div>
-    <v-container>
+    <v-container fluid class="pa-6">
       <v-btn
         variant="text"
         prepend-icon="mdi-chevron-left"
-        class="mb-4 text-primary font-weight-bold"
+        class="mb-4"
         @click="backToPatient"
-        >Back to Patient</v-btn
       >
-      <v-row>
-        <v-col cols="12" class="text-center"
-          ><v-card-title class="flex flex-start"
-            >INITIAL / PROGRESS / EXAMINATION REPORT</v-card-title
-          ></v-col
-        >
+        Back to Patient
+      </v-btn>
+
+      <!-- Header -->
+      <v-row class="mb-4">
+        <v-col cols="12">
+          <v-card color="secondary" variant="flat" class="pa-6 rounded-lg">
+            <div class="d-flex align-center">
+              <v-icon
+                icon="mdi-clipboard-text"
+                size="48"
+                class="mr-4"
+                color="white"
+              ></v-icon>
+              <div>
+                <h1 class="text-h4 font-weight-bold text-white mb-1">
+                  Examination Report
+                </h1>
+                <p class="text-body-1 text-white" style="opacity: 0.9">
+                  {{ currentPatient?.firstName }}
+                  {{ currentPatient?.lastName }} - Exam:
+                  {{ formatExamDate(currentReport?.exam_date) }}
+                </p>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
       <GeneralInfo :patient="currentPatient" :report="currentReport" />
       <Vitals :patient="currentPatient" :report="currentReport" />
@@ -102,18 +122,27 @@ export default {
     },
   },
   async mounted() {
-    // load services
-    this.patientService = await createPatientService(this.$api);
-    this.reportService = await createReportService(this.$api);
+    // Check if in demo mode
+    const { demoStore } = await import('~/store/demo');
+    const demo = demoStore();
 
-    // load patient from route
-    const patientId = this.$route.params.id;
-    this.patient = await this.patientService.getPatient({
-      id: patientId,
-    });
+    if (demo.getIsDemo) {
+      // Load demo data
+      const patientId = parseInt(this.$route.params.id);
+      const reportId = this.$route.params.reportId;
 
-    // load properties
-    await this.getCurrentReportProperties();
+      this.currentPatient = demo.getPatients.find((p) => p.id === patientId);
+      this.currentReport = demo.getReports.find((r) => r.id === reportId);
+    } else {
+      this.patientService = await createPatientService(this.$api);
+      this.reportService = await createReportService(this.$api);
+      this.currentPatient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
+      this.currentReport = await this.reportService.getReport({
+        reportId: this.$route.params.reportId,
+      });
+    }
   },
   methods: {
     async getCurrentReportProperties() {

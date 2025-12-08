@@ -1,54 +1,72 @@
 <template>
   <div>
-    <v-card class="sc-card">
-      <div class="card-header">
-        <v-card-title>Subjective Complaints</v-card-title>
-        <div class="icon-container">
-          <v-icon v-if="!editMode" @click="editMode = true">mdi-pencil</v-icon>
-          <div v-if="editMode">
-            <v-icon @click="handleCancel">mdi-trash-can</v-icon>
-            <v-icon @click="handleSave">mdi-check</v-icon>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div v-for="(complaint, index) in complaints" :key="index">
-          <v-row class="mx-5">
-            <v-col cols="3">
-              <v-text-field
-                v-model="complaint.text"
-                label="Complaint Text"
-                required
-                :disabled="!editMode"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="8">
-              <v-slider
-                v-model="complaint.painLevel"
-                :max="5"
-                :step="1"
-                :ticks="[0, 1, 2, 3, 4, 5]"
-                show-ticks="always"
-                label="Pain Level"
-                :disabled="!editMode"
-              ></v-slider>
-            </v-col>
-            <v-col cols="1" class="d-flex justify-end align-center">
+    <v-row>
+      <v-col cols="12">
+        <v-card elevation="3" color="error" variant="tonal">
+          <div class="card-header pa-4">
+            <div class="d-flex align-center">
               <v-icon
-                v-if="editMode"
-                color="red"
-                @click="deleteComplaint(complaint.id)"
+                icon="mdi-alert-circle"
+                color="error"
+                size="32"
+                class="mr-3"
+              ></v-icon>
+              <v-card-title class="text-h5 pa-0"
+                >Subjective Complaints</v-card-title
               >
-                mdi-trash-can
-              </v-icon>
-            </v-col>
-          </v-row>
-        </div>
-        <v-row class="mx-5 py-5">
-          <v-btn v-if="editMode" @click="addComplaint">Add New Complaint</v-btn>
-        </v-row>
-      </div>
-    </v-card>
+            </div>
+            <div class="icon-container">
+              <v-icon v-if="!editMode" @click="editMode = true"
+                >mdi-pencil</v-icon
+              >
+              <div v-if="editMode">
+                <v-icon @click="handleCancel">mdi-trash-can</v-icon>
+                <v-icon @click="handleSave">mdi-check</v-icon>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div v-for="(complaint, index) in complaints" :key="index">
+              <v-row class="mx-5">
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="complaint.text"
+                    label="Complaint Text"
+                    required
+                    :disabled="!editMode"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="8">
+                  <v-slider
+                    v-model="complaint.painLevel"
+                    :max="5"
+                    :step="1"
+                    :ticks="[0, 1, 2, 3, 4, 5]"
+                    show-ticks="always"
+                    label="Pain Level"
+                    :disabled="!editMode"
+                  ></v-slider>
+                </v-col>
+                <v-col cols="1" class="d-flex justify-end align-center">
+                  <v-icon
+                    v-if="editMode"
+                    color="red"
+                    @click="deleteComplaint(complaint.id)"
+                  >
+                    mdi-trash-can
+                  </v-icon>
+                </v-col>
+              </v-row>
+            </div>
+            <v-row class="mx-5 py-5">
+              <v-btn v-if="editMode" @click="addComplaint"
+                >Add New Complaint</v-btn
+              >
+            </v-row>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -78,11 +96,19 @@ export default {
       });
     },
     async retrieveNewComplaints() {
-      this.copmlaints = [];
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
+
+      this.complaints = [];
       this.complaintsCopy = [];
-      this.complaints = await this.complaintService.getComplaintsForPatient({
-        patientId: this.patientId,
-      });
+
+      if (demo.getIsDemo) {
+        this.complaints = demo.getPatientComplaints(this.patientId);
+      } else {
+        this.complaints = await this.complaintService.getComplaintsForPatient({
+          patientId: this.patientId,
+        });
+      }
       this.complaintsCopy = JSON.parse(JSON.stringify(this.complaints));
     },
     async handleSave() {

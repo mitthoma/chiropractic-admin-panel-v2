@@ -1,11 +1,17 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="drawer" theme="dark">
-      <v-list-item class="my-5" title="Pynkerton Chiropractic"></v-list-item>
+    <v-navigation-drawer v-model="drawer" class="custom-drawer" :width="280">
+      <div class="drawer-header pa-6">
+        <v-avatar color="primary" size="48" class="mb-3">
+          <v-icon icon="mdi-hospital-building" size="28" color="white"></v-icon>
+        </v-avatar>
+        <h2 class="text-h6 font-weight-bold">Chiropractic Admin</h2>
+        <p class="text-caption text-medium-emphasis">Practice Management</p>
+      </div>
 
       <v-divider></v-divider>
 
-      <v-list density="compact" nav>
+      <v-list density="comfortable" nav class="px-2 py-4">
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
@@ -14,51 +20,91 @@
           exact
           :title="item.title"
           :value="item.value"
-          :prepend-icon="item.icon"
-          class="dashboard-item item"
-        ></v-list-item>
+          class="nav-item mb-1 rounded-lg"
+          color="primary"
+        >
+          <template #prepend>
+            <v-icon :icon="item.icon"></v-icon>
+          </template>
+        </v-list-item>
       </v-list>
 
       <template #append>
-        <div class="pa-2">
+        <div class="pa-4">
           <v-btn
-            color="primary"
+            color="error"
+            variant="tonal"
             block
+            size="large"
             :theme="theme.global.name.value"
+            class="logout-btn"
             @click="signOut()"
           >
+            <v-icon start icon="mdi-logout"></v-icon>
             Logout
           </v-btn>
         </div>
       </template>
     </v-navigation-drawer>
 
-    <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-app-bar elevation="0" class="custom-app-bar">
+      <v-app-bar-nav-icon
+        class="ml-2"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Pynkerton Chiropractic</v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold text-h6">
+        Chiropractic Admin
+      </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <v-chip
+        v-if="isDemoMode"
+        color="success"
+        variant="flat"
+        size="small"
+        prepend-icon="mdi-play-circle"
+        class="font-weight-bold elevation-2 mr-4"
+      >
+        Demo Mode
+      </v-chip>
+
       <v-switch
         v-model="themeToggler"
-        class="d-flex justify-end mr-4"
+        hide-details
+        density="compact"
+        class="mr-4"
+        color="primary"
       ></v-switch>
-      <v-menu min-width="200px" rounded>
+
+      <v-menu min-width="250px" rounded="lg" offset-y>
         <template #activator="{ props }">
-          <v-btn icon v-bind="props" class="mx-16">
-            <v-avatar color="brown" size="large">
-              <span class="text-h5">{{ user.initials }}</span>
+          <v-btn icon v-bind="props" class="mr-2">
+            <v-avatar color="primary" size="40">
+              <span class="text-subtitle-1 font-weight-bold">{{
+                user.initials
+              }}</span>
             </v-avatar>
           </v-btn>
         </template>
-        <v-card class="pa-5">
+        <v-card class="pa-4" elevation="8">
           <v-card-text>
             <div class="mx-auto text-center">
-              <v-avatar color="brown" class="w-full">
-                <span class="text-h5">{{ user.initials }}</span>
+              <v-avatar color="primary" size="64" class="mb-3">
+                <span class="text-h5 font-weight-bold">{{
+                  user.initials
+                }}</span>
               </v-avatar>
-              <h3>{{ user.firstName }}</h3>
-              <p class="text-caption mt-1">
+              <h3 class="text-h6 font-weight-bold">
+                {{ user.firstName }} {{ user.lastName }}
+              </h3>
+              <p class="text-caption text-medium-emphasis mt-1">
                 {{ user.email }}
               </p>
+              <v-chip size="small" color="primary" class="mt-2">
+                Administrator
+              </v-chip>
             </div>
           </v-card-text>
         </v-card>
@@ -86,7 +132,7 @@
 <script></script>
 
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch, computed } from 'vue';
 import { useTheme } from 'vuetify';
 import { userStore } from '~/store/user';
 
@@ -105,6 +151,11 @@ const user = {
   email: store.user?.email,
   initials: store.user ? initials : '',
 };
+
+// Check if user is in demo mode
+const isDemoMode = computed(() => {
+  return store.user?.firebaseUid?.startsWith('demo-user-');
+});
 const items = [
   {
     icon: 'mdi-apps',
@@ -168,6 +219,11 @@ const signOut = async () => {
   await signOutUser();
   clearTimeout(inactivityTimer.value);
   clearInterval(countdownInterval.value);
+
+  // Reset demo mode on logout
+  const { demoStore } = await import('~/store/demo');
+  const demo = demoStore();
+  demo.reset();
 };
 
 onMounted(() => {
@@ -189,13 +245,24 @@ onUnmounted(() => {
 watch(themeToggler, () => {
   theme.global.name.value = theme.global.current.value.dark
     ? 'customLight'
-    : 'dark';
+    : 'customDark';
 });
 </script>
 
 <style scoped>
-.item {
-  font-weight: 800;
-  font-size: 16px;
+.nav-item {
+  font-weight: 600;
+  margin: 4px 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-item:hover {
+  transform: translateX(4px);
+}
+
+.logout-btn {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
 }
 </style>

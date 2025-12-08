@@ -260,9 +260,20 @@ export default {
     },
   },
   async mounted() {
-    this.entries = spinalEntries;
-    this.entryService = createEntryService(this.$api);
-    await this.getExistingEntries();
+    const { demoStore } = await import('~/store/demo');
+    const demo = demoStore();
+
+    if (demo.getIsDemo) {
+      // Load demo entries
+      const noteId = this.$route.params.noteId;
+      this.entries = demo.getNoteSpinalEntries(noteId);
+      this.entriesToDelete = new Set();
+      this.existingEntriesToDelete = new Set();
+    } else {
+      this.entries = spinalEntries;
+      this.entryService = createEntryService(this.$api);
+      await this.getExistingEntries();
+    }
   },
   methods: {
     startEditMode() {

@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
- 
 import {
   cervical,
   lumbar,
@@ -41,10 +39,46 @@ interface ReportGeneralData {
 }
 
 // define the patterns for mapping different values
- 
-const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
- 
-const postureOrder = ['name', 'wnl', 'tiltName', 'tiltEst', 'translationName', 'translationEst', 'rotation', 'lordKyph'];
+
+const COL_LETTERS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+];
+
+const postureOrder = [
+  'name',
+  'wnl',
+  'tiltName',
+  'tiltEst',
+  'translationName',
+  'translationEst',
+  'rotation',
+  'lordKyph',
+];
 const postureOrder2 = ['name', 'pronated', 'supinated'];
 const postureColStart = 0;
 const postureRowStart = 16;
@@ -61,22 +95,22 @@ const reflexesColStart = 6;
 const reflexesRowStart = 26;
 
 // ortho standing
-const orthoStandingOrder = ['name', 'wnl', 'lt', 'rt', 'pain']
+const orthoStandingOrder = ['name', 'wnl', 'lt', 'rt', 'pain'];
 const orthoStandingColStart = 0;
 const orthoStandingRowStart = 36;
 
 // ortho seated
-const orthoSeatedOrder = ['name', 'wnl', 'lt', 'rt', 'referral']
+const orthoSeatedOrder = ['name', 'wnl', 'lt', 'rt', 'referral'];
 const orthoSeatedColStart = 6;
 const orthoSeatedRowStart = 36;
 
 // cervical
-const cervicalOrder = ['name', 'norm', 'arom', 'pain', 'notes']
+const cervicalOrder = ['name', 'norm', 'arom', 'pain', 'notes'];
 const cervicalColStart = 0;
 const cervicalRowStart = 48;
 
 // orthoSupine
-const orthoSupineOrder = ['name', 'wnl', 'lt', 'rt', 'referral']
+const orthoSupineOrder = ['name', 'wnl', 'lt', 'rt', 'referral'];
 const orthoSupineColStart = 6;
 const orthoSupineRowStart = 48;
 
@@ -91,16 +125,16 @@ const orthoProneColStart = 6;
 const orthoProneRowStart = 58;
 
 const generalDataMappings = {
-  patientName: "B4",
-  acctNo: "B5",
-  examDate: "B6",
-  height: "B8",
-  weight: "B9",
-  temp: "B10",
-  sys: "D8",
-  dia: "D9",
-  pulse: "F8",
-  resp: "F9"
+  patientName: 'B4',
+  acctNo: 'B5',
+  examDate: 'B6',
+  height: 'B8',
+  weight: 'B9',
+  temp: 'B10',
+  sys: 'D8',
+  dia: 'D9',
+  pulse: 'F8',
+  resp: 'F9',
 };
 
 export async function getReportDataMappings(
@@ -123,36 +157,105 @@ export async function getReportDataMappings(
   // fill out postures - needs special handling since the data is organized oddly
   const posturesData1 = reportData.postures.slice(0, 3);
   const posturesData2 = [reportData.postures[3]];
-  populateTable(dataMappings, postureOrder, postureColStart, postureRowStart, posturesData1);
-  populateTable(dataMappings, postureOrder2, postureColStart, postureRowStart2, posturesData2);
+  populateTable(
+    dataMappings,
+    postureOrder,
+    postureColStart,
+    postureRowStart,
+    posturesData1
+  );
+  populateTable(
+    dataMappings,
+    postureOrder2,
+    postureColStart,
+    postureRowStart2,
+    posturesData2
+  );
 
   // fill out the rest of the tables
-  populateTable(dataMappings, lumbarOrder, lumbarColStart, lumbarRowStart, reportData.lumbar);
-  populateTable(dataMappings, reflexesOrder, reflexesColStart, reflexesRowStart, reportData.reflexes);
-  populateTable(dataMappings, orthoStandingOrder, orthoStandingColStart, orthoStandingRowStart, reportData.orthoStanding);
-  populateTable(dataMappings, orthoSeatedOrder, orthoSeatedColStart, orthoSeatedRowStart, reportData.orthoSeated);
-  populateTable(dataMappings, cervicalOrder, cervicalColStart, cervicalRowStart, reportData.cervical);
-  populateTable(dataMappings, orthoSupineOrder, orthoSupineColStart, orthoSupineRowStart, reportData.orthoSupine);
-  populateTable(dataMappings, myodermOrder, myodermColStart, myodermRowStart, reportData.myoDerm);
-  populateTable(dataMappings, orthoProneOrder, orthoProneColStart, orthoProneRowStart, reportData.orthoProne);
+  populateTable(
+    dataMappings,
+    lumbarOrder,
+    lumbarColStart,
+    lumbarRowStart,
+    reportData.lumbar
+  );
+  populateTable(
+    dataMappings,
+    reflexesOrder,
+    reflexesColStart,
+    reflexesRowStart,
+    reportData.reflexes
+  );
+  populateTable(
+    dataMappings,
+    orthoStandingOrder,
+    orthoStandingColStart,
+    orthoStandingRowStart,
+    reportData.orthoStanding
+  );
+  populateTable(
+    dataMappings,
+    orthoSeatedOrder,
+    orthoSeatedColStart,
+    orthoSeatedRowStart,
+    reportData.orthoSeated
+  );
+  populateTable(
+    dataMappings,
+    cervicalOrder,
+    cervicalColStart,
+    cervicalRowStart,
+    reportData.cervical
+  );
+  populateTable(
+    dataMappings,
+    orthoSupineOrder,
+    orthoSupineColStart,
+    orthoSupineRowStart,
+    reportData.orthoSupine
+  );
+  populateTable(
+    dataMappings,
+    myodermOrder,
+    myodermColStart,
+    myodermRowStart,
+    reportData.myoDerm
+  );
+  populateTable(
+    dataMappings,
+    orthoProneOrder,
+    orthoProneColStart,
+    orthoProneRowStart,
+    reportData.orthoProne
+  );
 
   return dataMappings;
 }
 
-function populateTable(dataMappings: DataMappings, propOrder: string[], colStart: number, rowStart: number, dataObject: any) {
+function populateTable(
+  dataMappings: DataMappings,
+  propOrder: string[],
+  colStart: number,
+  rowStart: number,
+  dataObject: any
+) {
   let curRow = rowStart;
-    for (const rowData of dataObject) {
-        let curCol = colStart;
-        for (const dataProp of propOrder) {
-            const cellName = COL_LETTERS[curCol] + curRow;
-            dataMappings[cellName] = rowData[dataProp];
-            curCol++;
-        }
-        curRow++;
+  for (const rowData of dataObject) {
+    let curCol = colStart;
+    for (const dataProp of propOrder) {
+      const cellName = COL_LETTERS[curCol] + curRow;
+      dataMappings[cellName] = rowData[dataProp];
+      curCol++;
     }
+    curRow++;
+  }
 }
 
-function populateGeneralData(dataMappings: DataMappings, generalData: ReportGeneralData) {
+function populateGeneralData(
+  dataMappings: DataMappings,
+  generalData: ReportGeneralData
+) {
   for (const prop in generalDataMappings) {
     const cellName = (generalDataMappings as any)[prop]; // ah, typescript...
     dataMappings[cellName] = (generalData as any)[prop];
@@ -175,12 +278,20 @@ async function loadReportData(reportID: string): Promise<ReportData> {
   const postures = (await getAllPosturesByReportId(reportID)) as posture[];
   const lumbar = (await getAllLumbarsByReportId(reportID)) as lumbar[];
   const reflexes = (await getAllReflexessByReportId(reportID)) as reflexes[];
-  const orthoStanding = (await getAllOrthoStandingsByReportId(reportID)) as orthoStanding[];
-  const orthoSeated = (await getAllOrthoSeatedsByReportId(reportID)) as orthoSeated[];
-  const orthoSupine = await getAllOrthoSupinesByReportId(reportID) as orthoSupine[];
-  const orthoProne = await getAllOrthoPronesByReportId(reportID) as orthoProne[];
-  const cervical = await getAllCervicalsByReportId(reportID) as cervical[];
-  const myoDerm = await getAllMyoDermsByReportId(reportID) as myoDerm[];
+  const orthoStanding = (await getAllOrthoStandingsByReportId(
+    reportID
+  )) as orthoStanding[];
+  const orthoSeated = (await getAllOrthoSeatedsByReportId(
+    reportID
+  )) as orthoSeated[];
+  const orthoSupine = (await getAllOrthoSupinesByReportId(
+    reportID
+  )) as orthoSupine[];
+  const orthoProne = (await getAllOrthoPronesByReportId(
+    reportID
+  )) as orthoProne[];
+  const cervical = (await getAllCervicalsByReportId(reportID)) as cervical[];
+  const myoDerm = (await getAllMyoDermsByReportId(reportID)) as myoDerm[];
   const data: ReportData = {
     postures,
     lumbar,
@@ -195,10 +306,10 @@ async function loadReportData(reportID: string): Promise<ReportData> {
   return data;
 }
 
-
-
-async function loadReportGeneralData(reportID: string): Promise<ReportGeneralData | null> {
-  const reportData = await getReportById(reportID) as report;
+async function loadReportGeneralData(
+  reportID: string
+): Promise<ReportGeneralData | null> {
+  const reportData = (await getReportById(reportID)) as report;
   if (!reportData) {
     console.error('failed to load report data during report export.');
     return null;
@@ -211,14 +322,14 @@ async function loadReportGeneralData(reportID: string): Promise<ReportGeneralDat
   console.log('general report data:', reportData);
   const height = `${patient.heightFeet}'${patient.heightInches}`;
   const patientName = `${patient.lastName}, ${patient.firstName}`;
-  
+
   let examDate = 'None';
   if (reportData.exam_date) {
     examDate = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(new Date(reportData.exam_date));
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date(reportData.exam_date));
   }
   return {
     temp: reportData.temp || 0,
@@ -230,6 +341,6 @@ async function loadReportGeneralData(reportID: string): Promise<ReportGeneralDat
     height,
     weight: patient.weight || 0,
     examDate,
-    acctNo: patient.acctNo
-  }
+    acctNo: patient.acctNo,
+  };
 }

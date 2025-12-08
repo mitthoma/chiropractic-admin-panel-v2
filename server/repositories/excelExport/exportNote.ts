@@ -3,8 +3,34 @@ import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
 import { getAllTreatmentsByNoteId } from '~~/server/repositories/treatmentRepository';
 import { DataMappings, Treatment } from '~~/types/datamodel';
 
-// eslint-disable-next-line prettier/prettier
-const COL_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+const COL_LETTERS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+];
 
 /**
  * Ranges of columns for each finding type. Note: this is 0-based, since we use it to find the corresponding letter from the COLS array.
@@ -28,14 +54,41 @@ const ROW_RANGES = {
 
 const LEVELS = {
   C: ['occ', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'],
-  // eslint-disable-next-line prettier/prettier
-  T: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'],
+
+  T: [
+    't1',
+    't2',
+    't3',
+    't4',
+    't5',
+    't6',
+    't7',
+    't8',
+    't9',
+    't10',
+    't11',
+    't12',
+  ],
   L: ['l1', 'l2', 'l3', 'l4', 'l5'],
   S: ['s1', 's2', 's3', 's4', 's5'],
 };
 
-// eslint-disable-next-line prettier/prettier
-const EXTREMITIES = ['shoulder', 'arm', 'bicep', 'tricep', 'elbow', 'wrist', 'hand', 'hip', 'thigh', 'leg', 'knee', 'calf', 'ankle', 'foot'];
+const EXTREMITIES = [
+  'shoulder',
+  'arm',
+  'bicep',
+  'tricep',
+  'elbow',
+  'wrist',
+  'hand',
+  'hip',
+  'thigh',
+  'leg',
+  'knee',
+  'calf',
+  'ankle',
+  'foot',
+];
 
 /** objective findings (their key values) in the order they appear in the spreadsheet.
 make sure this matches the order of the columns in the spreadsheet. */

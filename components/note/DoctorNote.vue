@@ -2,9 +2,17 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <v-card>
-          <div class="card-header">
-            <v-card-title class="text-h5 pb-5">Doctor Note</v-card-title>
+        <v-card class="vcard" elevation="3" color="warning" variant="tonal">
+          <div class="card-header pa-4">
+            <div class="d-flex align-center">
+              <v-icon
+                icon="mdi-stethoscope"
+                color="warning"
+                size="32"
+                class="mr-3"
+              ></v-icon>
+              <v-card-title class="text-h5 pa-0">Doctor Note</v-card-title>
+            </div>
             <div class="icon-container">
               <v-icon v-if="!editMode" @click="editMode = true"
                 >mdi-pencil</v-icon
@@ -71,11 +79,19 @@ export default {
       await this.retrieveData();
     },
     async retrieveData() {
-      this.note = await this.noteService.getNote({
-        id: this.$route.params.noteId,
-      });
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
 
-      this.doctorNote = this.note.doctorNote;
+      if (demo.getIsDemo) {
+        const noteId = this.$route.params.noteId;
+        this.note = demo.getNotes.find((n) => n.id === noteId);
+      } else {
+        this.note = await this.noteService.getNote({
+          id: this.$route.params.noteId,
+        });
+      }
+
+      this.doctorNote = this.note?.doctorNote;
     },
   },
 };

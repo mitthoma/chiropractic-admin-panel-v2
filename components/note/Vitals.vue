@@ -2,9 +2,17 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <v-card class="vcard">
-          <div class="card-header">
-            <v-card-title class="text-h5 pb-5">Vitals</v-card-title>
+        <v-card class="vcard" elevation="3" color="success" variant="tonal">
+          <div class="card-header pa-4">
+            <div class="d-flex align-center">
+              <v-icon
+                icon="mdi-heart-pulse"
+                color="success"
+                size="32"
+                class="mr-3"
+              ></v-icon>
+              <v-card-title class="text-h5 pa-0">Vitals</v-card-title>
+            </div>
             <div class="icon-container">
               <v-icon v-if="!editMode" @click="editMode = true"
                 >mdi-pencil</v-icon
@@ -213,23 +221,32 @@ export default {
       await this.retrieveData();
     },
     async retrieveData() {
-      this.note = await this.noteService.getNote({
-        id: this.$route.params.noteId,
-      });
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
 
-      this.patient = await this.patientService.getPatient({
-        id: this.$route.params.id,
-      });
+      if (demo.getIsDemo) {
+        const patientId = parseInt(this.$route.params.id);
+        const noteId = this.$route.params.noteId;
+        this.patient = demo.getPatients.find((p) => p.id === patientId);
+        this.note = demo.getNotes.find((n) => n.id === noteId);
+      } else {
+        this.note = await this.noteService.getNote({
+          id: this.$route.params.noteId,
+        });
+        this.patient = await this.patientService.getPatient({
+          id: this.$route.params.id,
+        });
+      }
 
-      this.heightFeet = this.patient.heightFeet;
-      this.heightInches = this.patient.heightInches;
-      this.weight = this.patient.weight;
+      this.heightFeet = this.patient?.heightFeet;
+      this.heightInches = this.patient?.heightInches;
+      this.weight = this.patient?.weight;
 
-      this.systolic = this.note.systolic;
-      this.diastolic = this.note.diastolic;
-      this.pulse = this.note.pulse;
-      this.temperature = this.note.temperature;
-      this.respiration = this.note.respiration;
+      this.systolic = this.note?.systolic;
+      this.diastolic = this.note?.diastolic;
+      this.pulse = this.note?.pulse;
+      this.temperature = this.note?.temperature;
+      this.respiration = this.note?.respiration;
     },
     async handleCancel() {
       this.editMode = false;
