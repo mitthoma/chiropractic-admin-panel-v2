@@ -2,5 +2,13 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nuxtjs"
+  "framework": "nuxtjs",
+  "functions": {
+    "api/**": {
+      "runtime": "nodejs20.x"
+    },
+    "__nitro/**": {
+      "runtime": "nodejs20.x"
+    }
+  }
 }
