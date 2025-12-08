@@ -52,4 +52,7 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
+  nitro: {
+    preset: 'vercel',
+  },
 });
