@@ -54,10 +54,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'vercel',
+    node: {
+      version: '20',
+    },
     vercel: {
-      // @ts-expect-error - Nitro vercel functions config not in types
       functions: {
-        runtime: 'nodejs20.x',
+        '*': {
+          runtime: 'nodejs20.x',
+        },
       },
     },
   },
