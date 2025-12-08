@@ -54,11 +54,5 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'vercel',
-    vercel: {
-      config: {
-        // @ts-ignore - runtime is valid but not in types
-        runtime: 'nodejs20.x',
-      },
-    },
   },
 });

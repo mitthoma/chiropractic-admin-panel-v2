@@ -2,14 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nuxtjs",
-  "outputDirectory": ".output/public",
-  "functions": {
-    ".vercel/output/functions/**": {
-      "runtime": "nodejs20.x"
-    },
-    "**/__nitro.func/**": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "framework": "nuxtjs"
 }
