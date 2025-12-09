@@ -21,7 +21,6 @@
     "node": "20.x"
   },
   "devDependencies": {
-    "@nuxtjs/proxy": "^2.1.0",
     "@types/node": "^20.0.0",
     "http-proxy-middleware": "^2.0.6",
     "husky": "^8.0.3",
@@ -32,10 +31,6 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
-    "@nuxt/kit": "^4.2.1",
-    "@nuxt/schema": "^4.2.1",
-    "@nuxt/types": "^2.16.3",
-    "@nuxt/vite-builder": "^4.2.1",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtus/nuxt-localtunnel": "^1.0.1",
     "@pinia/nuxt": "^0.4.11",
