@@ -1,5 +1,5 @@
-import { AxiosInstance } from 'axios';
-import { ExportExcelRequest } from '~/types/datamodel';
+import type { AxiosInstance } from 'axios';
+import type { ExportExcelRequest } from '~/types/datamodel.d';
 
 const config = useRuntimeConfig();
 

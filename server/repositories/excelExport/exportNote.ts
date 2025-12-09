@@ -1,7 +1,7 @@
 import { getNoteById } from '~~/server/repositories/noteRepository';
 import { getAllEntriesByNoteId } from '~~/server/repositories/entryRepository';
 import { getAllTreatmentsByNoteId } from '~~/server/repositories/treatmentRepository';
-import { DataMappings, Treatment } from '~~/types/datamodel';
+import type { DataMappings, Treatment } from '~/types/datamodel.d';
 
 const COL_LETTERS = [
   'A',

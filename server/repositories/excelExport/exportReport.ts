@@ -23,7 +23,7 @@ import { getAllMyoDermsByReportId } from '../reports/myoDermRepository';
 
 import { getPatient } from '../patientRepository';
 import { getReportById } from '../reports/reportRepository';
-import { DataMappings } from '~~/types/datamodel';
+import type { DataMappings } from '~/types/datamodel.d';
 
 interface ReportGeneralData {
   height: string;
