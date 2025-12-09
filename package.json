@@ -1,6 +1,5 @@
 {
   "private": true,
-  "type": "module",
   "scripts": {
     "prepare": "husky install",
     "build": "prisma generate && nuxt build",
