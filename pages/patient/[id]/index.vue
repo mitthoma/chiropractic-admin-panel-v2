@@ -90,220 +90,237 @@
       <v-row>
         <v-col cols="7">
           <v-card class="elevation-4 mx-5 my-5">
-            <div v-if="isLoading" class="text-center py-5">
+            <div v-if="isLoading" class="text-center py-12">
               <v-progress-circular
                 indeterminate
                 color="primary"
+                size="64"
               ></v-progress-circular>
+              <p class="text-body-1 mt-4 text-medium-emphasis">
+                Loading notes...
+              </p>
             </div>
-            <div v-else class="py-5 d-flex">
-              <v-card-title> Notes List </v-card-title>
-              <v-spacer></v-spacer>
-              <v-row class="mx-2 pa-2" justify="end">
-                <v-btn color="primary" @click="openNewNoteDialog"
-                  >Add New Note</v-btn
-                >
-                <v-dialog
-                  v-model="newNoteDialog"
-                  max-width="500px"
-                  max-height="300px"
-                >
-                  <v-card class="report-dialog-card">
-                    <v-card-title class="headline"
-                      >Select a Note Date</v-card-title
-                    >
-                    <v-card-text>
-                      <VueDatePicker
-                        v-model="selectedDate"
-                        week-start="0"
-                        type="date"
-                        class="datepicker"
-                        :enable-time-picker="false"
-                      />
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="closeNewNoteDialog"
-                        >Cancel</v-btn
+            <div v-else>
+              <div class="py-5 d-flex">
+                <v-card-title> Notes List </v-card-title>
+                <v-spacer></v-spacer>
+                <v-row class="mx-2 pa-2" justify="end">
+                  <v-btn color="primary" @click="openNewNoteDialog"
+                    >Add New Note</v-btn
+                  >
+                  <v-dialog
+                    v-model="newNoteDialog"
+                    max-width="500px"
+                    max-height="300px"
+                  >
+                    <v-card class="report-dialog-card">
+                      <v-card-title class="headline"
+                        >Select a Note Date</v-card-title
                       >
-                      <v-btn
-                        color="green darken-1"
-                        text
-                        @click="saveAndGoToNote"
-                        >Save & Go To Note</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-                <!-- <NoteDialog
+                      <v-card-text>
+                        <VueDatePicker
+                          v-model="selectedDate"
+                          week-start="0"
+                          type="date"
+                          class="datepicker"
+                          :enable-time-picker="false"
+                        />
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="closeNewNoteDialog"
+                          >Cancel</v-btn
+                        >
+                        <v-btn
+                          color="green darken-1"
+                          text
+                          @click="saveAndGoToNote"
+                          >Save & Go To Note</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                  <!-- <NoteDialog
                   v-model="dialog"
                   :patient="currentPatient"
                   @note-added="refreshNotes"
                   @close-dialog="closeNoteDialog"
                 /> -->
-              </v-row>
-            </div>
-            <v-table>
-              <thead>
-                <tr>
-                  <th class="text-left">#</th>
-                  <th class="text-left">Visit Date</th>
-                  <th class="text-left">Last Updated</th>
-                  <th class="text-right pr-8">Actions</th>
-                </tr>
-              </thead>
-              <tbody class="">
-                <template v-for="(item, index) in shownNotes" :key="item.id">
-                  <tr
-                    :class="
-                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
-                    "
-                  >
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ formatVisitDate(item.visitDate, item) }}</td>
-                    <td>{{ formatDate(item.lastEdited, item) }}</td>
-                    <td class="d-flex justify-end">
-                      <v-menu transition="slide-x-transition">
-                        <template #activator="{ props }">
-                          <v-icon class="mt-3" v-bind="props"
-                            >mdi-export-variant</v-icon
-                          >
-                          <!-- Update button with export icon -->
-                        </template>
-                        <v-list>
-                          <v-list-item @click="handleExportNote(item)">
-                            <v-list-item-title>
-                              Export to Excel
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                      <v-icon class="ma-3" @click="goToNote(item)"
-                        >mdi-eye</v-icon
-                      >
-                      <!-- Update button with eye icon -->
-                      <v-icon class="mt-3" @click="openDeleteDialog(item)"
-                        >mdi-delete</v-icon
-                      >
-                      <!-- Add delete button -->
-                    </td>
+                </v-row>
+              </div>
+              <v-table>
+                <thead>
+                  <tr>
+                    <th class="text-left">#</th>
+                    <th class="text-left">Visit Date</th>
+                    <th class="text-left">Last Updated</th>
+                    <th class="text-right pr-8">Actions</th>
                   </tr>
-                </template>
-              </tbody>
-            </v-table>
-            <v-pagination
-              v-model="currentPage"
-              :length="totalPages"
-              :total-visible="5"
-              color="primary"
-            ></v-pagination>
+                </thead>
+                <tbody class="">
+                  <template v-for="(item, index) in shownNotes" :key="item.id">
+                    <tr
+                      :class="
+                        index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                      "
+                    >
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ formatVisitDate(item.visitDate, item) }}</td>
+                      <td>{{ formatDate(item.lastEdited, item) }}</td>
+                      <td class="d-flex justify-end">
+                        <v-menu transition="slide-x-transition">
+                          <template #activator="{ props }">
+                            <v-icon class="mt-3" v-bind="props"
+                              >mdi-export-variant</v-icon
+                            >
+                            <!-- Update button with export icon -->
+                          </template>
+                          <v-list>
+                            <v-list-item @click="handleExportNote(item)">
+                              <v-list-item-title>
+                                Export to Excel
+                              </v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                        <v-icon class="ma-3" @click="goToNote(item)"
+                          >mdi-eye</v-icon
+                        >
+                        <!-- Update button with eye icon -->
+                        <v-icon class="mt-3" @click="openDeleteDialog(item)"
+                          >mdi-delete</v-icon
+                        >
+                        <!-- Add delete button -->
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </v-table>
+              <v-pagination
+                v-model="currentPage"
+                :length="totalPages"
+                :total-visible="5"
+                color="primary"
+              ></v-pagination>
+            </div>
           </v-card>
         </v-col>
         <v-col class="px-1" cols="5">
           <v-card class="elevation-4 mx-5 my-5">
-            <div v-if="isReportsLoading" class="text-center py-5">
+            <div v-if="isReportsLoading" class="text-center py-12">
               <v-progress-circular
                 indeterminate
                 color="primary"
+                size="64"
               ></v-progress-circular>
+              <p class="text-body-1 mt-4 text-medium-emphasis">
+                Loading reports...
+              </p>
             </div>
-            <div class="py-5 d-flex">
-              <v-card-title> Reports List </v-card-title>
-              <v-spacer></v-spacer>
-              <!-- Additional buttons or actions for Reports can go here -->
-              <v-row class="mx-2 pa-2" justify="end">
-                <v-btn color="primary" @click="openNewReportDialog"
-                  >Add New Report</v-btn
-                >
-                <v-dialog
-                  v-model="reportDialog"
-                  max-width="500px"
-                  max-height="300px"
-                >
-                  <v-card class="report-dialog-card">
-                    <v-card-title class="headline"
-                      >Select a Report Date</v-card-title
-                    >
-                    <v-card-text>
-                      <VueDatePicker
-                        v-model="selectedDate"
-                        week-start="0"
-                        type="date"
-                        class="datepicker"
-                        :enable-time-picker="false"
-                      />
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="closeDialog"
-                        >Cancel</v-btn
-                      >
-                      <v-btn
-                        color="green darken-1"
-                        text
-                        @click="saveAndGoToReport"
-                        >Save & Go To Report</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </v-row>
-            </div>
-            <v-table>
-              <thead>
-                <tr>
-                  <th class="text-left">#</th>
-                  <th class="text-left">Exam Date</th>
-                  <th class="text-left">Date Added</th>
-                  <th class="text-right pr-8">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template v-for="(item, index) in shownReports" :key="item.id">
-                  <tr
-                    :class="
-                      index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
-                    "
+            <div v-else>
+              <div class="py-5 d-flex">
+                <v-card-title> Reports List </v-card-title>
+                <v-spacer></v-spacer>
+                <!-- Additional buttons or actions for Reports can go here -->
+                <v-row class="mx-2 pa-2" justify="end">
+                  <v-btn color="primary" @click="openNewReportDialog"
+                    >Add New Report</v-btn
                   >
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ formatVisitDate(item.exam_date, item) }}</td>
-                    <td>{{ formatDate(item.dateAdded, item) }}</td>
-                    <td class="d-flex justify-end">
-                      <v-menu transition="slide-x-transition">
-                        <template #activator="{ props }">
-                          <v-icon class="mt-3" v-bind="props"
-                            >mdi-export-variant</v-icon
-                          >
-                          <!-- Update button with export icon -->
-                        </template>
-                        <v-list>
-                          <v-list-item @click="handleExportReport(item)">
-                            <v-list-item-title
-                              >Export to Excel</v-list-item-title
-                            >
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                      <v-icon class="ma-3" @click="goToReport(item)"
-                        >mdi-eye</v-icon
+                  <v-dialog
+                    v-model="reportDialog"
+                    max-width="500px"
+                    max-height="300px"
+                  >
+                    <v-card class="report-dialog-card">
+                      <v-card-title class="headline"
+                        >Select a Report Date</v-card-title
                       >
-                      <v-icon class="mt-3" @click="openDeleteReportDialog(item)"
-                        >mdi-delete</v-icon
-                      >
-                    </td>
+                      <v-card-text>
+                        <VueDatePicker
+                          v-model="selectedDate"
+                          week-start="0"
+                          type="date"
+                          class="datepicker"
+                          :enable-time-picker="false"
+                        />
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="closeDialog"
+                          >Cancel</v-btn
+                        >
+                        <v-btn
+                          color="green darken-1"
+                          text
+                          @click="saveAndGoToReport"
+                          >Save & Go To Report</v-btn
+                        >
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+                </v-row>
+              </div>
+              <v-table>
+                <thead>
+                  <tr>
+                    <th class="text-left">#</th>
+                    <th class="text-left">Exam Date</th>
+                    <th class="text-left">Date Added</th>
+                    <th class="text-right pr-8">Actions</th>
                   </tr>
-                </template>
-              </tbody>
-            </v-table>
-            <v-pagination
-              v-model="currentReportPage"
-              :length="totalReportPages"
-              :total-visible="5"
-              color="primary"
-            ></v-pagination>
+                </thead>
+                <tbody>
+                  <template
+                    v-for="(item, index) in shownReports"
+                    :key="item.id"
+                  >
+                    <tr
+                      :class="
+                        index % 2 == 0 ? 'bg-surface-darken-1' : 'bg-surface'
+                      "
+                    >
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ formatVisitDate(item.exam_date, item) }}</td>
+                      <td>{{ formatDate(item.dateAdded, item) }}</td>
+                      <td class="d-flex justify-end">
+                        <v-menu transition="slide-x-transition">
+                          <template #activator="{ props }">
+                            <v-icon class="mt-3" v-bind="props"
+                              >mdi-export-variant</v-icon
+                            >
+                            <!-- Update button with export icon -->
+                          </template>
+                          <v-list>
+                            <v-list-item @click="handleExportReport(item)">
+                              <v-list-item-title
+                                >Export to Excel</v-list-item-title
+                              >
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
+                        <v-icon class="ma-3" @click="goToReport(item)"
+                          >mdi-eye</v-icon
+                        >
+                        <v-icon
+                          class="mt-3"
+                          @click="openDeleteReportDialog(item)"
+                          >mdi-delete</v-icon
+                        >
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </v-table>
+              <v-pagination
+                v-model="currentReportPage"
+                :length="totalReportPages"
+                :total-visible="5"
+                color="primary"
+              ></v-pagination>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -444,17 +461,35 @@ export default {
     this.patientStore = patientStore();
     await this.getCurrentPatient();
     this.noteStore = noteStore();
-    this.reportService = createReportService(this.$api);
-    this.noteService = createNoteService(this.$api);
-    this.entryService = createEntryService(this.$api);
-    this.notes = await this.noteService.getNotesForPatient({
-      patientId: this.$route.params.id,
-    });
-    this.updateDisplayedNotes();
-    this.reports = await this.reportService.getReportsForPatient({
-      patientId: this.$route.params.id,
-    });
-    this.updateDisplayedReports();
+
+    // Check if in demo mode
+    const { demoStore } = await import('~/store/demo');
+    const demo = demoStore();
+
+    if (demo.getIsDemo) {
+      // Load demo data
+      const patientId = parseInt(this.$route.params.id);
+      this.notes = demo.getPatientNotes(patientId);
+      this.reports = demo.getPatientReports(patientId);
+      this.complaints = demo.getPatientComplaints(patientId);
+      this.updateDisplayedNotes();
+      this.updateDisplayedReports();
+      this.updateDisplayedComplaints();
+    } else {
+      // Load from API
+      this.reportService = createReportService(this.$api);
+      this.noteService = createNoteService(this.$api);
+      this.entryService = createEntryService(this.$api);
+      this.notes = await this.noteService.getNotesForPatient({
+        patientId: this.$route.params.id,
+      });
+      this.updateDisplayedNotes();
+      this.reports = await this.reportService.getReportsForPatient({
+        patientId: this.$route.params.id,
+      });
+      this.updateDisplayedReports();
+    }
+
     this.isLoading = false;
     this.isReportsLoading = false;
   },
@@ -690,20 +725,46 @@ export default {
       this.$router.push(`/patient/${this.$route.params.id}/report/${item.id}`);
     },
     async refreshNotes() {
-      this.isLoading = true;
-      this.notes = await this.noteService.getNotesForPatient({
-        patientId: this.$route.params.id,
-      });
-      this.updateDisplayedNotes();
-      this.isLoading = false;
+      try {
+        this.isLoading = true;
+        const { demoStore } = await import('~/store/demo');
+        const demo = demoStore();
+
+        if (demo.getIsDemo) {
+          const patientId = parseInt(this.$route.params.id);
+          this.notes = demo.getPatientNotes(patientId);
+        } else {
+          this.notes = await this.noteService.getNotesForPatient({
+            patientId: this.$route.params.id,
+          });
+        }
+        this.updateDisplayedNotes();
+        this.isLoading = false;
+      } catch (error) {
+        console.error('Error refreshing notes:', error);
+        this.isLoading = false;
+      }
     },
     async refreshReports() {
-      this.isReportsLoading = true;
-      this.reports = await this.reportService.getReportsForPatient({
-        patientId: this.$route.params.id,
-      });
-      this.updateDisplayedReports();
-      this.isReportsLoading = false;
+      try {
+        this.isReportsLoading = true;
+        const { demoStore } = await import('~/store/demo');
+        const demo = demoStore();
+
+        if (demo.getIsDemo) {
+          const patientId = parseInt(this.$route.params.id);
+          this.reports = demo.getPatientReports(patientId);
+        } else {
+          this.reports = await this.reportService.getReportsForPatient({
+            patientId: this.$route.params.id,
+          });
+        }
+        this.updateDisplayedReports();
+        this.isReportsLoading = false;
+      } catch (error) {
+        console.error('Error refreshing reports:', error);
+        this.isReportsLoading = false;
+      }
     },
     editComplaintItem(complaint) {
       this.complaintDialog = true;
@@ -770,10 +831,21 @@ export default {
       }
     },
     async getCurrentPatient() {
-      this.patientService = createPatientService(this.$api);
-      const patient = await this.patientService.getPatient({
-        id: this.$route.params.id,
-      });
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
+
+      let patient;
+      if (demo.getIsDemo) {
+        // Get patient from demo store
+        const patientId = parseInt(this.$route.params.id);
+        patient = demo.getPatients.find((p) => p.id === patientId);
+      } else {
+        this.patientService = createPatientService(this.$api);
+        patient = await this.patientService.getPatient({
+          id: this.$route.params.id,
+        });
+      }
+
       this.patientStore.setCurrentPatient(patient);
       return patient;
     },
@@ -792,9 +864,17 @@ export default {
       );
     },
     async refreshComplaints() {
-      this.complaints = await this.complaintService.getComplaintsForPatient({
-        patientId: this.$route.params.id,
-      });
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
+
+      if (demo.getIsDemo) {
+        const patientId = parseInt(this.$route.params.id);
+        this.complaints = demo.getPatientComplaints(patientId);
+      } else {
+        this.complaints = await this.complaintService.getComplaintsForPatient({
+          patientId: this.$route.params.id,
+        });
+      }
       this.updateDisplayedComplaints();
     },
     closeComplaintDialog() {

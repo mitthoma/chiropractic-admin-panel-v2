@@ -1,5 +1,3 @@
-
-
 // Note types
 export interface Treatment {
   id: string;
@@ -37,7 +35,7 @@ id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
 export type DataMappings = Record<string, any>;
 
 export interface ExportExcelRequest {
-    dataMappings: DataMappings,
-    noteID: string,
-    templateName: string
+  dataMappings: DataMappings;
+  noteID: string;
+  templateName: string;
 }

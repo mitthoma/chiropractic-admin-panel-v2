@@ -2,20 +2,39 @@
 
 <template>
   <div>
-    <v-container>
+    <v-container fluid class="pa-6">
       <v-btn
         variant="text"
         prepend-icon="mdi-chevron-left"
-        class="mb-4 text-primary font-weight-bold"
+        class="mb-4"
         @click="backToPatient"
-        >Back to Patient</v-btn
       >
-      <v-row>
-        <v-col cols="12" class="text-center"
-          ><v-card-title class="flex flex-start"
-            >NOTE REPORT</v-card-title
-          ></v-col
-        >
+        Back to Patient
+      </v-btn>
+
+      <!-- Header -->
+      <v-row class="mb-4">
+        <v-col cols="12">
+          <v-card color="primary" variant="flat" class="pa-6 rounded-lg">
+            <div class="d-flex align-center">
+              <v-icon
+                icon="mdi-file-document-edit"
+                size="48"
+                class="mr-4"
+                color="white"
+              ></v-icon>
+              <div>
+                <h1 class="text-h4 font-weight-bold text-white mb-1">
+                  Treatment Note
+                </h1>
+                <p class="text-body-1 text-white" style="opacity: 0.9">
+                  {{ patient?.firstName }} {{ patient?.lastName }} - Visit:
+                  {{ formatVisitDate(currentNote?.visitDate) }}
+                </p>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="6">
@@ -92,35 +111,63 @@ export default {
     },
   },
   async mounted() {
-    // load services
-    this.patientService = await createPatientService(this.$api);
-    this.reportService = await createReportService(this.$api);
-    this.noteService = await createNoteService(this.$api);
-    this.entryService = await createEntryService(this.$api);
+    // Check if in demo mode
+    const { demoStore } = await import('~/store/demo');
+    const demo = demoStore();
 
-    // load patient from route
-    const patientId = this.$route.params.id;
-    this.patient = await this.patientService.getPatient({
-      id: patientId,
-    });
+    if (demo.getIsDemo) {
+      // Load demo data
+      const patientId = parseInt(this.$route.params.id);
+      const noteId = this.$route.params.noteId;
 
-    // load properties
-    await this.getCurrentProperties();
+      this.patient = demo.getPatients.find((p) => p.id === patientId);
+      this.currentNote = demo.getNotes.find((n) => n.id === noteId);
+    } else {
+      // load services
+      this.patientService = await createPatientService(this.$api);
+      this.reportService = await createReportService(this.$api);
+      this.noteService = await createNoteService(this.$api);
+      this.entryService = await createEntryService(this.$api);
+
+      // load the current note and patient
+      this.patient = await this.patientService.getPatient({
+        id: this.$route.params.id,
+      });
+      this.currentNote = await this.noteService.getNote({
+        noteId: this.$route.params.noteId,
+      });
+    }
   },
   methods: {
     async refresh() {},
     async getCurrentProperties() {
-      this.currentNote = await this.noteService.getNote({
-        id: this.$route.params.noteId,
-      });
+      const { demoStore } = await import('~/store/demo');
+      const demo = demoStore();
 
-      this.patient = await this.patientService.getPatient({
-        id: this.$route.params.id,
-      });
+      if (demo.getIsDemo) {
+        const patientId = parseInt(this.$route.params.id);
+        const noteId = this.$route.params.noteId;
+        this.patient = demo.getPatients.find((p) => p.id === patientId);
+        this.currentNote = demo.getNotes.find((n) => n.id === noteId);
+      } else {
+        if (!this.patientService) {
+          return;
+        }
+        this.currentNote = await this.noteService.getNote({
+          id: this.$route.params.noteId,
+        });
+        this.patient = await this.patientService.getPatient({
+          id: this.$route.params.id,
+        });
+      }
     },
 
     backToPatient() {
       this.$router.push(`/patient/${this.$route.params.id}`);
+    },
+    formatVisitDate(date) {
+      if (!date) return 'N/A';
+      return new Date(date).toLocaleDateString();
     },
     formatExamDate(date) {
       return date ? new Date(date).toLocaleDateString() : 'N/A';

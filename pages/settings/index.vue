@@ -1,19 +1,35 @@
 <template>
   <div>
-    <v-container>
-      <v-btn
-        variant="text"
-        prepend-icon="mdi-chevron-left"
-        class="mb-4 text-primary font-weight-bold"
-        @click="backToDashboard"
-      >
-        Back to Dashboard
-      </v-btn>
-      <br />
-      <br />
+    <v-container fluid class="pa-6">
+      <v-row class="mb-4">
+        <v-col cols="12">
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-chevron-left"
+            class="mb-2"
+            @click="backToDashboard"
+          >
+            Back to Dashboard
+          </v-btn>
+          <h1 class="text-h4 font-weight-bold mb-2">Settings</h1>
+          <p class="text-body-1 text-medium-emphasis">
+            Manage treatment options and room assignments
+          </p>
+        </v-col>
+      </v-row>
 
-      <v-title>Treatment Options Management</v-title>
-      <br />
+      <DemoModeNotice
+        v-if="isDemo"
+        :show="true"
+        title="Demo Mode: Settings View Only"
+        message="Adding or modifying settings is disabled in demo mode. You can view all current options. Contact us for a quote to get your own customizable system."
+        type="warning"
+        icon="mdi-lock"
+      />
+
+      <h2 class="text-h5 font-weight-bold mb-4">
+        Treatment Options Management
+      </h2>
       <v-row>
         <v-col cols="6">
           <v-card class="elevation-4">
@@ -22,12 +38,21 @@
                 Physio Positioning Options
               </v-card-title>
               <v-spacer></v-spacer>
-              <v-btn
-                class="mb-4 justify-end"
-                color="primary"
-                @click="showAddDialog('physioPositioning')"
-                >Add New Option</v-btn
-              >
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <div v-bind="props">
+                    <v-btn
+                      class="mb-4 justify-end"
+                      color="primary"
+                      :disabled="isDemo"
+                      @click="showAddDialog('physioPositioning')"
+                    >
+                      Add New Option
+                    </v-btn>
+                  </div>
+                </template>
+                <span v-if="isDemo">Disabled in demo mode</span>
+              </v-tooltip>
             </div>
             <v-table>
               <thead>
@@ -150,12 +175,21 @@
                 Treatment Positioning Options
               </v-card-title>
               <v-spacer></v-spacer>
-              <v-btn
-                class="mb-4 justify-end"
-                color="primary"
-                @click="showAddDialog('treatmentPositioning')"
-                >Add New Option</v-btn
-              >
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <div v-bind="props">
+                    <v-btn
+                      class="mb-4 justify-end"
+                      color="primary"
+                      :disabled="isDemo"
+                      @click="showAddDialog('treatmentPositioning')"
+                    >
+                      Add New Option
+                    </v-btn>
+                  </div>
+                </template>
+                <span v-if="isDemo">Disabled in demo mode</span>
+              </v-tooltip>
             </div>
             <v-table>
               <thead>
@@ -191,12 +225,21 @@
                 Treatment Technique Options
               </v-card-title>
               <v-spacer></v-spacer>
-              <v-btn
-                class="mb-4 justify-end"
-                color="primary"
-                @click="showAddDialog('treatmentTechnique')"
-                >Add New Option</v-btn
-              >
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <div v-bind="props">
+                    <v-btn
+                      class="mb-4 justify-end"
+                      color="primary"
+                      :disabled="isDemo"
+                      @click="showAddDialog('treatmentTechnique')"
+                    >
+                      Add New Option
+                    </v-btn>
+                  </div>
+                </template>
+                <span v-if="isDemo">Disabled in demo mode</span>
+              </v-tooltip>
             </div>
             <v-table>
               <thead>
@@ -239,12 +282,21 @@
                 Treatment Method Names
               </v-card-title>
               <v-spacer></v-spacer>
-              <v-btn
-                class="mb-4 justify-end"
-                color="primary"
-                @click="showAddTreatmentMethodNameDialog = true"
-                >Add New Method Name</v-btn
-              >
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <div v-bind="props">
+                    <v-btn
+                      class="mb-4 justify-end"
+                      color="primary"
+                      :disabled="isDemo"
+                      @click="showAddTreatmentMethodNameDialog = true"
+                    >
+                      Add New Method Name
+                    </v-btn>
+                  </div>
+                </template>
+                <span v-if="isDemo">Disabled in demo mode</span>
+              </v-tooltip>
             </div>
             <v-table>
               <thead>
@@ -374,6 +426,7 @@
 <script>
 import { createTreatmentOptionService } from '~~/services/treatmentOption';
 import { createTreatmentMethodNameService } from '~~/services/treatmentMethodName';
+import { demoStore } from '~/store/demo';
 
 export default {
   name: 'SettingsPage',
@@ -407,13 +460,36 @@ export default {
       currentTreatmentOptionCategory: null,
     };
   },
+  computed: {
+    isDemo() {
+      const demo = demoStore();
+      return demo.getIsDemo;
+    },
+  },
   async mounted() {
-    this.treatmentOptionService = createTreatmentOptionService(this.$api);
-    await this.loadTreatmentOptions();
-    this.treatmentMethodNameService = createTreatmentMethodNameService(
-      this.$api
-    );
-    await this.loadTreatmentMethodNames();
+    const demo = demoStore();
+
+    if (demo.getIsDemo) {
+      // Load demo data
+      this.treatmentOptions = demo.getTreatmentOptions;
+      this.treatmentMethodNames = demo.getTreatmentMethodNames;
+      this.physioPositioningOptions = this.treatmentOptions.filter(
+        (option) => option.category === 'physioPositioning'
+      );
+      this.treatmentPositioningOptions = this.treatmentOptions.filter(
+        (option) => option.category === 'treatmentPositioning'
+      );
+      this.treatmentTechniqueOptions = this.treatmentOptions.filter(
+        (option) => option.category === 'treatmentTechnique'
+      );
+    } else {
+      this.treatmentOptionService = createTreatmentOptionService(this.$api);
+      await this.loadTreatmentOptions();
+      this.treatmentMethodNameService = createTreatmentMethodNameService(
+        this.$api
+      );
+      await this.loadTreatmentMethodNames();
+    }
   },
   methods: {
     async loadTreatmentOptions() {

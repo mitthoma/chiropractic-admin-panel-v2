@@ -93,3 +93,47 @@ export const resetPassword = async (email: string) => {
   const auth = getAuth();
   await sendPasswordResetEmail(auth, email);
 };
+
+// Demo mode users
+export const demoUsers = [
+  {
+    id: 1,
+    email: 'dr.sarah.mitchell@demo.com',
+    firstName: 'Sarah',
+    lastName: 'Mitchell',
+    role: 'admin',
+    firebaseUid: 'demo-user-1',
+  },
+  {
+    id: 2,
+    email: 'dr.james.anderson@demo.com',
+    firstName: 'James',
+    lastName: 'Anderson',
+    role: 'admin',
+    firebaseUid: 'demo-user-2',
+  },
+  {
+    id: 3,
+    email: 'dr.emily.chen@demo.com',
+    firstName: 'Emily',
+    lastName: 'Chen',
+    role: 'admin',
+    firebaseUid: 'demo-user-3',
+  },
+];
+
+export const signInDemoUser = async (demoUserEmail: string) => {
+  const store = userStore();
+  try {
+    const demoUser = demoUsers.find((user) => user.email === demoUserEmail);
+    if (demoUser) {
+      store.setUser(demoUser as any);
+      store.setIsLoggedIn(true);
+      return { success: true };
+    }
+    return { success: false, error: 'Demo user not found' };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error: (error as Error).message };
+  }
+};

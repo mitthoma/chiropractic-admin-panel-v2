@@ -3,10 +3,13 @@ export default defineNuxtConfig({
   css: [
     'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.min.css',
+    '~/assets/styles/main.css',
   ],
+
   build: {
     transpile: ['vuetify', '@vuepic/vue-datepicker', 'chart.js'],
   },
+
   auth: {
     strategies: {
       google: {
@@ -22,9 +25,8 @@ export default defineNuxtConfig({
     '~/plugins/vuetify.ts',
     '~/plugins/reflect-metadata.ts',
     '~/plugins/chart.ts',
-
-    // '~/plugins/pdfmake.ts'
   ],
+
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.API_BASE_URL,
@@ -34,6 +36,7 @@ export default defineNuxtConfig({
       FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
       FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+
       DB_TYPE: process.env.DB_TYPE,
       DB_HOST: process.env.DB_HOST,
       DB_PORT: process.env.DB_PORT,
@@ -42,13 +45,25 @@ export default defineNuxtConfig({
       DB_DATABASE: process.env.DB_DATABASE,
       DB_SYNCHRONIZE: process.env.DB_SYNCHRONIZE,
       DB_LOGGING: process.env.DB_LOGGING,
+
       PORT: process.env.PORT,
       EXPORT_EXCEL_API_URL: process.env.EXPORT_EXCEL_API_URL,
     },
   },
 
   modules: ['@pinia/nuxt'],
+
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
+  },
+
+  nitro: {
+    preset: 'vercel',
+    // This ensures modern runtime without triggering TS errors
+    runtimeConfig: {
+      nitro: {
+        nodeVersion: '20',
+      },
+    },
   },
 });
